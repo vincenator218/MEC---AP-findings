@@ -1,0 +1,725 @@
+=== ./gameconfigs/RunnerKitDefinitionsMeta.bin[0] ===
+version=1 bigEndian=False
+complexes=10 fields=20 instances=1 arrays=80 guids=0
+
+class DataContainer  (size=8, align=4)
+class Asset  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Name                             Sid          offset=8 ref=0
+class DataContainerPolicyAsset  (size=12, align=4)
+    .$                                Void         offset=8 ref=1
+class PamRunnerKitDefinitionsMeta  (size=24, align=4)
+    .$                                Void         offset=8 ref=2
+    .RunnerKits                       DbObject     offset=12 ref=4
+    .RunnerKitTypes                   DbObject     offset=16 ref=8
+    .InitialRewards                   DbObject     offset=20 ref=6
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=5
+class PamRunnerKitMeta  (size=40, align=4)
+    .KitGuid                          Guid         offset=0 ref=0
+    .KitTypeGuid                      Guid         offset=16 ref=0
+    .RewardDescriptionSid             Sid          offset=32 ref=0
+    .Rewards                          DbObject     offset=36 ref=6
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=7
+class PamRunnerKitRewardMeta  (size=8, align=4)
+    .Name                             Sid          offset=0 ref=0
+    .Hash                             Hash         offset=4 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=9
+class PamRunnerKitTypeMeta  (size=40, align=4)
+    .KitTypeGuid                      Guid         offset=0 ref=0
+    .DisplayName                      Sid          offset=16 ref=0
+    .DisplayNameSid                   Sid          offset=20 ref=0
+    .ObjectVariationGuid              Guid         offset=24 ref=0
+
+--- instance guid=a3449173de7feec03fdfb140788c92dd type=PamRunnerKitDefinitionsMeta ---
+PamRunnerKitDefinitionsMeta {
+  .$ = None
+  .RunnerKits:
+  [
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 091300001dbb94e1000000004c000000'
+      .KitTypeGuid = 'Guid: f180122f025d624fb1fec6ebfbc9fc03'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1211772726 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: aada07f28b482ccdffffffff01000000'
+      .KitTypeGuid = 'Guid: f8faf15b4b79ce47aeaaf29cc496b86c'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1211772726 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: aada07f28b482ccdffffffff02000000'
+      .KitTypeGuid = 'Guid: d996d9a98569fc478a7d32fe360d1082'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e34300000003000000'
+      .KitTypeGuid = 'Guid: 2cf63b7d7bc4684a9a9e3f72ab447b93'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e35d00000004000000'
+      .KitTypeGuid = 'Guid: 4d86c8cd35fa4e409c9a8bdf86366e1f'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e37700000005000000'
+      .KitTypeGuid = 'Guid: bfcc3eefe8cb0f4aa3f10dad80d6dc4a'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd5cf00000006000000'
+      .KitTypeGuid = 'Guid: cf1f3278d0e4034b9a7e3e861a5dedac'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1255885725 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8660c9ff6c0f79860401000007000000'
+      .KitTypeGuid = 'Guid: 463ecd06dba10142a5744a7c3b5746e4'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1231342848 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 9f10e12e9313ccb82c01000008000000'
+      .KitTypeGuid = 'Guid: 0515768187be254ea12de11435025d9f'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1129501125 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 94a65ca46d678de86e01000009000000'
+      .KitTypeGuid = 'Guid: 9a09b9b8ae31e84398a0364220fdebac'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1222908606 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: aee0c2262266c7908c0100000a000000'
+      .KitTypeGuid = 'Guid: 40ac1eab9253c54cabfe2cf89a7f7659'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1145328169 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8d36c3b6406b874de60100000b000000'
+      .KitTypeGuid = 'Guid: 3516f24ec32bc74484d9533f810c9675'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1156605679 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: aeafc86205b39871110200000c000000'
+      .KitTypeGuid = 'Guid: 2c72ee5f08860d4aa258b7aa9678a872'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1145328169 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8d36c3b6406b874d6a0200000d000000'
+      .KitTypeGuid = 'Guid: 63941df5600aa74eb40e2d18bd0f67ea'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1239361837 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8a750441f6c3b32c900200000e000000'
+      .KitTypeGuid = 'Guid: 7bdc52f100c019489c88b2e877097429'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd9b70200000f000000'
+      .KitTypeGuid = 'Guid: fe16ccb65829fc489d926839ba310c2a'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1239361837 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8a750441f6c3b32c0c03000010000000'
+      .KitTypeGuid = 'Guid: db37c3ade4957c4a9728c91db6f6c3f5'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1239361837 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8a750441f6c3b32c4003000011000000'
+      .KitTypeGuid = 'Guid: 51bda9d4808e354583357e45f53444b9'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd96d03000012000000'
+      .KitTypeGuid = 'Guid: f9b22100bdce0747a194d6d99b29bbbc'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1239361837 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8a750441f6c3b32cc603000013000000'
+      .KitTypeGuid = 'Guid: 911b747954e06642919fb3975e2ad453'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd51c04000014000000'
+      .KitTypeGuid = 'Guid: 0a99c29eb5cafe4b828f0d2b321f3646'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1231342848 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 9f10e12e9313ccb84804000015000000'
+      .KitTypeGuid = 'Guid: 3a384f9337b4cb459f662e481b30e41d'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1145328169 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8d36c3b6406b874d7104000016000000'
+      .KitTypeGuid = 'Guid: cacde7867b155942bbe7f9c8b17f993f'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1239361837 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8a750441f6c3b32c9c04000017000000'
+      .KitTypeGuid = 'Guid: c1836abfb281894f992f1347888783c6'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1191129070 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: a690f6cdfab56febc604000018000000'
+      .KitTypeGuid = 'Guid: f06c55bbb3ac04469045389bf8bd1081'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1255885725 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8660c9ff6c0f79861f05000019000000'
+      .KitTypeGuid = 'Guid: 92feeaf09615e142a00cb9f71d8c8006'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1129501125 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 94a65ca46d678de8470500001a000000'
+      .KitTypeGuid = 'Guid: 11f1a7ab642ca143b9de78f67e16e83c'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd9970500001b000000'
+      .KitTypeGuid = 'Guid: 120f59259de97542a4d88faad5e9943f'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1330818444 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: a17b1b54ea3b38f5f10500001c000000'
+      .KitTypeGuid = 'Guid: 2674f6d543c8494885fbe1b8572a0b11'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd54d0600001d000000'
+      .KitTypeGuid = 'Guid: 2366712b3f3fe241b14ceca7b21e3cdf'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd5770600001e000000'
+      .KitTypeGuid = 'Guid: 637bfb73f2828f44874e9c1efa86d8c0'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd5a00600001f000000'
+      .KitTypeGuid = 'Guid: 6967b150b4cfcd42bef4ace38bec9df6'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1330818444 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: a17b1b54ea3b38f5c706000020000000'
+      .KitTypeGuid = 'Guid: 0cc8d19fa69f4e49a6d16cad0c8ddd91'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1330818444 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: a17b1b54ea3b38f52607000021000000'
+      .KitTypeGuid = 'Guid: bd8812c245eddf49862bae566eab0a19'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1251118219 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 9bcb4edd40ab09607f07000022000000'
+      .KitTypeGuid = 'Guid: 9ad8abe44d7bdd479229baf6c1a6d491'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd5de07000023000000'
+      .KitTypeGuid = 'Guid: 7a6e3df0988198488b44a0d5b19eab8a'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd53008000024000000'
+      .KitTypeGuid = 'Guid: 11148200a868ac47a22e7890174a2f73'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd55c08000025000000'
+      .KitTypeGuid = 'Guid: f949321b95fd47468af6faa206dc7e1c'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1255885725 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8660c9ff6c0f79868108000026000000'
+      .KitTypeGuid = 'Guid: a0e3912265aa2d4a84cfccbba73df707'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1205421838 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 962292c4ff684caad808000027000000'
+      .KitTypeGuid = 'Guid: 6b39d718955d984ab08a8ce44d4da3d0'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1191129070 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: a690f6cdfab56feb2c09000028000000'
+      .KitTypeGuid = 'Guid: 014259ec4e15ad4c9fafa668351000de'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1255885725 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8660c9ff6c0f79868109000029000000'
+      .KitTypeGuid = 'Guid: a4561937c3be2d49960b22848a24adf0'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1231342848 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 9f10e12e9313ccb8a50900002a000000'
+      .KitTypeGuid = 'Guid: e40b40597c40db48bd645ceba91a5295'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1231342848 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 9f10e12e9313ccb8da0900002b000000'
+      .KitTypeGuid = 'Guid: 329d9bafedeb924c92523f290c750b87'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd9080a00002c000000'
+      .KitTypeGuid = 'Guid: 13213f22bb063044991b195d7468e0f2'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd96d0a00002d000000'
+      .KitTypeGuid = 'Guid: 2af7986551b97841afb8313355c26715'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd9c50a00002e000000'
+      .KitTypeGuid = 'Guid: 298d1ea420fa954095bc4f97ed94db6d'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd9240b00002f000000'
+      .KitTypeGuid = 'Guid: bd86c91ead13e146964d18e37070991c'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e3740b000030000000'
+      .KitTypeGuid = 'Guid: b7cd64e0b02dc04da367458fe0217cfe'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e39e0b000031000000'
+      .KitTypeGuid = 'Guid: ef37ef56d577f44a88d872a8e03f0403'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e3c70b000032000000'
+      .KitTypeGuid = 'Guid: a0b5868f1a2b8449a4301e561b09e8c9'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e3e80b000033000000'
+      .KitTypeGuid = 'Guid: 849890da75cf1146b87be6dae82d55dc'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1202992863 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b700f18275be9fbf0f0c000034000000'
+      .KitTypeGuid = 'Guid: f3ff4513b7fee846b77682a585466098'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1253435631 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: bdac7e11ca2e0e6d790c000035000000'
+      .KitTypeGuid = 'Guid: f6f5b5a8320abb4f93ec654bcd6de806'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1239293634 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96ba8a663f5d268ed90c000036000000'
+      .KitTypeGuid = 'Guid: f2ceb8c5a7661941bbba1a9e712c797f'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1090856154 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: a214945fc7a45a1a180d000037000000'
+      .KitTypeGuid = 'Guid: 9a55ba608de1984686bb144e2bea8ded'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e3420d000038000000'
+      .KitTypeGuid = 'Guid: 00a5c58d551d784b9a243d1f21e95938'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd5710d000039000000'
+      .KitTypeGuid = 'Guid: 06e14813535b4947bc68a314671e873a'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd9bb0d00003a000000'
+      .KitTypeGuid = 'Guid: 544d6bc4690b204293b07491d5ec023a'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e30f0e00003b000000'
+      .KitTypeGuid = 'Guid: 7a7b7b848364574e8dfc3db9af94775b'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd53b0e00003c000000'
+      .KitTypeGuid = 'Guid: dfde189deb620c44873ebaa4840d947e'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd98a0e00003d000000'
+      .KitTypeGuid = 'Guid: c3749726bff4ba4aad091bd7eeee147e'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd5dc0e00003e000000'
+      .KitTypeGuid = 'Guid: 77ad5ff2b12a5944a1bf73f940cf4ab2'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd9050f00003f000000'
+      .KitTypeGuid = 'Guid: 6d6ee9dd9d467c489117ce1365c8adee'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e3650f000040000000'
+      .KitTypeGuid = 'Guid: 89b271662d22784b9a614855da4ec381'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1255885725 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8660c9ff6c0f7986930f000041000000'
+      .KitTypeGuid = 'Guid: bf391f3027a035458ed3ab293c1c20e9'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1129501125 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 94a65ca46d678de8f50f000042000000'
+      .KitTypeGuid = 'Guid: d3d40d931597f747b655022c7ef056aa'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd95f10000043000000'
+      .KitTypeGuid = 'Guid: 498a47fd4481c944ac025833b8867d57'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1163821149 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: b2118228bed1c3e3c810000044000000'
+      .KitTypeGuid = 'Guid: 890d427f6440f242a7d1c7e7be6627fa'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd5eb10000045000000'
+      .KitTypeGuid = 'Guid: fb249dd426a75f4ca903f62921f29294'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd93e11000046000000'
+      .KitTypeGuid = 'Guid: 04fbbc525ecfba4e9dc8089973ecafd7'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1077566358 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 96d5ed0e77fcdfd59f11000047000000'
+      .KitTypeGuid = 'Guid: 943a8b4024a8574aa0422e8be63e361d'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1231342848 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 9f10e12e9313ccb8cc11000048000000'
+      .KitTypeGuid = 'Guid: 1e80a9bc2ef39b4097090386790ab503'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1188256252 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 81a35622a3c4bcd92112000049000000'
+      .KitTypeGuid = 'Guid: a58bd02f55d3e14d8c5d91036d4f66fe'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1099559908 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 8b7dd37bf0d112da881200004a000000'
+      .KitTypeGuid = 'Guid: 9b3f160c5e34ae46a2da2d6444157c7d'
+      .RewardDescriptionSid = ''
+      .Rewards = '<array field with out-of-range repeater index 1179603248 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+    PamRunnerKitMeta {
+      .KitGuid = 'Guid: 9465ef4dd1e460cebb1200004b000000'
+      .KitTypeGuid = 'Guid: 8382a9425a32914cae7f40aa3fc07683'
+      .RewardDescriptionSid = '\\xceѲ\x0f \x07'
+      .Rewards = '<array field with out-of-range repeater index 1196448112 — likely an empty/zero array using a convention not yet nailed down>'
+    }
+  ]
+  .RunnerKitTypes:
+  [
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 0000000000000000000000001a000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: aa96032253eff97a0d1300001d130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: b0ed1960665a8a820d1300001d130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: aada07f28b482ccd311300003c130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: b2118228bed1c3e35213000064130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 214fd88e68341b4cab1d7c355fe61ced'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 96d5ed0e77fcdfd57613000064130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 214fd88e68341b4cab1d7c355fe61ced'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 8660c9ff6c0f79868813000064130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 214fd88e68341b4cab1d7c355fe61ced'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 9f10e12e9313ccb89a13000064130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 214fd88e68341b4cab1d7c355fe61ced'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 94a65ca46d678de8ac13000064130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 214fd88e68341b4cab1d7c355fe61ced'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 8d36c3b6406b874dbe13000064130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 214fd88e68341b4cab1d7c355fe61ced'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 8a750441f6c3b32cd013000064130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 214fd88e68341b4cab1d7c355fe61ced'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: a17b1b54ea3b38f5e2130000f7130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: a91cb5010826b6740c140000f7130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 962292c4ff684caa21140000f7130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: ae3032ffb562996135140000f7130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: aee0c2262266c7904a140000f7130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: aeafc86205b398715f140000f7130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 81a35622a3c4bcd974140000f7130000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 00000000000000000000000000000000'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 9bcb4edd40ab0960891400009b140000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 2a19224ae6fda641a9e197716b40db10'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: a690f6cdfab56febad1400009b140000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 2a19224ae6fda641a9e197716b40db10'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: b700f18275be9fbfbf140000d2140000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 8c69a987ba36ba900a2c49b71c4e2f1a'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: a214945fc7a45a1ae7140000f0140000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 25b1cc71989ee56d6cb8e943e4b7e406'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 96ba8a663f5d268e0115000010150000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 2a19224ae6fda641a9e197716b40db10'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: bdac7e11ca2e0e6d271500003b150000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: cbac297ad24786d17a267cffa098fb73'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 8b7dd37bf0d112da5115000065150000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 25b1cc71989ee56d6cb8e943e4b7e406'
+      .DisplayName = ''
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: 9465ef4dd1e460ce7f15000093150000'
+    }
+    PamRunnerKitTypeMeta {
+      .KitTypeGuid = 'Guid: 25b1cc71989ee56d6cb8e943e4b7e406'
+      .DisplayName = '\\xceѲ\x0f \x07'
+      .DisplayNameSid = ''
+      .ObjectVariationGuid = 'Guid: b0330d12925ea8d6ad150000c1150000'
+    }
+  ]
+  .InitialRewards:
+  [
+    PamRunnerKitRewardMeta {
+      .Name = 'GameConfigurations/RunnerKitDefinitionsMeta'
+      .Hash = 'Hash: 0x00000000'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'GameConfigurations/RunnerKitDefinitionsMeta'
+      .Hash = 'Hash: 0x00000010'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'spheres_04'
+      .Hash = 'Hash: 0x468baa6b'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'organic_01'
+      .Hash = 'Hash: 0x79ffa6e9'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'crystaline_02'
+      .Hash = 'Hash: 0x98651b48'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'blocks_02'
+      .Hash = 'Hash: 0xb13bcd26'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'bop-chaser'
+      .Hash = 'Hash: 0x5a3dee32'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Arrow'
+      .Hash = 'Hash: 0xb5ca55fd'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Circle'
+      .Hash = 'Hash: 0x2dd7ae0d'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Diamond'
+      .Hash = 'Hash: 0xbd31eada'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Hexagon'
+      .Hash = 'Hash: 0xf4251d4c'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Octagon'
+      .Hash = 'Hash: 0x118bc9d8'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Pentagon'
+      .Hash = 'Hash: 0x64184ec6'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Shield'
+      .Hash = 'Hash: 0x4e33543a'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Square'
+      .Hash = 'Hash: 0x3b62a424'
+    }
+    PamRunnerKitRewardMeta {
+      .Name = 'Basic_Star'
+      .Hash = 'Hash: 0xde78e729'
+    }
+  ]
+}
+

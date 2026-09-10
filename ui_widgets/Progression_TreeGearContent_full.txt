@@ -1,0 +1,3397 @@
+=== ./ui/Progression_TreeGearContent.bin[0] ===
+version=1 bigEndian=False
+complexes=80 fields=420 instances=110 arrays=54 guids=33
+
+class DataContainer  (size=8, align=4)
+class Asset  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Name                             Sid          offset=8 ref=0
+class DataBusData  (size=28, align=4)
+    .$                                Void         offset=8 ref=1
+    .PropertyConnections              DbObject     offset=12 ref=3
+    .LinkConnections                  DbObject     offset=16 ref=5
+    .Interface                        GUID         offset=20 ref=0
+    .Flags                            Int16        offset=24 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=4
+class PropertyConnection  (size=20, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceFieldId                    Hash         offset=8 ref=0
+    .TargetFieldId                    Hash         offset=12 ref=0
+    .Flags                            Int16        offset=16 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=6
+class LinkConnection  (size=16, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceFieldId                    Hash         offset=8 ref=0
+    .TargetFieldId                    Hash         offset=12 ref=0
+class EntityBusData  (size=32, align=4)
+    .$                                Void         offset=8 ref=2
+    .EventConnections                 DbObject     offset=28 ref=8
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=9
+class EventConnection  (size=20, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceEvent                      FileRef      offset=8 ref=10
+    .TargetEvent                      FileRef      offset=12 ref=10
+    .TargetType                       FileRef      offset=16 ref=11
+class EventSpec  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class EventConnectionTargetType  (size=4, align=4)
+    .EventConnectionTargetType_Invalid Void         offset=0 ref=0
+    .EventConnectionTargetType_ClientAndServer Void         offset=1 ref=0
+    .EventConnectionTargetType_Client Void         offset=2 ref=0
+    .EventConnectionTargetType_Server Void         offset=3 ref=0
+    .EventConnectionTargetType_NetworkedClient Void         offset=4 ref=0
+    .EventConnectionTargetType_NetworkedClientAndServer Void         offset=5 ref=0
+class Blueprint  (size=32, align=4)
+    .$                                Void         offset=8 ref=7
+class ObjectBlueprint  (size=36, align=4)
+    .$                                Void         offset=8 ref=12
+    .Object                           GUID         offset=32 ref=0
+class UIWidgetBlueprint  (size=36, align=4)
+    .$                                Void         offset=8 ref=13
+class GameDataContainer  (size=8, align=4)
+    .$                                Void         offset=8 ref=0
+class DataBusPeer  (size=12, align=4)
+    .$                                Void         offset=8 ref=15
+    .Flags                            Int16        offset=8 ref=0
+class GameObjectData  (size=12, align=4)
+    .$                                Void         offset=8 ref=16
+class EntityData  (size=12, align=4)
+    .$                                Void         offset=8 ref=17
+class UIWidgetEntityData  (size=36, align=4)
+    .$                                Void         offset=8 ref=18
+    .Size                             FileRef      offset=12 ref=20
+    .Layers                           DbObject     offset=20 ref=21
+    .TextureMappings                  DbObject     offset=24 ref=21
+    .Components                       DbObject     offset=28 ref=21
+    .Visible                          Int16        offset=32 ref=0
+class UIElementSize  (size=8, align=4)
+    .X                                Float32?     offset=0 ref=0
+    .Y                                Float32?     offset=4 ref=0
+class array  (size=4, align=4)
+    .member                           GUID         offset=0 ref=0
+class PamUIWidgetEntityData  (size=112, align=4)
+    .$                                Void         offset=8 ref=19
+    .Width                            Float32?     offset=36 ref=0
+    .Height                           Float32?     offset=40 ref=0
+    .AutoWidthPadding                 Float32?     offset=44 ref=0
+    .AutoWidthMinimumSize             Float32?     offset=48 ref=0
+    .AutoWidthStride                  Float32?     offset=52 ref=0
+    .AutoWidthStrideOffset            Float32?     offset=56 ref=0
+    .AutoHeightPadding                Float32?     offset=60 ref=0
+    .AutoHeightMinimumSize            Float32?     offset=64 ref=0
+    .AutoHeightStride                 Float32?     offset=68 ref=0
+    .AutoHeightStrideOffset           Float32?     offset=72 ref=0
+    .EdgeSnapping                     FileRef      offset=76 ref=23
+    .PaddingLeft                      Float32?     offset=92 ref=0
+    .PaddingRight                     Float32?     offset=96 ref=0
+    .PaddingTop                       Float32?     offset=100 ref=0
+    .PaddingBottom                    Float32?     offset=104 ref=0
+    .AutoWidth                        Int16        offset=108 ref=0
+    .AutoHeight                       Int16        offset=109 ref=0
+class PamUIEdgeSnappings  (size=16, align=4)
+    .Top                              FileRef      offset=0 ref=24
+    .Bottom                           FileRef      offset=4 ref=24
+    .Left                             FileRef      offset=8 ref=24
+    .Right                            FileRef      offset=12 ref=24
+class PamUIEdgeSnap  (size=4, align=4)
+    .PamUIEdgeSnap_None               Void         offset=0 ref=0
+    .PamUIEdgeSnap_SafeEdge           Void         offset=1 ref=0
+    .PamUIEdgeSnap_UnsafeEdge         Void         offset=2 ref=0
+class ReferenceObjectData  (size=112, align=16)
+    .$                                Void         offset=8 ref=17
+    .Blueprint                        GUID         offset=12 ref=0
+    .BlueprintTransform               FileRef      offset=16 ref=26
+    .ObjectVariation                  GUID         offset=80 ref=0
+    .StreamRealm                      FileRef      offset=84 ref=28
+    .RadiosityTypeOverride            FileRef      offset=88 ref=29
+    .LightmapResolutionScale          Int16        offset=92 ref=0
+    .RenderingOverrides               FileRef      offset=96 ref=30
+    .CastSunShadowEnable              Int16        offset=108 ref=0
+    .CastReflectionEnable             Int16        offset=109 ref=0
+    .CastEnvmapEnable                 Int16        offset=110 ref=0
+    .Excluded                         Int16        offset=111 ref=0
+class LinearTransform  (size=64, align=16)
+    .right                            FileRef      offset=0 ref=27
+    .up                               FileRef      offset=16 ref=27
+    .forward                          FileRef      offset=32 ref=27
+    .trans                            FileRef      offset=48 ref=27
+class Vec3  (size=16, align=16)
+    .x                                Float32?     offset=0 ref=0
+    .y                                Float32?     offset=4 ref=0
+    .z                                Float32?     offset=8 ref=0
+class StreamRealm  (size=4, align=4)
+    .StreamRealm_None                 Void         offset=0 ref=0
+    .StreamRealm_Client               Void         offset=1 ref=0
+    .StreamRealm_Both                 Void         offset=2 ref=0
+class RadiosityTypeOverride  (size=4, align=4)
+    .RadiosityTypeOverride_None       Void         offset=0 ref=0
+    .RadiosityTypeOverride_Dynamic    Void         offset=1 ref=0
+    .RadiosityTypeOverride_LightProbe Void         offset=2 ref=0
+    .RadiosityTypeOverride_Static     Void         offset=3 ref=0
+    .RadiosityTypeOverride_TerrainProjected Void         offset=4 ref=0
+class RenderingOverrides  (size=12, align=4)
+    .ShadowEnable                     FileRef      offset=0 ref=31
+    .DynamicReflectionEnable          FileRef      offset=4 ref=31
+    .StaticReflectionEnable           FileRef      offset=8 ref=31
+class RenderingOverride  (size=4, align=4)
+    .RenderingOverride_Inherit        Void         offset=0 ref=0
+    .RenderingOverride_Enable         Void         offset=1 ref=0
+    .RenderingOverride_Disable        Void         offset=2 ref=0
+    .RenderingOverride_Legacy         Void         offset=3 ref=0
+class LogicReferenceObjectData  (size=128, align=16)
+    .$                                Void         offset=8 ref=25
+    .LocalPlayerId                    FileRef      offset=112 ref=33
+    .SubRealm                         FileRef      offset=116 ref=34
+class LocalPlayerId  (size=4, align=4)
+    .LocalPlayerId_0                  Void         offset=0 ref=0
+    .LocalPlayerId_1                  Void         offset=1 ref=0
+    .LocalPlayerId_2                  Void         offset=2 ref=0
+    .LocalPlayerId_3                  Void         offset=3 ref=0
+    .LocalPlayerId_4                  Void         offset=4 ref=0
+    .LocalPlayerId_5                  Void         offset=5 ref=0
+    .LocalPlayerId_6                  Void         offset=6 ref=0
+    .LocalPlayerId_7                  Void         offset=7 ref=0
+    .LocalPlayerId_Invalid            Void         offset=255 ref=0
+class SubRealm  (size=4, align=4)
+    .SubRealm_All                     Void         offset=0 ref=0
+    .SubRealm_LocalPlayer             Void         offset=1 ref=0
+    .SubRealm_RemotePlayer            Void         offset=2 ref=0
+class UIElementWidgetReferenceEntityData  (size=272, align=16)
+    .$                                Void         offset=8 ref=32
+    .UIElementTransform               FileRef      offset=128 ref=36
+    .Color                            FileRef      offset=176 ref=27
+    .InstanceName                     Sid          offset=192 ref=0
+    .InstanceNameHash                 Int16        offset=196 ref=0
+    .InclusionSettings                FileRef      offset=200 ref=37
+    .Size                             FileRef      offset=208 ref=39
+    .LayoutMode                       FileRef      offset=216 ref=40
+    .Offset                           FileRef      offset=220 ref=41
+    .Anchor                           FileRef      offset=228 ref=42
+    .Position                         FileRef      offset=236 ref=41
+    .Expansion                        FileRef      offset=244 ref=43
+    .Alpha                            Float32?     offset=260 ref=0
+    .CodeAccessIdentifier             Sid          offset=264 ref=0
+    .UseElementSize                   Int16        offset=268 ref=0
+class UIElementTransform  (size=48, align=16)
+    .Rotation                         FileRef      offset=0 ref=27
+    .RotationPivot                    FileRef      offset=16 ref=27
+    .Z                                Float32?     offset=32 ref=0
+class UIElementInclusionSettings  (size=8, align=4)
+    .CustomInclusionCritera           DbObject     offset=0 ref=38
+    .IsSingleplayerLayer              Int16        offset=4 ref=0
+    .IsMultiplayerLayer               Int16        offset=5 ref=0
+    .IsSDLayer                        Int16        offset=6 ref=0
+    .IsHDLayer                        Int16        offset=7 ref=0
+class array  (size=4, align=4)
+    .member                           Sid          offset=0 ref=0
+class Vec2  (size=8, align=4)
+    .x                                Float32?     offset=0 ref=0
+    .y                                Float32?     offset=4 ref=0
+class UILayoutMode  (size=4, align=4)
+    .UILayoutMode_AnchorOffset        Void         offset=0 ref=0
+    .UILayoutMode_PositionExpansion   Void         offset=1 ref=0
+class UIElementOffset  (size=8, align=4)
+    .X                                Float32?     offset=0 ref=0
+    .Y                                Float32?     offset=4 ref=0
+class UIElementAnchor  (size=8, align=4)
+    .X                                Float32?     offset=0 ref=0
+    .Y                                Float32?     offset=4 ref=0
+class UIElementRectExpansion  (size=16, align=4)
+    .X                                Float32?     offset=0 ref=0
+    .Y                                Float32?     offset=4 ref=0
+    .Width                            Float32?     offset=8 ref=0
+    .Height                           Float32?     offset=12 ref=0
+class DynamicDataContainer  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Fields                           DbObject     offset=8 ref=45
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=46
+class DataField  (size=16, align=4)
+    .Value                            Sid          offset=0 ref=0
+    .ValueRef                         GUID         offset=4 ref=0
+    .Id                               Hash         offset=8 ref=0
+    .AccessType                       FileRef      offset=12 ref=47
+class FieldAccessType  (size=4, align=4)
+    .FieldAccessType_Source           Void         offset=0 ref=0
+    .FieldAccessType_Target           Void         offset=1 ref=0
+    .FieldAccessType_SourceAndTarget  Void         offset=2 ref=0
+class InterfaceDescriptorData  (size=28, align=4)
+    .$                                Void         offset=8 ref=44
+    .InputEvents                      DbObject     offset=12 ref=49
+    .OutputEvents                     DbObject     offset=16 ref=49
+    .InputLinks                       DbObject     offset=20 ref=51
+    .OutputLinks                      DbObject     offset=24 ref=51
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=50
+class DynamicEvent  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=52
+class DynamicLink  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class PlayVideoEntityData  (size=40, align=4)
+    .$                                Void         offset=8 ref=18
+    .Movie                            GUID         offset=12 ref=0
+    .NetworkStreamingUrl              Sid          offset=16 ref=0
+    .VideoIdentifier                  Sid          offset=20 ref=0
+    .MarkerOffset                     Float32?     offset=24 ref=0
+    .MarkerOffsets                    DbObject     offset=28 ref=54
+    .Loop                             Int16        offset=32 ref=0
+    .KeepBlackScreen                  Int16        offset=33 ref=0
+    .AllowSkip                        Int16        offset=34 ref=0
+    .DrawInWidget                     Int16        offset=35 ref=0
+    .RenderWorld                      Int16        offset=36 ref=0
+    .DrawOnTop                        Int16        offset=37 ref=0
+    .Force30HzFramerate               Int16        offset=38 ref=0
+    .DisableNonCubemapRootViews       Int16        offset=39 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=55
+class Marker  (size=8, align=4)
+    .Name                             Sid          offset=0 ref=0
+    .Offset                           Float32?     offset=4 ref=0
+class CompareBoolEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=18
+    .Realm                            FileRef      offset=12 ref=57
+    .Bool                             Int16        offset=16 ref=0
+    .TriggerOnPropertyChange          Int16        offset=17 ref=0
+    .TriggerOnStart                   Int16        offset=18 ref=0
+    .AlwaysSend                       Int16        offset=19 ref=0
+class Realm  (size=4, align=4)
+    .Realm_Client                     Void         offset=0 ref=0
+    .Realm_Server                     Void         offset=1 ref=0
+    .Realm_ClientAndServer            Void         offset=2 ref=0
+    .Realm_None                       Void         offset=3 ref=0
+    .Realm_Pipeline                   Void         offset=4 ref=0
+class LocalizedStringEntityBaseData  (size=20, align=4)
+    .$                                Void         offset=8 ref=18
+    .Arguments                        DbObject     offset=12 ref=59
+    .ArgumentHashes                   DbObject     offset=16 ref=61
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=60
+class LocalizedStringArgumentType  (size=4, align=4)
+    .LocalizedStringArgumentType_Integer Void         offset=0 ref=0
+    .LocalizedStringArgumentType_Long Void         offset=1 ref=0
+    .LocalizedStringArgumentType_Float Void         offset=2 ref=0
+    .LocalizedStringArgumentType_String Void         offset=3 ref=0
+    .LocalizedStringArgumentType_LocalizedString Void         offset=4 ref=0
+    .LocalizedStringArgumentType_Date Void         offset=5 ref=0
+    .LocalizedStringArgumentType_Time Void         offset=6 ref=0
+class array  (size=4, align=4)
+    .member                           Int16        offset=0 ref=0
+class CheckedLocalizedStringEntityData  (size=32, align=4)
+    .$                                Void         offset=8 ref=58
+    .DynamicStringId                  FileRef      offset=20 ref=63
+    .DebugString                      Sid          offset=24 ref=0
+    .Sid                              Sid          offset=28 ref=0
+class LocalizedStringId  (size=4, align=4)
+    .StringHash                       Hash         offset=0 ref=0
+class PamProgressionFlagInfoEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=18
+    .FlagGroup                        GUID         offset=12 ref=0
+    .Flag                             GUID         offset=16 ref=0
+class SchematicChannelEntityData  (size=36, align=4)
+    .$                                Void         offset=8 ref=18
+    .Realm                            FileRef      offset=12 ref=57
+    .Channel                          GUID         offset=16 ref=0
+    .InputProperties                  DbObject     offset=20 ref=66
+    .InputRefProperties               DbObject     offset=24 ref=66
+    .OutputProperties                 DbObject     offset=28 ref=66
+    .OutputRefProperties              DbObject     offset=32 ref=66
+class array  (size=4, align=4)
+    .member                           Hash         offset=0 ref=0
+class AndEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=18
+    .Realm                            FileRef      offset=12 ref=57
+    .InputCount                       Int16        offset=16 ref=0
+class PamUIInputUnicodeEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=18
+    .UIInputAction                    FileRef      offset=12 ref=69
+    .EntryInputAction                 Hash         offset=16 ref=0
+class UIInputAction  (size=4, align=4)
+    .UIInputAction_NavigateUp         Void         offset=0 ref=0
+    .UIInputAction_NavigateDown       Void         offset=1 ref=0
+    .UIInputAction_NavigateLeft       Void         offset=2 ref=0
+    .UIInputAction_NavigateRight      Void         offset=3 ref=0
+    .UIInputAction_TabLeft            Void         offset=4 ref=0
+    .UIInputAction_TabRight           Void         offset=5 ref=0
+    .UIInputAction_Activate           Void         offset=6 ref=0
+    .UIInputAction_Deactivate         Void         offset=7 ref=0
+    .UIInputAction_Menu               Void         offset=8 ref=0
+    .UIInputAction_Cancel             Void         offset=9 ref=0
+    .UIInputAction_OK                 Void         offset=10 ref=0
+    .UIInputAction_Back               Void         offset=11 ref=0
+    .UIInputAction_Tab                Void         offset=12 ref=0
+    .UIInputAction_Edit               Void         offset=13 ref=0
+    .UIInputAction_View               Void         offset=14 ref=0
+    .UIInputAction_LThumb             Void         offset=15 ref=0
+    .UIInputAction_RThumb             Void         offset=16 ref=0
+    .UIInputAction_MapZoom            Void         offset=17 ref=0
+    .UIInputAction_MapSize            Void         offset=18 ref=0
+    .UIInputAction_SayAllChat         Void         offset=19 ref=0
+    .UIInputAction_TeamChat           Void         offset=20 ref=0
+    .UIInputAction_SquadChat          Void         offset=21 ref=0
+    .UIInputAction_CommoRose          Void         offset=22 ref=0
+    .UIInputAction_ToggleChat         Void         offset=23 ref=0
+    .UIInputAction_ToggleMinimapType  Void         offset=24 ref=0
+    .UIInputAction_DigitalUp          Void         offset=25 ref=0
+    .UIInputAction_DigitalDown        Void         offset=26 ref=0
+    .UIInputAction_DigitalLeft        Void         offset=27 ref=0
+    .UIInputAction_DigitalRight       Void         offset=28 ref=0
+    .UIInputAction_NavigateRUp        Void         offset=29 ref=0
+    .UIInputAction_NavigateRDown      Void         offset=30 ref=0
+    .UIInputAction_NavigateRLeft      Void         offset=31 ref=0
+    .UIInputAction_NavigateRRight     Void         offset=32 ref=0
+    .UIInputAction_MenuTriggerLeft    Void         offset=33 ref=0
+    .UIInputAction_MenuTriggerRight   Void         offset=34 ref=0
+    .UIInputAction_TacticalMenu       Void         offset=35 ref=0
+    .UIInputAction_ConversationSelect Void         offset=36 ref=0
+    .UIInputAction_ConversationSkip   Void         offset=37 ref=0
+    .UIInputAction_ConversationChangeSelection Void         offset=38 ref=0
+    .UIInputAction_BattledashToggle   Void         offset=39 ref=0
+    .UIInputAction_VoipPushToTalk     Void         offset=40 ref=0
+    .UIInputAction_MultipleSelect     Void         offset=41 ref=0
+    .UIInputAction_SpectatorViewPrev  Void         offset=42 ref=0
+    .UIInputAction_SpectatorViewNext  Void         offset=43 ref=0
+    .UIInputAction_SpectatorTargetPrev Void         offset=44 ref=0
+    .UIInputAction_SpectatorTargetNext Void         offset=45 ref=0
+    .UIInputAction_SpectatorViewTableTop Void         offset=46 ref=0
+    .UIInputAction_SpectatorViewFirstPerson Void         offset=47 ref=0
+    .UIInputAction_SpectatorViewThirdPerson Void         offset=48 ref=0
+    .UIInputAction_SpectatorViewFreeCam Void         offset=49 ref=0
+    .UIInputAction_SpectatorViewPlayer1 Void         offset=50 ref=0
+    .UIInputAction_SpectatorViewPlayer2 Void         offset=51 ref=0
+    .UIInputAction_SpectatorViewPlayer3 Void         offset=52 ref=0
+    .UIInputAction_SpectatorViewPlayer4 Void         offset=53 ref=0
+    .UIInputAction_SpectatorViewPlayer5 Void         offset=54 ref=0
+    .UIInputAction_SpectatorViewPlayer6 Void         offset=55 ref=0
+    .UIInputAction_SpectatorViewPlayer7 Void         offset=56 ref=0
+    .UIInputAction_SpectatorViewPlayer8 Void         offset=57 ref=0
+    .UIInputAction_SpectatorViewPlayer9 Void         offset=58 ref=0
+    .UIInputAction_SpectatorViewPlayer10 Void         offset=59 ref=0
+    .UIInputAction_SpectatorViewPlayer11 Void         offset=60 ref=0
+    .UIInputAction_SpectatorViewPlayer12 Void         offset=61 ref=0
+    .UIInputAction_SpectatorViewPlayer13 Void         offset=62 ref=0
+    .UIInputAction_SpectatorViewPlayer14 Void         offset=63 ref=0
+    .UIInputAction_SpectatorViewPlayer15 Void         offset=64 ref=0
+    .UIInputAction_SpectatorViewPlayer16 Void         offset=65 ref=0
+    .UIInputAction_SpectatorViewOptions Void         offset=66 ref=0
+    .UIInputAction_SpectatorHudVisibility Void         offset=67 ref=0
+    .UIInputAction_SpectatorTargetPrevInSquad Void         offset=68 ref=0
+    .UIInputAction_SpectatorTargetNextInSquad Void         offset=69 ref=0
+    .UIInputAction_SpectatorTargetPrevOnTeam Void         offset=70 ref=0
+    .UIInputAction_SpectatorTargetNextOnTeam Void         offset=71 ref=0
+    .UIInputAction_SpectatorSquadLeft Void         offset=72 ref=0
+    .UIInputAction_SpectatorSquadRight Void         offset=73 ref=0
+    .UIInputAction_SpectatorSquadUp   Void         offset=74 ref=0
+    .UIInputAction_SpectatorSquadDown Void         offset=75 ref=0
+    .UIInputAction_SpectatorSquadActivate Void         offset=76 ref=0
+    .UIInputAction_Start              Void         offset=77 ref=0
+    .UIInputAction_Minimize           Void         offset=78 ref=0
+    .UIInputAction_SelectAll          Void         offset=79 ref=0
+    .UIInputAction_Skip               Void         offset=80 ref=0
+    .UIInputAction_ToggleScoreboard   Void         offset=81 ref=0
+    .UIInputAction_Size               Void         offset=82 ref=0
+    .UIInputAction_None               Void         offset=83 ref=0
+class MathEntityData  (size=28, align=4)
+    .$                                Void         offset=8 ref=18
+    .Realm                            FileRef      offset=12 ref=57
+    .Assembly                         FileRef      offset=16 ref=71
+    .WriteOnChanged                   Int16        offset=24 ref=0
+    .EvaluateOnEvent                  Int16        offset=25 ref=0
+class MathEntityAssembly  (size=8, align=4)
+    .FunctionCalls                    DbObject     offset=0 ref=72
+    .Instructions                     DbObject     offset=4 ref=74
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=73
+class MathEntityFunctionCall  (size=4, align=4)
+    .Parameters                       DbObject     offset=0 ref=61
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=75
+class MathEntityInstruction  (size=16, align=4)
+    .Code                             FileRef      offset=0 ref=76
+    .Result                           Hash         offset=4 ref=0
+    .Param1                           Hash         offset=8 ref=0
+    .Param2                           Hash         offset=12 ref=0
+class MathOpCode  (size=4, align=4)
+    .MathOpCode_ConstB                Void         offset=0 ref=0
+    .MathOpCode_ConstI                Void         offset=1 ref=0
+    .MathOpCode_ConstF                Void         offset=2 ref=0
+    .MathOpCode_InputB                Void         offset=3 ref=0
+    .MathOpCode_InputI                Void         offset=4 ref=0
+    .MathOpCode_InputF                Void         offset=5 ref=0
+    .MathOpCode_InputV2               Void         offset=6 ref=0
+    .MathOpCode_InputV3               Void         offset=7 ref=0
+    .MathOpCode_InputV4               Void         offset=8 ref=0
+    .MathOpCode_InputT                Void         offset=9 ref=0
+    .MathOpCode_OrB                   Void         offset=10 ref=0
+    .MathOpCode_AndB                  Void         offset=11 ref=0
+    .MathOpCode_GreaterI              Void         offset=12 ref=0
+    .MathOpCode_GreaterF              Void         offset=13 ref=0
+    .MathOpCode_GreaterEqI            Void         offset=14 ref=0
+    .MathOpCode_GreaterEqF            Void         offset=15 ref=0
+    .MathOpCode_LessI                 Void         offset=16 ref=0
+    .MathOpCode_LessF                 Void         offset=17 ref=0
+    .MathOpCode_LessEqI               Void         offset=18 ref=0
+    .MathOpCode_LessEqF               Void         offset=19 ref=0
+    .MathOpCode_NotEqI                Void         offset=20 ref=0
+    .MathOpCode_NotEqF                Void         offset=21 ref=0
+    .MathOpCode_NotEqB                Void         offset=22 ref=0
+    .MathOpCode_EqI                   Void         offset=23 ref=0
+    .MathOpCode_EqF                   Void         offset=24 ref=0
+    .MathOpCode_EqB                   Void         offset=25 ref=0
+    .MathOpCode_AddI                  Void         offset=26 ref=0
+    .MathOpCode_AddF                  Void         offset=27 ref=0
+    .MathOpCode_AddV2                 Void         offset=28 ref=0
+    .MathOpCode_AddV3                 Void         offset=29 ref=0
+    .MathOpCode_AddV4                 Void         offset=30 ref=0
+    .MathOpCode_SubI                  Void         offset=31 ref=0
+    .MathOpCode_SubF                  Void         offset=32 ref=0
+    .MathOpCode_SubV2                 Void         offset=33 ref=0
+    .MathOpCode_SubV3                 Void         offset=34 ref=0
+    .MathOpCode_SubV4                 Void         offset=35 ref=0
+    .MathOpCode_MulF                  Void         offset=36 ref=0
+    .MathOpCode_MulI                  Void         offset=37 ref=0
+    .MathOpCode_MulV2F                Void         offset=38 ref=0
+    .MathOpCode_MulV3F                Void         offset=39 ref=0
+    .MathOpCode_MulV4F                Void         offset=40 ref=0
+    .MathOpCode_MulV2I                Void         offset=41 ref=0
+    .MathOpCode_MulV3I                Void         offset=42 ref=0
+    .MathOpCode_MulV4I                Void         offset=43 ref=0
+    .MathOpCode_MulT                  Void         offset=44 ref=0
+    .MathOpCode_DivI                  Void         offset=45 ref=0
+    .MathOpCode_DivF                  Void         offset=46 ref=0
+    .MathOpCode_DivV2F                Void         offset=47 ref=0
+    .MathOpCode_DivV3F                Void         offset=48 ref=0
+    .MathOpCode_DivV4F                Void         offset=49 ref=0
+    .MathOpCode_DivV2I                Void         offset=50 ref=0
+    .MathOpCode_DivV3I                Void         offset=51 ref=0
+    .MathOpCode_DivV4I                Void         offset=52 ref=0
+    .MathOpCode_ModI                  Void         offset=53 ref=0
+    .MathOpCode_NegI                  Void         offset=54 ref=0
+    .MathOpCode_NegF                  Void         offset=55 ref=0
+    .MathOpCode_NegV2                 Void         offset=56 ref=0
+    .MathOpCode_NegV3                 Void         offset=57 ref=0
+    .MathOpCode_NegV4                 Void         offset=58 ref=0
+    .MathOpCode_NotB                  Void         offset=59 ref=0
+    .MathOpCode_PowI                  Void         offset=60 ref=0
+    .MathOpCode_PowF                  Void         offset=61 ref=0
+    .MathOpCode_FieldV2               Void         offset=62 ref=0
+    .MathOpCode_FieldV3               Void         offset=63 ref=0
+    .MathOpCode_FieldV4               Void         offset=64 ref=0
+    .MathOpCode_FieldT                Void         offset=65 ref=0
+    .MathOpCode_Func                  Void         offset=66 ref=0
+    .MathOpCode_Return                Void         offset=67 ref=0
+class IntEntityData  (size=24, align=4)
+    .$                                Void         offset=8 ref=18
+    .Realm                            FileRef      offset=12 ref=57
+    .DefaultValue                     Hash         offset=16 ref=0
+    .IncDecValue                      Hash         offset=20 ref=0
+class StringEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=18
+    .Realm                            FileRef      offset=12 ref=57
+    .DefaultString                    Sid          offset=16 ref=0
+class UIElementLayerEntityData  (size=32, align=4)
+    .$                                Void         offset=8 ref=18
+    .LayerName                        Sid          offset=12 ref=0
+    .Elements                         DbObject     offset=16 ref=21
+    .InclusionSettings                FileRef      offset=20 ref=37
+    .Visible                          Int16        offset=28 ref=0
+
+--- instance guid=f13d7345cf7a144fb461a7bcc1549d70 type=UIWidgetBlueprint ---
+UIWidgetBlueprint {
+  .$ = None
+}
+
+--- instance guid=<index 0> type=AndEntityData ---
+AndEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .InputCount = 2
+}
+
+--- instance guid=<index 1> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR2_LONGDESC'
+}
+
+--- instance guid=<index 2> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR2_TITLE'
+}
+
+--- instance guid=<index 3> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR1_SHORTDESC'
+}
+
+--- instance guid=<index 4> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR1_TITLE'
+}
+
+--- instance guid=<index 5> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE2_TITLE'
+}
+
+--- instance guid=<index 6> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE1_TITLE'
+}
+
+--- instance guid=<index 7> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_GRIDLEAKMAPPING_LONGDESC'
+}
+
+--- instance guid=<index 8> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_GRIDLEAKMAPPING_TITLE'
+}
+
+--- instance guid=<index 9> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_BEATLINK_LONGDESC'
+}
+
+--- instance guid=<index 10> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_BEATLINK_TITLE'
+}
+
+--- instance guid=<index 11> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTORBATTERY_LONGDESC'
+}
+
+--- instance guid=<index 12> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTORBATTERY_TITLE'
+}
+
+--- instance guid=<index 13> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_SANCTUARY'
+}
+
+--- instance guid=<index 14> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR_TITLE'
+}
+
+--- instance guid=<index 15> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE_LONGDESC'
+}
+
+--- instance guid=<index 16> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE2_LONGDESC'
+}
+
+--- instance guid=<index 17> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR_LONGDESC'
+}
+
+--- instance guid=<index 18> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_BEATTRANSMISSION_LONGDESC'
+}
+
+--- instance guid=<index 19> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_KSECTAP_LONGDESC'
+}
+
+--- instance guid=<index 20> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_KSECTAP_TITLE'
+}
+
+--- instance guid=<index 21> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_BEATLINK_SHORTDESC'
+}
+
+--- instance guid=<index 22> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_GRIDLEAKMAPPING_SHORTDESC'
+}
+
+--- instance guid=<index 23> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_BEATTRANSMISSION_SHORTDESC'
+}
+
+--- instance guid=<index 24> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE_SHORTDESC'
+}
+
+--- instance guid=<index 25> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE1_SHORTDESC'
+}
+
+--- instance guid=<index 26> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE2_SHORTDESC'
+}
+
+--- instance guid=<index 27> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_KSECTAP_SHORTDESC'
+}
+
+--- instance guid=<index 28> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR_SHORTDESC'
+}
+
+--- instance guid=<index 29> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE1_LONGDESC'
+}
+
+--- instance guid=<index 30> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTOR1_LONGDESC'
+}
+
+--- instance guid=<index 31> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_DISRUPTORBATTERY_SHORTDESC'
+}
+
+--- instance guid=<index 32> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_PREVIOUS'
+}
+
+--- instance guid=<index 33> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_VIVE'
+}
+
+--- instance guid=<index 34> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_SAVANT'
+}
+
+--- instance guid=<index 35> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_BENEFACTOR'
+}
+
+--- instance guid=<index 36> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_PREVIOUS'
+}
+
+--- instance guid=<index 37> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_STORY'
+}
+
+--- instance guid=<index 38> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_PREVIOUS'
+}
+
+--- instance guid=<index 39> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_REQ_MISCHIEFMAKER'
+}
+
+--- instance guid=<index 40> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_BEATTRANSMISSION_TITLE'
+}
+
+--- instance guid=<index 41> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_UNL_MAGROPE_TITLE'
+}
+
+--- instance guid=<index 42> type=CompareBoolEntityData ---
+CompareBoolEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Bool = 256
+  .TriggerOnPropertyChange = 257
+  .TriggerOnStart = 257
+  .AlwaysSend = 17153
+}
+
+--- instance guid=<index 43> type=CompareBoolEntityData ---
+CompareBoolEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Bool = 256
+  .TriggerOnPropertyChange = 257
+  .TriggerOnStart = 257
+  .AlwaysSend = -9727
+}
+
+--- instance guid=<index 44> type=CompareBoolEntityData ---
+CompareBoolEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Bool = 256
+  .TriggerOnPropertyChange = 257
+  .TriggerOnStart = 257
+  .AlwaysSend = 6401
+}
+
+--- instance guid=<index 45> type=CompareBoolEntityData ---
+CompareBoolEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Bool = 256
+  .TriggerOnPropertyChange = 257
+  .TriggerOnStart = 257
+  .AlwaysSend = -4607
+}
+
+--- instance guid=<index 46> type=CompareBoolEntityData ---
+CompareBoolEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Bool = 256
+  .TriggerOnPropertyChange = 257
+  .TriggerOnStart = 257
+  .AlwaysSend = -29183
+}
+
+--- instance guid=<index 47> type=IntEntityData ---
+IntEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .DefaultValue = 'Hash: 0x0000000b'
+  .IncDecValue = 'Hash: 0x00000001'
+}
+
+--- instance guid=<index 48> type=InterfaceDescriptorData ---
+InterfaceDescriptorData {
+  .$ = None
+  .InputEvents:
+  [
+  ]
+  .OutputEvents:
+  [
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+  ]
+  .InputLinks:
+  [
+  ]
+  .OutputLinks:
+  [
+  ]
+}
+
+--- instance guid=<index 49> type=MathEntityData ---
+MathEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Assembly:
+  MathEntityAssembly {
+    .FunctionCalls:
+    [
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          LocalizedStringArgumentType {
+            .LocalizedStringArgumentType_Integer = None
+            .LocalizedStringArgumentType_Long = None
+            .LocalizedStringArgumentType_Float = None
+            .LocalizedStringArgumentType_String = None
+            .LocalizedStringArgumentType_LocalizedString = None
+            .LocalizedStringArgumentType_Date = None
+            .LocalizedStringArgumentType_Time = None
+          }
+          LocalizedStringArgumentType {
+            .LocalizedStringArgumentType_Integer = None
+            .LocalizedStringArgumentType_Long = None
+            .LocalizedStringArgumentType_Float = None
+            .LocalizedStringArgumentType_String = None
+            .LocalizedStringArgumentType_LocalizedString = None
+            .LocalizedStringArgumentType_Date = None
+            .LocalizedStringArgumentType_Time = None
+          }
+          LocalizedStringArgumentType {
+            .LocalizedStringArgumentType_Integer = None
+            .LocalizedStringArgumentType_Long = None
+            .LocalizedStringArgumentType_Float = None
+            .LocalizedStringArgumentType_String = None
+            .LocalizedStringArgumentType_LocalizedString = None
+            .LocalizedStringArgumentType_Date = None
+            .LocalizedStringArgumentType_Time = None
+          }
+          LocalizedStringArgumentType {
+            .LocalizedStringArgumentType_Integer = None
+            .LocalizedStringArgumentType_Long = None
+            .LocalizedStringArgumentType_Float = None
+            .LocalizedStringArgumentType_String = None
+            .LocalizedStringArgumentType_LocalizedString = None
+            .LocalizedStringArgumentType_Date = None
+            .LocalizedStringArgumentType_Time = None
+          }
+          LocalizedStringArgumentType {
+            .LocalizedStringArgumentType_Integer = None
+            .LocalizedStringArgumentType_Long = None
+            .LocalizedStringArgumentType_Float = None
+            .LocalizedStringArgumentType_String = None
+            .LocalizedStringArgumentType_LocalizedString = None
+            .LocalizedStringArgumentType_Date = None
+            .LocalizedStringArgumentType_Time = None
+          }
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          18665
+        ]
+      }
+    ]
+    .Instructions:
+    [
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddF'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000011'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_ConstI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000005'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc5'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc6'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000002'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000001'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc7'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000003'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000002'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc0'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000004'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000003'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc1'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000005'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000004'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x00000001'
+        .Param2 = 'Hash: 0x00000002'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x00000001'
+        .Param2 = 'Hash: 0x00000003'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x00000001'
+        .Param2 = 'Hash: 0x00000004'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x00000001'
+        .Param2 = 'Hash: 0x00000005'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_SubI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000001'
+      }
+    ]
+  }
+  .WriteOnChanged = 0
+  .EvaluateOnEvent = 0
+}
+
+--- instance guid=<index 50> type=MathEntityData ---
+MathEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Assembly:
+  MathEntityAssembly {
+    .FunctionCalls:
+    [
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+    ]
+    .Instructions:
+    [
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddV4'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000005'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x9fb8587c'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_ConstI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000001'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_ConstI'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b875403'
+        .Param2 = 'Hash: 0x00000000'
+      }
+    ]
+  }
+  .WriteOnChanged = 0
+  .EvaluateOnEvent = 0
+}
+
+--- instance guid=<index 51> type=MathEntityData ---
+MathEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Assembly:
+  MathEntityAssembly {
+    .FunctionCalls:
+    [
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          LocalizedStringArgumentType {
+            .LocalizedStringArgumentType_Integer = None
+            .LocalizedStringArgumentType_Long = None
+            .LocalizedStringArgumentType_Float = None
+            .LocalizedStringArgumentType_String = None
+            .LocalizedStringArgumentType_LocalizedString = None
+            .LocalizedStringArgumentType_Date = None
+            .LocalizedStringArgumentType_Time = None
+          }
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          0
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          0
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          0
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          0
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          0
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          0
+        ]
+      }
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+          0
+        ]
+      }
+    ]
+    .Instructions:
+    [
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_MulV2I'
+        .Result = 'Hash: 0x0000002a'
+        .Param1 = 'Hash: 0x0000002b'
+        .Param2 = 'Hash: 0x00000021'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc5'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc6'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000001'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc7'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000002'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000002'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc0'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000003'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000003'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc1'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000004'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000004'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc2'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000005'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000005'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873cc3'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000006'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000006'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873ccc'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000007'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000007'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873ccd'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000008'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000008'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873d25'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000009'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x00000009'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b873d24'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x0000000a'
+        .Param1 = 'Hash: 0x7c71b5b4'
+        .Param2 = 'Hash: 0x0000000a'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000001'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000002'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000003'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000004'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000005'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000006'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000007'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000008'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000009'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_AddI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x0000000a'
+      }
+    ]
+  }
+  .WriteOnChanged = 0
+  .EvaluateOnEvent = 0
+}
+
+--- instance guid=<index 52> type=MathEntityData ---
+MathEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Assembly:
+  MathEntityAssembly {
+    .FunctionCalls:
+    [
+      MathEntityFunctionCall {
+        .Parameters:
+        [
+        ]
+      }
+    ]
+    .Instructions:
+    [
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_DivF'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000005'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_InputB'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x4887e4e9'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_ConstI'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x00000001'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_ConstI'
+        .Result = 'Hash: 0x00000001'
+        .Param1 = 'Hash: 0x00000000'
+        .Param2 = 'Hash: 0x00000000'
+      }
+      MathEntityInstruction {
+        .Code = 'MathOpCode.MathOpCode_Func'
+        .Result = 'Hash: 0x00000000'
+        .Param1 = 'Hash: 0x0b875403'
+        .Param2 = 'Hash: 0x00000000'
+      }
+    ]
+  }
+  .WriteOnChanged = 0
+  .EvaluateOnEvent = 0
+}
+
+--- instance guid=<index 53> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=392d8375793f4e408261b2657b8442b0 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=2da27d73e7d53142b635dc88c109ad22 in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 54> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=7429b7eaf477854caeb1decf691ad093 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=99671f30462ee24cb5fc027fe8a846ac in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 55> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=392d8375793f4e408261b2657b8442b0 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=bea812acc0115b4a879628e3327741e1 in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 56> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=392d8375793f4e408261b2657b8442b0 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=8f01c9f74fb76f46a9a8d83bd3317fd5 in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 57> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=392d8375793f4e408261b2657b8442b0 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=c41e34af89e0dc41ab879eb47006c91b in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 58> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=392d8375793f4e408261b2657b8442b0 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=d11184863b64c5439a4d80710df1d5fe in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 59> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=7429b7eaf477854caeb1decf691ad093 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=633afa14e41113489a5ad1f111af0120 in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 60> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=7429b7eaf477854caeb1decf691ad093 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=e10145454601604b8d52551446edb1ef in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 61> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=7429b7eaf477854caeb1decf691ad093 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=139d60a1fdce6746a5f6e1a44a96a014 in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 62> type=PamProgressionFlagInfoEntityData ---
+PamProgressionFlagInfoEntityData {
+  .$ = None
+  .FlagGroup = '<external ref: instance=7429b7eaf477854caeb1decf691ad093 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=80ec3193d07cc54b9edb61e5e746c8b8 in file=51dfdd3c33b6e111909bcec4923250b4>'
+}
+
+--- instance guid=<index 63> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x2884e132'
+}
+
+--- instance guid=<index 64> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x06ab18c6'
+}
+
+--- instance guid=<index 65> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x06ab18c7'
+}
+
+--- instance guid=<index 66> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0xdc0e327d'
+}
+
+--- instance guid=<index 67> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0xdc0e3320'
+}
+
+--- instance guid=<index 68> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x2884e121'
+}
+
+--- instance guid=<index 69> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x2884e136'
+}
+
+--- instance guid=<index 70> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x2884e124'
+}
+
+--- instance guid=<index 71> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0xdc0e327e'
+}
+
+--- instance guid=<index 72> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x97cd85a6'
+}
+
+--- instance guid=<index 73> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x06ab18df'
+}
+
+--- instance guid=<index 74> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x06ab18dc'
+}
+
+--- instance guid=<index 75> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x1dcfd4cd'
+}
+
+--- instance guid=<index 76> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0xdc0e3323'
+}
+
+--- instance guid=<index 77> type=PamUIInputUnicodeEntityData ---
+PamUIInputUnicodeEntityData {
+  .$ = None
+  .UIInputAction = 'UIInputAction.UIInputAction_None'
+  .EntryInputAction = 'Hash: 0x436f6516'
+}
+
+--- instance guid=<index 78> type=PamUIWidgetEntityData ---
+PamUIWidgetEntityData {
+  .$ = None
+  .Width = 'Float32?: 0x00000000'
+  .Height = 'Float32?: 0x00000000'
+  .AutoWidthPadding = 'Float32?: 0x00000000'
+  .AutoWidthMinimumSize = 'Float32?: 0x00000000'
+  .AutoWidthStride = 'Float32?: 0x3f800000'
+  .AutoWidthStrideOffset = 'Float32?: 0x00000000'
+  .AutoHeightPadding = 'Float32?: 0x00000000'
+  .AutoHeightMinimumSize = 'Float32?: 0x00000000'
+  .AutoHeightStride = 'Float32?: 0x3f800000'
+  .AutoHeightStrideOffset = 'Float32?: 0x00000000'
+  .EdgeSnapping:
+  PamUIEdgeSnappings {
+    .Top = 'PamUIEdgeSnap.PamUIEdgeSnap_None'
+    .Bottom = 'PamUIEdgeSnap.PamUIEdgeSnap_None'
+    .Left = 'PamUIEdgeSnap.PamUIEdgeSnap_None'
+    .Right = 'PamUIEdgeSnap.PamUIEdgeSnap_None'
+  }
+  .PaddingLeft = 'Float32?: 0x00000000'
+  .PaddingRight = 'Float32?: 0x00000000'
+  .PaddingTop = 'Float32?: 0x00000000'
+  .PaddingBottom = 'Float32?: 0x00000000'
+  .AutoWidth = 0
+  .AutoHeight = 0
+}
+
+--- instance guid=<index 79> type=PlayVideoEntityData ---
+PlayVideoEntityData {
+  .$ = None
+  .Movie = '<external ref: instance=fa6c54dbe774d130e434781bf32586ac in file=8a7fca9e7fe7e511966780c0d190a7ae>'
+  .NetworkStreamingUrl = None
+  .VideoIdentifier = 'ProgressionVideo'
+  .MarkerOffset = 'Float32?: 0x3f800000'
+  .MarkerOffsets:
+  [
+  ]
+  .Loop = 1
+  .KeepBlackScreen = 0
+  .AllowSkip = 256
+  .DrawInWidget = 1
+  .RenderWorld = 0
+  .DrawOnTop = 0
+  .Force30HzFramerate = 0
+  .DisableNonCubemapRootViews = -8192
+}
+
+--- instance guid=<index 80> type=PlayVideoEntityData ---
+PlayVideoEntityData {
+  .$ = None
+  .Movie = '<external ref: instance=18a1879a112a0b5c62bc82fa3a4c1c2f in file=5d6ec2528cfde511b06df0f4d528a113>'
+  .NetworkStreamingUrl = None
+  .VideoIdentifier = 'ProgressionVideo'
+  .MarkerOffset = 'Float32?: 0x3f800000'
+  .MarkerOffsets:
+  [
+  ]
+  .Loop = 1
+  .KeepBlackScreen = 0
+  .AllowSkip = 256
+  .DrawInWidget = 1
+  .RenderWorld = 0
+  .DrawOnTop = 0
+  .Force30HzFramerate = 0
+  .DisableNonCubemapRootViews = -11520
+}
+
+--- instance guid=<index 81> type=PlayVideoEntityData ---
+PlayVideoEntityData {
+  .$ = None
+  .Movie = '<external ref: instance=9e3dc843e3a164f392d9de93eac39015 in file=31e4c091bee6e5119735e46a3d031f12>'
+  .NetworkStreamingUrl = None
+  .VideoIdentifier = 'ProgressionVideo'
+  .MarkerOffset = 'Float32?: 0x3f800000'
+  .MarkerOffsets:
+  [
+  ]
+  .Loop = 1
+  .KeepBlackScreen = 0
+  .AllowSkip = 256
+  .DrawInWidget = 1
+  .RenderWorld = 0
+  .DrawOnTop = 0
+  .Force30HzFramerate = 0
+  .DisableNonCubemapRootViews = -7168
+}
+
+--- instance guid=<index 82> type=PlayVideoEntityData ---
+PlayVideoEntityData {
+  .$ = None
+  .Movie = '<external ref: instance=34d6039199abcf1de6169405a4b9adb9 in file=a9d5dfcdbee6e5119735e46a3d031f12>'
+  .NetworkStreamingUrl = None
+  .VideoIdentifier = 'ProgressionVideo'
+  .MarkerOffset = 'Float32?: 0x3f800000'
+  .MarkerOffsets:
+  [
+  ]
+  .Loop = 1
+  .KeepBlackScreen = 0
+  .AllowSkip = 256
+  .DrawInWidget = 1
+  .RenderWorld = 0
+  .DrawOnTop = 0
+  .Force30HzFramerate = 0
+  .DisableNonCubemapRootViews = 13568
+}
+
+--- instance guid=<index 83> type=PlayVideoEntityData ---
+PlayVideoEntityData {
+  .$ = None
+  .Movie = '<external ref: instance=58e5ba889c1a03b63b90bb53456f3b6c in file=c4e15988bee6e5119735e46a3d031f12>'
+  .NetworkStreamingUrl = None
+  .VideoIdentifier = 'ProgressionVideo'
+  .MarkerOffset = 'Float32?: 0x3f800000'
+  .MarkerOffsets:
+  [
+  ]
+  .Loop = 1
+  .KeepBlackScreen = 0
+  .AllowSkip = 256
+  .DrawInWidget = 1
+  .RenderWorld = 0
+  .DrawOnTop = 0
+  .Force30HzFramerate = 0
+  .DisableNonCubemapRootViews = -5120
+}
+
+--- instance guid=<index 84> type=PlayVideoEntityData ---
+PlayVideoEntityData {
+  .$ = None
+  .Movie = '<external ref: instance=f2604bdb8185d52cb288ba912f4bdf52 in file=5ae825b8bee6e5119735e46a3d031f12>'
+  .NetworkStreamingUrl = None
+  .VideoIdentifier = 'ProgressionVideo'
+  .MarkerOffset = 'Float32?: 0x3f800000'
+  .MarkerOffsets:
+  [
+  ]
+  .Loop = 1
+  .KeepBlackScreen = 0
+  .AllowSkip = 256
+  .DrawInWidget = 1
+  .RenderWorld = 0
+  .DrawOnTop = 0
+  .Force30HzFramerate = 0
+  .DisableNonCubemapRootViews = -3840
+}
+
+--- instance guid=<index 85> type=PlayVideoEntityData ---
+PlayVideoEntityData {
+  .$ = None
+  .Movie = '<external ref: instance=bc52e1aa213c7180c6e5c775f2e860d8 in file=ec5431a8bee6e5119735e46a3d031f12>'
+  .NetworkStreamingUrl = None
+  .VideoIdentifier = 'ProgressionVideo'
+  .MarkerOffset = 'Float32?: 0x3f800000'
+  .MarkerOffsets:
+  [
+  ]
+  .Loop = 1
+  .KeepBlackScreen = 0
+  .AllowSkip = 256
+  .DrawInWidget = 1
+  .RenderWorld = 0
+  .DrawOnTop = 0
+  .Force30HzFramerate = 0
+  .DisableNonCubemapRootViews = 512
+}
+
+--- instance guid=<index 86> type=SchematicChannelEntityData ---
+SchematicChannelEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Channel = '<external ref: instance=943c935a267466fe3b33d39a6dfa0b26 in file=e07a290e8e69e411bbbbc9f8a3a322b4>'
+  .InputProperties:
+  [
+  ]
+  .InputRefProperties:
+  [
+  ]
+  .OutputProperties:
+  [
+    'Hash: 0x00000051'
+    'Hash: 0x00000052'
+    'Hash: 0x00000000'
+    'Hash: 0x0000000d'
+    'Hash: 0x00000002'
+    'Hash: 0x00000008'
+    'Hash: 0x00000009'
+    'Hash: 0x0000000c'
+    'Hash: 0x00000019'
+    'Hash: 0x0000001a'
+    'Hash: 0x0000001b'
+    'Hash: 0x0000001f'
+    'Hash: 0x00000020'
+  ]
+  .OutputRefProperties:
+  [
+  ]
+}
+
+--- instance guid=<index 87> type=StringEntityData ---
+StringEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .DefaultString = 'gear'
+}
+
+--- instance guid=<index 88> type=UIElementLayerEntityData ---
+UIElementLayerEntityData {
+  .$ = None
+  .LayerName = 'Skills'
+  .Elements:
+  [
+    '<local ref: PamProgressionFlagInfoEntityData guid=<index 60>>'
+    '<local ref: UIWidgetBlueprint guid=f13d7345cf7a144fb461a7bcc1549d70>'
+    '<local ref: UIWidgetBlueprint guid=f13d7345cf7a144fb461a7bcc1549d70>'
+    '<local ref: CheckedLocalizedStringEntityData guid=<index 10>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 95>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 96>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 106>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 92>>'
+    '<local ref: out-of-range index 110>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 91>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 93>>'
+  ]
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 257
+  }
+  .Visible = 1
+}
+
+--- instance guid=<index 89> type=UIElementLayerEntityData ---
+UIElementLayerEntityData {
+  .$ = None
+  .LayerName = 'Links'
+  .Elements:
+  [
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 105>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 107>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 104>>'
+    '<local ref: CheckedLocalizedStringEntityData guid=<index 7>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 99>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 100>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 101>>'
+    '<local ref: UIElementWidgetReferenceEntityData guid=<index 102>>'
+  ]
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 257
+  }
+  .Visible = 1
+}
+
+--- instance guid=<index 90> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'MAGrope UPGRADE 1 / MagropePullUp'
+  .InstanceNameHash = -12821
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x42a80000'
+    .Y = 'Float32?: 0x42a80000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 91> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'DISRUPT - AI  / DisruptMechs'
+  .InstanceNameHash = 24351
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x43280000'
+    .Y = 'Float32?: 0x42a80000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 92> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'MAGrope / MagropeSwing'
+  .InstanceNameHash = 398
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x42a80000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 93> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'BEAT TRANSMISSION / Glove'
+  .InstanceNameHash = 22937
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x42a80000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 94> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'DISRUPTOR / DisruptHumans'
+  .InstanceNameHash = 16475
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x43280000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 95> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'DISRUPT +'
+  .InstanceNameHash = 28211
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x43280000'
+    .Y = 'Float32?: 0x437c0000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 96> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_3-2'
+  .InstanceNameHash = -29194
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x43280000'
+    .Y = 'Float32?: 0x42a80000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 97> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_3-1'
+  .InstanceNameHash = -29195
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x43280000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 98> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_1-1'
+  .InstanceNameHash = -27017
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 99> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_1-2'
+  .InstanceNameHash = -27020
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x42a80000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 100> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_1-3'
+  .InstanceNameHash = -27019
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x43280000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 101> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_2-1'
+  .InstanceNameHash = -28108
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x42a80000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 102> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_2-2'
+  .InstanceNameHash = -28105
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x42a80000'
+    .Y = 'Float32?: 0x42a80000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 103> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'GRIDLEAK MAPPING / GridLeakMapping'
+  .InstanceNameHash = -25430
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x437c0000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 104> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'BEAT LINK / BeatLink'
+  .InstanceNameHash = 18666
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 105> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'POWER STORAGE'
+  .InstanceNameHash = 2851
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x43280000'
+    .Y = 'Float32?: 0x43280000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 106> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'K-SEC SURVEILLANCE TAP'
+  .InstanceNameHash = -25452
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x43280000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 107> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'link_3-3'
+  .InstanceNameHash = -29193
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x43280000'
+    .Y = 'Float32?: 0x43280000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+
+--- instance guid=<index 108> type=UIElementWidgetReferenceEntityData ---
+UIElementWidgetReferenceEntityData {
+  .$ = None
+  .UIElementTransform:
+  UIElementTransform {
+    .Rotation:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .RotationPivot:
+    Vec3 {
+      .x = 'Float32?: 0x3f000000'
+      .y = 'Float32?: 0x3f000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .Z = 'Float32?: 0x00000000'
+  }
+  .Color:
+  Vec3 {
+    .x = 'Float32?: 0x3f800000'
+    .y = 'Float32?: 0x3f800000'
+    .z = 'Float32?: 0x3f800000'
+  }
+  .InstanceName = 'MAGrope UPGRADE 2 / MagropePullDown'
+  .InstanceNameHash = -32001
+  .InclusionSettings:
+  UIElementInclusionSettings {
+    .CustomInclusionCritera:
+    [
+    ]
+    .IsSingleplayerLayer = 257
+    .IsMultiplayerLayer = 257
+    .IsSDLayer = 257
+    .IsHDLayer = 1
+  }
+  .Size:
+  Vec2 {
+    .x = 'Float32?: 0x43800000'
+    .y = 'Float32?: 0x43800000'
+  }
+  .LayoutMode = 'UILayoutMode.UILayoutMode_AnchorOffset'
+  .Offset:
+  UIElementOffset {
+    .X = 'Float32?: 0x42a80000'
+    .Y = 'Float32?: 0x43280000'
+  }
+  .Anchor:
+  UIElementAnchor {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Position:
+  UIElementOffset {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+  }
+  .Expansion:
+  UIElementRectExpansion {
+    .X = 'Float32?: 0x00000000'
+    .Y = 'Float32?: 0x00000000'
+    .Width = 'Float32?: 0x00000000'
+    .Height = 'Float32?: 0x00000000'
+  }
+  .Alpha = 'Float32?: 0x3f800000'
+  .CodeAccessIdentifier = None
+  .UseElementSize = 0
+}
+

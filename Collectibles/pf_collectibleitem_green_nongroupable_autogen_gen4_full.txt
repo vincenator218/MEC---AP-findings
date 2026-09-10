@@ -1,0 +1,607 @@
+=== ./collectibles/pf_collectibleitem_green_nongroupable_autogen_gen4.bin[0] ===
+version=1 bigEndian=False
+complexes=69 fields=238 instances=22 arrays=10 guids=8
+
+class DataContainer  (size=8, align=4)
+class GameDataContainer  (size=8, align=4)
+    .$                                Void         offset=8 ref=0
+class DataBusPeer  (size=12, align=4)
+    .$                                Void         offset=8 ref=1
+    .Flags                            Int16        offset=8 ref=0
+class GameObjectData  (size=12, align=4)
+    .$                                Void         offset=8 ref=2
+class EntityData  (size=12, align=4)
+    .$                                Void         offset=8 ref=3
+class LocalizedStringEntityBaseData  (size=20, align=4)
+    .$                                Void         offset=8 ref=4
+    .Arguments                        DbObject     offset=12 ref=6
+    .ArgumentHashes                   DbObject     offset=16 ref=8
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=7
+class LocalizedStringArgumentType  (size=4, align=4)
+    .LocalizedStringArgumentType_Integer Void         offset=0 ref=0
+    .LocalizedStringArgumentType_Long Void         offset=1 ref=0
+    .LocalizedStringArgumentType_Float Void         offset=2 ref=0
+    .LocalizedStringArgumentType_String Void         offset=3 ref=0
+    .LocalizedStringArgumentType_LocalizedString Void         offset=4 ref=0
+    .LocalizedStringArgumentType_Date Void         offset=5 ref=0
+    .LocalizedStringArgumentType_Time Void         offset=6 ref=0
+class array  (size=4, align=4)
+    .member                           Int16        offset=0 ref=0
+class CheckedLocalizedStringEntityData  (size=32, align=4)
+    .$                                Void         offset=8 ref=5
+    .DynamicStringId                  FileRef      offset=20 ref=10
+    .DebugString                      Sid          offset=24 ref=0
+    .Sid                              Sid          offset=28 ref=0
+class LocalizedStringId  (size=4, align=4)
+    .StringHash                       Hash         offset=0 ref=0
+class CompareBoolEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .Bool                             Int16        offset=16 ref=0
+    .TriggerOnPropertyChange          Int16        offset=17 ref=0
+    .TriggerOnStart                   Int16        offset=18 ref=0
+    .AlwaysSend                       Int16        offset=19 ref=0
+class Realm  (size=4, align=4)
+    .Realm_Client                     Void         offset=0 ref=0
+    .Realm_Server                     Void         offset=1 ref=0
+    .Realm_ClientAndServer            Void         offset=2 ref=0
+    .Realm_None                       Void         offset=3 ref=0
+    .Realm_Pipeline                   Void         offset=4 ref=0
+class CompareFloatEntityData  (size=28, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .A                                Float32?     offset=16 ref=0
+    .B                                Float32?     offset=20 ref=0
+    .TriggerOnPropertyChange          Int16        offset=24 ref=0
+    .TriggerOnStart                   Int16        offset=25 ref=0
+class FloatEntityData  (size=24, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .DefaultValue                     Float32?     offset=16 ref=0
+    .IncDecValue                      Float32?     offset=20 ref=0
+class IntEntityData  (size=24, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .DefaultValue                     Hash         offset=16 ref=0
+    .IncDecValue                      Hash         offset=20 ref=0
+class DynamicDataContainer  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Fields                           DbObject     offset=8 ref=17
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=18
+class DataField  (size=16, align=4)
+    .Value                            Sid          offset=0 ref=0
+    .ValueRef                         GUID         offset=4 ref=0
+    .Id                               Hash         offset=8 ref=0
+    .AccessType                       FileRef      offset=12 ref=19
+class FieldAccessType  (size=4, align=4)
+    .FieldAccessType_Source           Void         offset=0 ref=0
+    .FieldAccessType_Target           Void         offset=1 ref=0
+    .FieldAccessType_SourceAndTarget  Void         offset=2 ref=0
+class InterfaceDescriptorData  (size=28, align=4)
+    .$                                Void         offset=8 ref=16
+    .InputEvents                      DbObject     offset=12 ref=21
+    .OutputEvents                     DbObject     offset=16 ref=21
+    .InputLinks                       DbObject     offset=20 ref=23
+    .OutputLinks                      DbObject     offset=24 ref=23
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=22
+class DynamicEvent  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=24
+class DynamicLink  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class LocalizedStringCoalesceEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=4
+    .InputCount                       Hash         offset=12 ref=0
+    .TreadEmptyStringAsNull           Int16        offset=16 ref=0
+class ReferenceObjectData  (size=112, align=16)
+    .$                                Void         offset=8 ref=3
+    .Blueprint                        GUID         offset=12 ref=0
+    .BlueprintTransform               FileRef      offset=16 ref=27
+    .ObjectVariation                  GUID         offset=80 ref=0
+    .StreamRealm                      FileRef      offset=84 ref=29
+    .RadiosityTypeOverride            FileRef      offset=88 ref=30
+    .LightmapResolutionScale          Int16        offset=92 ref=0
+    .RenderingOverrides               FileRef      offset=96 ref=31
+    .CastSunShadowEnable              Int16        offset=108 ref=0
+    .CastReflectionEnable             Int16        offset=109 ref=0
+    .CastEnvmapEnable                 Int16        offset=110 ref=0
+    .Excluded                         Int16        offset=111 ref=0
+class LinearTransform  (size=64, align=16)
+    .right                            FileRef      offset=0 ref=28
+    .up                               FileRef      offset=16 ref=28
+    .forward                          FileRef      offset=32 ref=28
+    .trans                            FileRef      offset=48 ref=28
+class Vec3  (size=16, align=16)
+    .x                                Float32?     offset=0 ref=0
+    .y                                Float32?     offset=4 ref=0
+    .z                                Float32?     offset=8 ref=0
+class StreamRealm  (size=4, align=4)
+    .StreamRealm_None                 Void         offset=0 ref=0
+    .StreamRealm_Client               Void         offset=1 ref=0
+    .StreamRealm_Both                 Void         offset=2 ref=0
+class RadiosityTypeOverride  (size=4, align=4)
+    .RadiosityTypeOverride_None       Void         offset=0 ref=0
+    .RadiosityTypeOverride_Dynamic    Void         offset=1 ref=0
+    .RadiosityTypeOverride_LightProbe Void         offset=2 ref=0
+    .RadiosityTypeOverride_Static     Void         offset=3 ref=0
+    .RadiosityTypeOverride_TerrainProjected Void         offset=4 ref=0
+class RenderingOverrides  (size=12, align=4)
+    .ShadowEnable                     FileRef      offset=0 ref=32
+    .DynamicReflectionEnable          FileRef      offset=4 ref=32
+    .StaticReflectionEnable           FileRef      offset=8 ref=32
+class RenderingOverride  (size=4, align=4)
+    .RenderingOverride_Inherit        Void         offset=0 ref=0
+    .RenderingOverride_Enable         Void         offset=1 ref=0
+    .RenderingOverride_Disable        Void         offset=2 ref=0
+    .RenderingOverride_Legacy         Void         offset=3 ref=0
+class LogicReferenceObjectData  (size=128, align=16)
+    .$                                Void         offset=8 ref=26
+    .LocalPlayerId                    FileRef      offset=112 ref=34
+    .SubRealm                         FileRef      offset=116 ref=35
+class LocalPlayerId  (size=4, align=4)
+    .LocalPlayerId_0                  Void         offset=0 ref=0
+    .LocalPlayerId_1                  Void         offset=1 ref=0
+    .LocalPlayerId_2                  Void         offset=2 ref=0
+    .LocalPlayerId_3                  Void         offset=3 ref=0
+    .LocalPlayerId_4                  Void         offset=4 ref=0
+    .LocalPlayerId_5                  Void         offset=5 ref=0
+    .LocalPlayerId_6                  Void         offset=6 ref=0
+    .LocalPlayerId_7                  Void         offset=7 ref=0
+    .LocalPlayerId_Invalid            Void         offset=255 ref=0
+class SubRealm  (size=4, align=4)
+    .SubRealm_All                     Void         offset=0 ref=0
+    .SubRealm_LocalPlayer             Void         offset=1 ref=0
+    .SubRealm_RemotePlayer            Void         offset=2 ref=0
+class LogicPrefabReferenceObjectData  (size=128, align=16)
+    .$                                Void         offset=8 ref=33
+class MixerEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=4
+    .Mixer                            GUID         offset=12 ref=0
+    .ActivateOnCreation               Int16        offset=16 ref=0
+    .AccumulatedInputs                Int16        offset=17 ref=0
+class NotEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .In                               Int16        offset=16 ref=0
+class PamDelayEntityData  (size=28, align=4)
+    .$                                Void         offset=8 ref=4
+    .Delay                            Float32?     offset=12 ref=0
+    .Realm                            FileRef      offset=16 ref=12
+    .TimeDeltaType                    FileRef      offset=20 ref=40
+    .UseRealTimeClock                 Int16        offset=24 ref=0
+    .AutoStart                        Int16        offset=25 ref=0
+    .RunOnce                          Int16        offset=26 ref=0
+    .RemoveDuplicateEvents            Int16        offset=27 ref=0
+class TimeDeltaType  (size=4, align=4)
+    .TimeDeltaType_None               Void         offset=0 ref=0
+    .TimeDeltaType_Player             Void         offset=1 ref=0
+    .TimeDeltaType_World              Void         offset=2 ref=0
+    .TimeDeltaType_Extra1             Void         offset=3 ref=0
+    .TimeDeltaType_Extra2             Void         offset=4 ref=0
+    .TimeDeltaType_Extra3             Void         offset=5 ref=0
+    .TimeDeltaType_Extra4             Void         offset=6 ref=0
+    .TimeDeltaType_Extra5             Void         offset=7 ref=0
+    .TimeDeltaType_Count              Void         offset=8 ref=0
+class PamProgressionFlagEntityData  (size=36, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .FlagGroup                        GUID         offset=16 ref=0
+    .Flag                             GUID         offset=20 ref=0
+    .Value                            Hash         offset=24 ref=0
+    .GeneratedFlagNameHash            Int16        offset=28 ref=0
+    .ValueAsBool                      Int16        offset=32 ref=0
+    .OnlySetValueOnEvent              Int16        offset=33 ref=0
+    .OnlyReadValueOnEvent             Int16        offset=34 ref=0
+class SchematicChannelEntityData  (size=36, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .Channel                          GUID         offset=16 ref=0
+    .InputProperties                  DbObject     offset=20 ref=43
+    .InputRefProperties               DbObject     offset=24 ref=43
+    .OutputProperties                 DbObject     offset=28 ref=43
+    .OutputRefProperties              DbObject     offset=32 ref=43
+class array  (size=4, align=4)
+    .member                           Hash         offset=0 ref=0
+class SoundEntityData  (size=128, align=16)
+    .$                                Void         offset=8 ref=4
+    .Sound                            GUID         offset=12 ref=0
+    .Transform                        FileRef      offset=16 ref=27
+    .TransformOffset                  FileRef      offset=80 ref=28
+    .RotationOffset                   FileRef      offset=96 ref=28
+    .PlayOnCreation                   Int16        offset=112 ref=0
+    .EnableOnCreation                 Int16        offset=113 ref=0
+    .UseParentTransform               Int16        offset=114 ref=0
+class Asset  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Name                             Sid          offset=8 ref=0
+class DataBusData  (size=28, align=4)
+    .$                                Void         offset=8 ref=45
+    .PropertyConnections              DbObject     offset=12 ref=47
+    .LinkConnections                  DbObject     offset=16 ref=49
+    .Interface                        GUID         offset=20 ref=0
+    .Flags                            Int16        offset=24 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=48
+class PropertyConnection  (size=20, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceFieldId                    Hash         offset=8 ref=0
+    .TargetFieldId                    Hash         offset=12 ref=0
+    .Flags                            Int16        offset=16 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=50
+class LinkConnection  (size=16, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceFieldId                    Hash         offset=8 ref=0
+    .TargetFieldId                    Hash         offset=12 ref=0
+class EntityBusData  (size=32, align=4)
+    .$                                Void         offset=8 ref=46
+    .EventConnections                 DbObject     offset=28 ref=52
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=53
+class EventConnection  (size=20, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceEvent                      FileRef      offset=8 ref=54
+    .TargetEvent                      FileRef      offset=12 ref=54
+    .TargetType                       FileRef      offset=16 ref=55
+class EventSpec  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class EventConnectionTargetType  (size=4, align=4)
+    .EventConnectionTargetType_Invalid Void         offset=0 ref=0
+    .EventConnectionTargetType_ClientAndServer Void         offset=1 ref=0
+    .EventConnectionTargetType_Client Void         offset=2 ref=0
+    .EventConnectionTargetType_Server Void         offset=3 ref=0
+    .EventConnectionTargetType_NetworkedClient Void         offset=4 ref=0
+    .EventConnectionTargetType_NetworkedClientAndServer Void         offset=5 ref=0
+class Blueprint  (size=32, align=4)
+    .$                                Void         offset=8 ref=51
+class PrefabBlueprint  (size=40, align=4)
+    .$                                Void         offset=8 ref=56
+    .Objects                          DbObject     offset=32 ref=58
+    .TimeDeltaType                    FileRef      offset=36 ref=40
+class array  (size=4, align=4)
+    .member                           GUID         offset=0 ref=0
+class SpatialPrefabBlueprint  (size=40, align=4)
+    .$                                Void         offset=8 ref=57
+class SpatialReferenceObjectData  (size=128, align=16)
+    .$                                Void         offset=8 ref=26
+    .LocalPlayerId                    FileRef      offset=112 ref=34
+class SpatialPrefabReferenceObjectData  (size=144, align=16)
+    .$                                Void         offset=8 ref=60
+    .PersistenceSetting               FileRef      offset=128 ref=62
+class BlueprintPersistenceSetting  (size=4, align=4)
+    .BlueprintPersistenceSetting_InheritFromParent Void         offset=0 ref=0
+    .BlueprintPersistenceSetting_SavedWhenInMemory Void         offset=1 ref=0
+    .BlueprintPersistenceSetting_AlwaysSaved Void         offset=2 ref=0
+    .BlueprintPersistenceSetting_NeverSaved Void         offset=3 ref=0
+class StringEntityData  (size=20, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .DefaultString                    Sid          offset=16 ref=0
+class SyncedBoolEntityData  (size=12, align=4)
+    .$                                Void         offset=8 ref=4
+class TelemetryHookEntityData  (size=32, align=4)
+    .$                                Void         offset=8 ref=4
+    .Realm                            FileRef      offset=12 ref=12
+    .mod                              Sid          offset=16 ref=0
+    .grp                              Sid          offset=20 ref=0
+    .subgrp                           Sid          offset=24 ref=0
+    .Params                           DbObject     offset=28 ref=66
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=67
+class TelemetryParameterDataProperty  (size=8, align=4)
+    .StatName                         Sid          offset=0 ref=0
+    .DataType                         FileRef      offset=4 ref=68
+class TelemetryParameterType  (size=4, align=4)
+    .TelemetryParameterType_Int       Void         offset=0 ref=0
+    .TelemetryParameterType_Float     Void         offset=1 ref=0
+    .TelemetryParameterType_String    Void         offset=2 ref=0
+    .TelemetryParameterType_Uint      Void         offset=3 ref=0
+    .TelemetryParameterType_Uint64    Void         offset=4 ref=0
+    .TelemetryParameterType_Bool      Void         offset=5 ref=0
+    .TelemetryParameterType_Vec2      Void         offset=6 ref=0
+    .TelemetryParameterType_Vec3      Void         offset=7 ref=0
+    .TelemetryParameterType_Vec4      Void         offset=8 ref=0
+    .TelemetryParameterType_Transform Void         offset=9 ref=0
+
+--- instance guid=1a787472a7e3f07300d54df20a0b09e2 type=SpatialPrefabBlueprint ---
+SpatialPrefabBlueprint {
+  .$ = None
+}
+
+--- instance guid=2fca2d9cd8aeae4cbb94091c90fe7e39 type=PamProgressionFlagEntityData ---
+PamProgressionFlagEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Server'
+  .FlagGroup = '<external ref: instance=7112456f16dc97469c022e25e3e1b440 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Flag = '<external ref: instance=a3dce078adefcd4fb785aa68ebb4ae29 in file=51dfdd3c33b6e111909bcec4923250b4>'
+  .Value = 'Hash: 0x00000000'
+  .GeneratedFlagNameHash = 0
+  .ValueAsBool = 0
+  .OnlySetValueOnEvent = 0
+  .OnlyReadValueOnEvent = 0
+}
+
+--- instance guid=32ec22dadb76c3409a1c6ae2693ad316 type=SyncedBoolEntityData ---
+SyncedBoolEntityData {
+  .$ = None
+}
+
+--- instance guid=dfb4ac772e10884a9d6bacc586029f94 type=LogicPrefabReferenceObjectData ---
+LogicPrefabReferenceObjectData {
+  .$ = None
+}
+
+--- instance guid=ee32e286cba70344bb59821405880ba6 type=SpatialPrefabReferenceObjectData ---
+SpatialPrefabReferenceObjectData {
+  .$ = None
+  .PersistenceSetting = 'BlueprintPersistenceSetting.BlueprintPersistenceSetting_InheritFromParent'
+}
+
+--- instance guid=<index 0> type=SoundEntityData ---
+SoundEntityData {
+  .$ = None
+  .Sound = '<external ref: instance=f4ec74c161956045a079ea5a4a47c394 in file=674570a0d8866948a3d90db97582cd4c>'
+  .Transform:
+  LinearTransform {
+    .right:
+    Vec3 {
+      .x = 'Float32?: 0x3f800000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .up:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x3f800000'
+      .z = 'Float32?: 0x00000000'
+    }
+    .forward:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x3f800000'
+    }
+    .trans:
+    Vec3 {
+      .x = 'Float32?: 0x00000000'
+      .y = 'Float32?: 0x00000000'
+      .z = 'Float32?: 0x00000000'
+    }
+  }
+  .TransformOffset:
+  Vec3 {
+    .x = 'Float32?: 0x00000000'
+    .y = 'Float32?: 0x00000000'
+    .z = 'Float32?: 0x00000000'
+  }
+  .RotationOffset:
+  Vec3 {
+    .x = 'Float32?: 0x00000000'
+    .y = 'Float32?: 0x00000000'
+    .z = 'Float32?: 0x00000000'
+  }
+  .PlayOnCreation = 256
+  .EnableOnCreation = 1
+  .UseParentTransform = 0
+}
+
+--- instance guid=<index 1> type=CheckedLocalizedStringEntityData ---
+CheckedLocalizedStringEntityData {
+  .$ = None
+  .DynamicStringId:
+  LocalizedStringId {
+    .StringHash = 'Hash: 0x00000000'
+  }
+  .DebugString = None
+  .Sid = 'ID_COL_AUDIOLOG_PICKUP'
+}
+
+--- instance guid=<index 2> type=CompareBoolEntityData ---
+CompareBoolEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Bool = 0
+  .TriggerOnPropertyChange = 0
+  .TriggerOnStart = 0
+  .AlwaysSend = -23808
+}
+
+--- instance guid=<index 3> type=CompareBoolEntityData ---
+CompareBoolEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Bool = 256
+  .TriggerOnPropertyChange = 1
+  .TriggerOnStart = 0
+  .AlwaysSend = -31232
+}
+
+--- instance guid=<index 4> type=CompareFloatEntityData ---
+CompareFloatEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .A = 'Float32?: 0x00000000'
+  .B = 'Float32?: 0x00000000'
+  .TriggerOnPropertyChange = 1
+  .TriggerOnStart = 0
+}
+
+--- instance guid=<index 5> type=CompareFloatEntityData ---
+CompareFloatEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .A = 'Float32?: 0x00000000'
+  .B = 'Float32?: 0x00000000'
+  .TriggerOnPropertyChange = 0
+  .TriggerOnStart = 0
+}
+
+--- instance guid=<index 6> type=FloatEntityData ---
+FloatEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_ClientAndServer'
+  .DefaultValue = 'Float32?: 0x40400000'
+  .IncDecValue = 'Float32?: 0x3f800000'
+}
+
+--- instance guid=<index 7> type=IntEntityData ---
+IntEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Server'
+  .DefaultValue = 'Hash: 0x00000001'
+  .IncDecValue = 'Hash: 0x00000001'
+}
+
+--- instance guid=<index 8> type=InterfaceDescriptorData ---
+InterfaceDescriptorData {
+  .$ = None
+  .InputEvents:
+  [
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+  ]
+  .OutputEvents:
+  [
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x00000001'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x4d5a3a73'
+    }
+  ]
+  .InputLinks:
+  [
+  ]
+  .OutputLinks:
+  [
+  ]
+}
+
+--- instance guid=<index 9> type=LocalizedStringCoalesceEntityData ---
+LocalizedStringCoalesceEntityData {
+  .$ = None
+  .InputCount = 'Hash: 0x00000002'
+  .TreadEmptyStringAsNull = 0
+}
+
+--- instance guid=<index 10> type=MixerEntityData ---
+MixerEntityData {
+  .$ = None
+  .Mixer = '<external ref: instance=bfee711665eedc44be5e55f62c869798 in file=f0074310ce84bd4a8764c0549cab2e74>'
+  .ActivateOnCreation = 0
+  .AccumulatedInputs = 0
+}
+
+--- instance guid=<index 11> type=NotEntityData ---
+NotEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Server'
+  .In = 0
+}
+
+--- instance guid=<index 12> type=PamDelayEntityData ---
+PamDelayEntityData {
+  .$ = None
+  .Delay = 'Float32?: 0x3f800000'
+  .Realm = 'Realm.Realm_Client'
+  .TimeDeltaType = 'TimeDeltaType.TimeDeltaType_World'
+  .UseRealTimeClock = 1
+  .AutoStart = 0
+  .RunOnce = 256
+  .RemoveDuplicateEvents = 1281
+}
+
+--- instance guid=<index 13> type=SchematicChannelEntityData ---
+SchematicChannelEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .Channel = '<external ref: instance=bfc457348dc34b55e68a83cf98957ee0 in file=d0bdd6c56a81e5118aaf8f1b1a8d343d>'
+  .InputProperties:
+  [
+    'Hash: 0xb311523b'
+  ]
+  .InputRefProperties:
+  [
+  ]
+  .OutputProperties:
+  [
+  ]
+  .OutputRefProperties:
+  [
+  ]
+}
+
+--- instance guid=<index 14> type=SchematicChannelEntityData ---
+SchematicChannelEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_ClientAndServer'
+  .Channel = '<external ref: instance=34a51086d17f05efe2d55153682c40b0 in file=bea818d006a3e4119b7df66b7e043ef0>'
+  .InputProperties:
+  [
+  ]
+  .InputRefProperties:
+  [
+  ]
+  .OutputProperties:
+  [
+    'Hash: 0xb048fea1'
+  ]
+  .OutputRefProperties:
+  [
+  ]
+}
+
+--- instance guid=<index 15> type=StringEntityData ---
+StringEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .DefaultString = 'recording'
+}
+
+--- instance guid=<index 16> type=TelemetryHookEntityData ---
+TelemetryHookEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_Client'
+  .mod = 'GAME'
+  .grp = 'COMM'
+  .subgrp = 'PCOL'
+  .Params:
+  [
+    TelemetryParameterDataProperty {
+      .StatName = 'gameplay/collectibles/pf_collectibleitem_green_nongroupable_autogen_gen4'
+      .DataType = 'TelemetryParameterType.TelemetryParameterType_Float'
+    }
+    TelemetryParameterDataProperty {
+      .StatName = 'gameplay/collectibles/pf_collectibleitem_green_nongroupable_autogen_gen4'
+      .DataType = 'TelemetryParameterType.TelemetryParameterType_Vec2'
+    }
+    TelemetryParameterDataProperty {
+      .StatName = 'posx'
+      .DataType = 'TelemetryParameterType.TelemetryParameterType_Float'
+    }
+    TelemetryParameterDataProperty {
+      .StatName = 'posy'
+      .DataType = 'TelemetryParameterType.TelemetryParameterType_Float'
+    }
+    TelemetryParameterDataProperty {
+      .StatName = 'posz'
+      .DataType = 'TelemetryParameterType.TelemetryParameterType_Float'
+    }
+    TelemetryParameterDataProperty {
+      .StatName = 'mode'
+      .DataType = 'TelemetryParameterType.TelemetryParameterType_String'
+    }
+  ]
+}
+

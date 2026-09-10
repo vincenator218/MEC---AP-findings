@@ -1,0 +1,520 @@
+=== ./gameconfigs/PamAchievements.bin[0] ===
+version=1 bigEndian=False
+complexes=6 fields=11 instances=50 arrays=2 guids=0
+
+class DataContainer  (size=8, align=4)
+class Asset  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Name                             Sid          offset=8 ref=0
+class DataContainerPolicyAsset  (size=12, align=4)
+    .$                                Void         offset=8 ref=1
+class PamAchievements  (size=16, align=4)
+    .$                                Void         offset=8 ref=2
+    .Achievements                     DbObject     offset=12 ref=4
+class array  (size=4, align=4)
+    .member                           GUID         offset=0 ref=0
+class PamAchievementData  (size=24, align=4)
+    .$                                Void         offset=8 ref=0
+    .AchievementCode                  Sid          offset=8 ref=0
+    .AchievementId                    Int16        offset=12 ref=0
+    .TrophyId                         Int16        offset=16 ref=0
+    .OriginId                         Int16        offset=20 ref=0
+
+--- instance guid=7df1b3250f04a5c901c3b75d32f97a6e type=PamAchievements ---
+PamAchievements {
+  .$ = None
+  .Achievements:
+  [
+    '<local ref: PamAchievements guid=7df1b3250f04a5c901c3b75d32f97a6e>'
+    '<local ref: PamAchievementData guid=ffe7bece67061547b6d49c3390c18da0>'
+    '<local ref: PamAchievementData guid=4b1a6339fa4bce418599db7c2e34e6fb>'
+    '<local ref: PamAchievementData guid=f5fa5d214a9fdf48a316285567df2335>'
+    '<local ref: PamAchievementData guid=85c721485a61344bb583352731deb89f>'
+    '<local ref: PamAchievementData guid=117b7b739d6e7742919f1cd87214e385>'
+    '<local ref: PamAchievementData guid=343ef1b65e398748810dcca3e797426c>'
+    '<local ref: PamAchievementData guid=27669b069203594f9950a7f21b060839>'
+    '<local ref: PamAchievementData guid=9d4ebe3029e43d438288068d95654e07>'
+    '<local ref: PamAchievementData guid=ba8eca8298497d40b035b1c1751326bb>'
+    '<local ref: PamAchievementData guid=68a2f93e9ba5fe43968f9eec936330da>'
+    '<local ref: PamAchievementData guid=27bb517e9164bf4b8f8c3fe4a9e689c4>'
+    '<local ref: PamAchievementData guid=54652791cce14944a603052646d4aa90>'
+    '<local ref: PamAchievementData guid=495299643280ef41b428990328f03792>'
+    '<local ref: PamAchievementData guid=e9d77d18c913b848a6bcc154184c5bdb>'
+    '<local ref: PamAchievementData guid=d6013d57b64cf649997b5c6acc565066>'
+    '<local ref: PamAchievementData guid=4a5fb22f36f4ab4bba7416c94b6784cf>'
+    '<local ref: PamAchievementData guid=bf8a844e6ffc5c4288e89f5a90c01fd7>'
+    '<local ref: PamAchievementData guid=ffe7bece67061547b6d49c3390c18da0>'
+    '<local ref: PamAchievementData guid=52dae96512749a45be5f1639a628cfd0>'
+    '<local ref: PamAchievementData guid=f70b0a8e7ebf654da1e15f9184657e03>'
+    '<local ref: PamAchievementData guid=8504c7a291470f49a08171673422fa22>'
+    '<local ref: PamAchievementData guid=1a3325f74a37b641805c203706645027>'
+    '<local ref: PamAchievementData guid=1da3c5ec27c04241afb5e60af3ba7674>'
+    '<local ref: PamAchievementData guid=b7e0fdb3371f26418bea4a7146964817>'
+    '<local ref: PamAchievementData guid=addfcd4c144dcc4f962620e6cb9a559d>'
+    '<local ref: PamAchievementData guid=73f765201b0f454aab152a6680374277>'
+    '<local ref: PamAchievementData guid=d2d7ed4e76161448a7bc655db3c2c8b5>'
+    '<local ref: PamAchievementData guid=abeac30ac422b24a88111625df849339>'
+    '<local ref: PamAchievementData guid=a9f0b1073c02e04e8b69b63f620d8996>'
+    '<local ref: PamAchievementData guid=8a23ad698b61ac42ba46d0c81dccbcd2>'
+    '<local ref: PamAchievementData guid=fd05d0bce9353f498a2fdc0005decd79>'
+    '<local ref: PamAchievementData guid=f55ae8dc77354646ab2075e9dbc5af5e>'
+    '<local ref: out-of-range index 50>'
+    '<local ref: PamAchievementData guid=8fd3f188b04b434c937fd64fe63bce90>'
+    '<local ref: PamAchievementData guid=f1a7019571062846915f169fffc3fa5c>'
+    '<local ref: PamAchievementData guid=2f9ebe4e08cd5e4bb5789efded39956f>'
+    '<local ref: PamAchievementData guid=f5b7639274e2ce46bf42a888eadfeb8d>'
+    '<local ref: PamAchievementData guid=55ff58034aca534c8559a98d1172f575>'
+    '<local ref: PamAchievementData guid=f3dd2f8740edc34e9ac7087e22f9f284>'
+    '<local ref: PamAchievementData guid=ab57bfdb9ff0ec44acf6fcd25a740f13>'
+    '<local ref: PamAchievementData guid=873d03d4021127459f68215f2bf82665>'
+    '<local ref: PamAchievementData guid=3301566a31863341a6fd52a8243c064f>'
+    '<local ref: PamAchievementData guid=37cd2521a56c244799dadc0e6481db1f>'
+    '<local ref: PamAchievementData guid=91cd1e3ad955934bab306c2bfee977f7>'
+    '<local ref: PamAchievementData guid=470cb11b6d7424428d660897ea564fb1>'
+    '<local ref: PamAchievementData guid=5d51a3b20edeff4187b1f3b6b686019c>'
+    '<local ref: PamAchievementData guid=77e8d509e583954a908c6e3a1a019a43>'
+    '<local ref: PamAchievementData guid=d1a9cd0590602d41ba4f41a290aa9241>'
+  ]
+}
+
+--- instance guid=02a3fe3a20d11d47bbff104021ed5176 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH04'
+  .AchievementId = 3
+  .TrophyId = 4
+  .OriginId = 4
+}
+
+--- instance guid=117b7b739d6e7742919f1cd87214e385 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH49'
+  .AchievementId = 48
+  .TrophyId = 49
+  .OriginId = 49
+}
+
+--- instance guid=1679abaddc85264d95be7765ccf3f38d type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH21'
+  .AchievementId = 20
+  .TrophyId = 21
+  .OriginId = 21
+}
+
+--- instance guid=1a3325f74a37b641805c203706645027 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH22'
+  .AchievementId = 21
+  .TrophyId = 22
+  .OriginId = 22
+}
+
+--- instance guid=1da3c5ec27c04241afb5e60af3ba7674 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH06'
+  .AchievementId = 5
+  .TrophyId = 6
+  .OriginId = 6
+}
+
+--- instance guid=27669b069203594f9950a7f21b060839 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH10'
+  .AchievementId = 9
+  .TrophyId = 10
+  .OriginId = 10
+}
+
+--- instance guid=27bb517e9164bf4b8f8c3fe4a9e689c4 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH35'
+  .AchievementId = 34
+  .TrophyId = 35
+  .OriginId = 35
+}
+
+--- instance guid=2f9ebe4e08cd5e4bb5789efded39956f type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH41'
+  .AchievementId = 40
+  .TrophyId = 41
+  .OriginId = 41
+}
+
+--- instance guid=3301566a31863341a6fd52a8243c064f type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH05'
+  .AchievementId = 4
+  .TrophyId = 5
+  .OriginId = 5
+}
+
+--- instance guid=343ef1b65e398748810dcca3e797426c type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH42'
+  .AchievementId = 41
+  .TrophyId = 42
+  .OriginId = 42
+}
+
+--- instance guid=37cd2521a56c244799dadc0e6481db1f type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH44'
+  .AchievementId = 43
+  .TrophyId = 44
+  .OriginId = 44
+}
+
+--- instance guid=470cb11b6d7424428d660897ea564fb1 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH12'
+  .AchievementId = 11
+  .TrophyId = 12
+  .OriginId = 12
+}
+
+--- instance guid=495299643280ef41b428990328f03792 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH15'
+  .AchievementId = 14
+  .TrophyId = 15
+  .OriginId = 15
+}
+
+--- instance guid=4a5fb22f36f4ab4bba7416c94b6784cf type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH01'
+  .AchievementId = 0
+  .TrophyId = 1
+  .OriginId = 1
+}
+
+--- instance guid=4b1a6339fa4bce418599db7c2e34e6fb type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH18'
+  .AchievementId = 17
+  .TrophyId = 18
+  .OriginId = 18
+}
+
+--- instance guid=52dae96512749a45be5f1639a628cfd0 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH11'
+  .AchievementId = 10
+  .TrophyId = 11
+  .OriginId = 11
+}
+
+--- instance guid=54652791cce14944a603052646d4aa90 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH37'
+  .AchievementId = 36
+  .TrophyId = 37
+  .OriginId = 37
+}
+
+--- instance guid=55ff58034aca534c8559a98d1172f575 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH45'
+  .AchievementId = 44
+  .TrophyId = 45
+  .OriginId = 45
+}
+
+--- instance guid=5d51a3b20edeff4187b1f3b6b686019c type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH09'
+  .AchievementId = 8
+  .TrophyId = 9
+  .OriginId = 9
+}
+
+--- instance guid=68a2f93e9ba5fe43968f9eec936330da type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH25'
+  .AchievementId = 24
+  .TrophyId = 25
+  .OriginId = 25
+}
+
+--- instance guid=73f765201b0f454aab152a6680374277 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH46'
+  .AchievementId = 45
+  .TrophyId = 46
+  .OriginId = 46
+}
+
+--- instance guid=77e8d509e583954a908c6e3a1a019a43 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH20'
+  .AchievementId = 19
+  .TrophyId = 20
+  .OriginId = 20
+}
+
+--- instance guid=8504c7a291470f49a08171673422fa22 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH03'
+  .AchievementId = 2
+  .TrophyId = 3
+  .OriginId = 3
+}
+
+--- instance guid=85c721485a61344bb583352731deb89f type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH40'
+  .AchievementId = 39
+  .TrophyId = 40
+  .OriginId = 40
+}
+
+--- instance guid=873d03d4021127459f68215f2bf82665 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH29'
+  .AchievementId = 28
+  .TrophyId = 29
+  .OriginId = 29
+}
+
+--- instance guid=8a23ad698b61ac42ba46d0c81dccbcd2 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH33'
+  .AchievementId = 32
+  .TrophyId = 33
+  .OriginId = 33
+}
+
+--- instance guid=8fd3f188b04b434c937fd64fe63bce90 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH43'
+  .AchievementId = 42
+  .TrophyId = 43
+  .OriginId = 43
+}
+
+--- instance guid=91cd1e3ad955934bab306c2bfee977f7 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH07'
+  .AchievementId = 6
+  .TrophyId = 7
+  .OriginId = 7
+}
+
+--- instance guid=9d4ebe3029e43d438288068d95654e07 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH28'
+  .AchievementId = 27
+  .TrophyId = 28
+  .OriginId = 28
+}
+
+--- instance guid=a9f0b1073c02e04e8b69b63f620d8996 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH39'
+  .AchievementId = 38
+  .TrophyId = 39
+  .OriginId = 39
+}
+
+--- instance guid=ab57bfdb9ff0ec44acf6fcd25a740f13 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH27'
+  .AchievementId = 26
+  .TrophyId = 27
+  .OriginId = 27
+}
+
+--- instance guid=abeac30ac422b24a88111625df849339 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH24'
+  .AchievementId = 23
+  .TrophyId = 24
+  .OriginId = 24
+}
+
+--- instance guid=addfcd4c144dcc4f962620e6cb9a559d type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH23'
+  .AchievementId = 22
+  .TrophyId = 23
+  .OriginId = 23
+}
+
+--- instance guid=b7e0fdb3371f26418bea4a7146964817 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH08'
+  .AchievementId = 7
+  .TrophyId = 8
+  .OriginId = 8
+}
+
+--- instance guid=ba8eca8298497d40b035b1c1751326bb type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH16'
+  .AchievementId = 15
+  .TrophyId = 16
+  .OriginId = 16
+}
+
+--- instance guid=bf8a844e6ffc5c4288e89f5a90c01fd7 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH47'
+  .AchievementId = 46
+  .TrophyId = 47
+  .OriginId = 47
+}
+
+--- instance guid=d1a9cd0590602d41ba4f41a290aa9241 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH26'
+  .AchievementId = 25
+  .TrophyId = 26
+  .OriginId = 26
+}
+
+--- instance guid=d2d7ed4e76161448a7bc655db3c2c8b5 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH14'
+  .AchievementId = 13
+  .TrophyId = 14
+  .OriginId = 14
+}
+
+--- instance guid=d6013d57b64cf649997b5c6acc565066 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH48'
+  .AchievementId = 47
+  .TrophyId = 48
+  .OriginId = 48
+}
+
+--- instance guid=d9c10e5d26612940a1a7b53efdb12143 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH13'
+  .AchievementId = 12
+  .TrophyId = 13
+  .OriginId = 13
+}
+
+--- instance guid=e9d77d18c913b848a6bcc154184c5bdb type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH34'
+  .AchievementId = 33
+  .TrophyId = 34
+  .OriginId = 34
+}
+
+--- instance guid=f1a7019571062846915f169fffc3fa5c type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH38'
+  .AchievementId = 37
+  .TrophyId = 38
+  .OriginId = 38
+}
+
+--- instance guid=f3dd2f8740edc34e9ac7087e22f9f284 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH31'
+  .AchievementId = 30
+  .TrophyId = 31
+  .OriginId = 31
+}
+
+--- instance guid=f55ae8dc77354646ab2075e9dbc5af5e type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH36'
+  .AchievementId = 35
+  .TrophyId = 36
+  .OriginId = 36
+}
+
+--- instance guid=f5b7639274e2ce46bf42a888eadfeb8d type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH02'
+  .AchievementId = 1
+  .TrophyId = 2
+  .OriginId = 2
+}
+
+--- instance guid=f5fa5d214a9fdf48a316285567df2335 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH19'
+  .AchievementId = 18
+  .TrophyId = 19
+  .OriginId = 19
+}
+
+--- instance guid=f70b0a8e7ebf654da1e15f9184657e03 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH30'
+  .AchievementId = 29
+  .TrophyId = 30
+  .OriginId = 30
+}
+
+--- instance guid=fd05d0bce9353f498a2fdc0005decd79 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH17'
+  .AchievementId = 16
+  .TrophyId = 17
+  .OriginId = 17
+}
+
+--- instance guid=ffe7bece67061547b6d49c3390c18da0 type=PamAchievementData ---
+PamAchievementData {
+  .$ = None
+  .AchievementCode = 'ACH32'
+  .AchievementId = 31
+  .TrophyId = 32
+  .OriginId = 32
+}
+

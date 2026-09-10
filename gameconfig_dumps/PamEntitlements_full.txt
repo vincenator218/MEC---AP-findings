@@ -1,0 +1,178 @@
+=== ./gameconfigs/PamEntitlements.bin[0] ===
+version=1 bigEndian=False
+complexes=8 fields=33 instances=1 arrays=2 guids=0
+
+class DataContainer  (size=8, align=4)
+class Asset  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Name                             Sid          offset=8 ref=0
+class EntitlementQuery  (size=36, align=4)
+    .$                                Void         offset=8 ref=1
+    .EntitlementsData                 DbObject     offset=12 ref=3
+    .GroupNames                       DbObject     offset=16 ref=6
+    .Platform                         FileRef      offset=20 ref=7
+    .EntitlementTag                   Sid          offset=24 ref=0
+    .ProductId                        Sid          offset=28 ref=0
+    .ProjectId                        Sid          offset=32 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=4
+class EntitlementData  (size=28, align=4)
+    .License                          Sid          offset=0 ref=0
+    .EntitlementTag                   Sid          offset=4 ref=0
+    .GroupName                        Sid          offset=8 ref=0
+    .ProductId                        Sid          offset=12 ref=0
+    .ProjectId                        Sid          offset=16 ref=0
+    .UsageType                        FileRef      offset=20 ref=5
+    .VerifyOwnership                  Int16        offset=24 ref=0
+class EntitlementType  (size=4, align=4)
+    .EntitlementType_Ignored          Void         offset=0 ref=0
+    .EntitlementType_Write            Void         offset=1 ref=0
+    .EntitlementType_Read             Void         offset=2 ref=0
+class array  (size=4, align=4)
+    .member                           Sid          offset=0 ref=0
+class GamePlatform  (size=4, align=4)
+    .GamePlatform_Ps3                 Void         offset=0 ref=0
+    .GamePlatform_Win32               Void         offset=1 ref=0
+    .GamePlatform_Xenon               Void         offset=2 ref=0
+    .GamePlatform_Gen4a               Void         offset=3 ref=0
+    .GamePlatform_Gen4b               Void         offset=4 ref=0
+    .GamePlatform_Android             Void         offset=5 ref=0
+    .GamePlatform_iOS                 Void         offset=6 ref=0
+    .GamePlatform_OSX                 Void         offset=7 ref=0
+    .GamePlatform_Linux               Void         offset=8 ref=0
+    .GamePlatform_Any                 Void         offset=9 ref=0
+    .GamePlatform_Invalid             Void         offset=10 ref=0
+    .GamePlatformCount                Void         offset=11 ref=0
+
+--- instance guid=99ab54743f03f0adb92ef9d851f7e2d2 type=EntitlementQuery ---
+EntitlementQuery {
+  .$ = None
+  .EntitlementsData:
+  [
+    EntitlementData {
+      .License = 'tions/PamEntitlements'
+      .EntitlementTag = 'CombatPack'
+      .GroupName = 'RUNNERPACK_COMBAT_ACCESS'
+      .ProductId = 'MECATPS4'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=80)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'ameConfigurations/PamEntitlements'
+      .EntitlementTag = 'CombatPack'
+      .GroupName = 'RUNNERPACK_COMBAT_ACCESS'
+      .ProductId = 'MECATXONE'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=97)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'ameConfigurations/PamEntitlements'
+      .EntitlementTag = 'CombatPack'
+      .GroupName = 'RUNNERPACK_COMBAT_ACCESS'
+      .ProductId = 'MECATPC'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=112)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'RunnerPack'
+      .GroupName = 'RUNNERPACK_SPEED_ACCESS'
+      .ProductId = 'MECATPS4'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=80)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'ameConfigurations/PamEntitlements'
+      .EntitlementTag = 'RunnerPack'
+      .GroupName = 'RUNNERPACK_SPEED_ACCESS'
+      .ProductId = 'MECATXONE'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=97)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'ameConfigurations/PamEntitlements'
+      .EntitlementTag = 'RunnerPack'
+      .GroupName = 'RUNNERPACK_SPEED_ACCESS'
+      .ProductId = 'MECATPC'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=112)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'PreOrder'
+      .GroupName = 'EDITION_PREORDER'
+      .ProductId = 'MECATPS4'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=180)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'PreOrder'
+      .GroupName = 'EDITION_PREORDER'
+      .ProductId = 'MECATXONE'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=187)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'FrontRunnerPack'
+      .GroupName = 'RUNNERPACK_FRONTRUNNER_ACCESS'
+      .ProductId = 'MirrorsEdgeCatalyst'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=4294967295)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'EarlyRunnerPack'
+      .GroupName = 'RUNNERPACK_EARLYRUNNER_ACCESS'
+      .ProductId = 'MirrorsEdgeCatalyst'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=4294967295)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'EngageKit1'
+      .GroupName = 'PROMO_ENGAGEMENT_RUNNERKIT1'
+      .ProductId = 'MirrorsEdgeCatalyst'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=4294967295)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'EngageKit2'
+      .GroupName = 'PROMO_ENGAGEMENT_RUNNERKIT2'
+      .ProductId = 'MirrorsEdgeCatalyst'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=4294967295)'
+      .VerifyOwnership = 2
+    }
+    EntitlementData {
+      .License = 'GameConfigurations/PamEntitlements'
+      .EntitlementTag = 'EngageKit3'
+      .GroupName = 'PROMO_ENGAGEMENT_RUNNERKIT3'
+      .ProductId = 'MirrorsEdgeCatalyst'
+      .ProjectId = None
+      .UsageType = 'EntitlementType(unresolved=4294967295)'
+      .VerifyOwnership = 2
+    }
+  ]
+  .GroupNames:
+  [
+  ]
+  .Platform = 'GamePlatform.GamePlatform_Invalid'
+  .EntitlementTag = None
+  .ProductId = None
+  .ProjectId = None
+}
+

@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+
+# Cheat Engine tables and live-memory-era scratch/debug output -- superseded
+# by the save-file approach (FINDINGS.md Part 3), not needed to use anything
+# in this repo, and not small.
+*.CT
+raw_flags_dump.json
+region_dump.bin
+region_dump.json
+progression_snapshot.json
+progression_snapshot_log.txt
+
+# A huge raw strings dump from early exploration -- ~47MB, not something
+# any tool here reads.
+strings.txt
+
+# Real save files -- these can contain account-identifying data
+# (linked platform account IDs) and shouldn't be committed.
+PROF_SAVE*
+*.sav
+
+# Third-party RTTI header dump shared privately on Discord (credit: Meteor)
+# -- thousands of files, and not this project's to redistribute in bulk.
+# Keep locally for reference; don't publish wholesale.
+SDK/

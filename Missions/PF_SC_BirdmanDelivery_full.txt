@@ -1,0 +1,188 @@
+=== ./missions/PF_SC_BirdmanDelivery.bin[0] ===
+version=1 bigEndian=False
+complexes=33 fields=85 instances=3 arrays=5 guids=1
+
+class DataContainer  (size=8, align=4)
+class Asset  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Name                             Sid          offset=8 ref=0
+class DataBusData  (size=28, align=4)
+    .$                                Void         offset=8 ref=1
+    .PropertyConnections              DbObject     offset=12 ref=3
+    .LinkConnections                  DbObject     offset=16 ref=5
+    .Interface                        GUID         offset=20 ref=0
+    .Flags                            Int16        offset=24 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=4
+class PropertyConnection  (size=20, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceFieldId                    Hash         offset=8 ref=0
+    .TargetFieldId                    Hash         offset=12 ref=0
+    .Flags                            Int16        offset=16 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=6
+class LinkConnection  (size=16, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceFieldId                    Hash         offset=8 ref=0
+    .TargetFieldId                    Hash         offset=12 ref=0
+class EntityBusData  (size=32, align=4)
+    .$                                Void         offset=8 ref=2
+    .EventConnections                 DbObject     offset=28 ref=8
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=9
+class EventConnection  (size=20, align=4)
+    .Source                           GUID         offset=0 ref=0
+    .Target                           GUID         offset=4 ref=0
+    .SourceEvent                      FileRef      offset=8 ref=10
+    .TargetEvent                      FileRef      offset=12 ref=10
+    .TargetType                       FileRef      offset=16 ref=11
+class EventSpec  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class EventConnectionTargetType  (size=4, align=4)
+    .EventConnectionTargetType_Invalid Void         offset=0 ref=0
+    .EventConnectionTargetType_ClientAndServer Void         offset=1 ref=0
+    .EventConnectionTargetType_Client Void         offset=2 ref=0
+    .EventConnectionTargetType_Server Void         offset=3 ref=0
+    .EventConnectionTargetType_NetworkedClient Void         offset=4 ref=0
+    .EventConnectionTargetType_NetworkedClientAndServer Void         offset=5 ref=0
+class Blueprint  (size=32, align=4)
+    .$                                Void         offset=8 ref=7
+class PrefabBlueprint  (size=40, align=4)
+    .$                                Void         offset=8 ref=12
+    .Objects                          DbObject     offset=32 ref=14
+    .TimeDeltaType                    FileRef      offset=36 ref=15
+class array  (size=4, align=4)
+    .member                           GUID         offset=0 ref=0
+class TimeDeltaType  (size=4, align=4)
+    .TimeDeltaType_None               Void         offset=0 ref=0
+    .TimeDeltaType_Player             Void         offset=1 ref=0
+    .TimeDeltaType_World              Void         offset=2 ref=0
+    .TimeDeltaType_Extra1             Void         offset=3 ref=0
+    .TimeDeltaType_Extra2             Void         offset=4 ref=0
+    .TimeDeltaType_Extra3             Void         offset=5 ref=0
+    .TimeDeltaType_Extra4             Void         offset=6 ref=0
+    .TimeDeltaType_Extra5             Void         offset=7 ref=0
+    .TimeDeltaType_Count              Void         offset=8 ref=0
+class LogicPrefabBlueprint  (size=40, align=4)
+    .$                                Void         offset=8 ref=13
+class GameDataContainer  (size=8, align=4)
+    .$                                Void         offset=8 ref=0
+class DataBusPeer  (size=12, align=4)
+    .$                                Void         offset=8 ref=17
+    .Flags                            Int16        offset=8 ref=0
+class GameObjectData  (size=12, align=4)
+    .$                                Void         offset=8 ref=18
+class EntityData  (size=12, align=4)
+    .$                                Void         offset=8 ref=19
+class SchematicChannelEntityData  (size=36, align=4)
+    .$                                Void         offset=8 ref=20
+    .Realm                            FileRef      offset=12 ref=22
+    .Channel                          GUID         offset=16 ref=0
+    .InputProperties                  DbObject     offset=20 ref=23
+    .InputRefProperties               DbObject     offset=24 ref=23
+    .OutputProperties                 DbObject     offset=28 ref=23
+    .OutputRefProperties              DbObject     offset=32 ref=23
+class Realm  (size=4, align=4)
+    .Realm_Client                     Void         offset=0 ref=0
+    .Realm_Server                     Void         offset=1 ref=0
+    .Realm_ClientAndServer            Void         offset=2 ref=0
+    .Realm_None                       Void         offset=3 ref=0
+    .Realm_Pipeline                   Void         offset=4 ref=0
+class array  (size=4, align=4)
+    .member                           Hash         offset=0 ref=0
+class DynamicDataContainer  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Fields                           DbObject     offset=8 ref=25
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=26
+class DataField  (size=16, align=4)
+    .Value                            Sid          offset=0 ref=0
+    .ValueRef                         GUID         offset=4 ref=0
+    .Id                               Hash         offset=8 ref=0
+    .AccessType                       FileRef      offset=12 ref=27
+class FieldAccessType  (size=4, align=4)
+    .FieldAccessType_Source           Void         offset=0 ref=0
+    .FieldAccessType_Target           Void         offset=1 ref=0
+    .FieldAccessType_SourceAndTarget  Void         offset=2 ref=0
+class InterfaceDescriptorData  (size=28, align=4)
+    .$                                Void         offset=8 ref=24
+    .InputEvents                      DbObject     offset=12 ref=29
+    .OutputEvents                     DbObject     offset=16 ref=29
+    .InputLinks                       DbObject     offset=20 ref=31
+    .OutputLinks                      DbObject     offset=24 ref=31
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=30
+class DynamicEvent  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=32
+class DynamicLink  (size=4, align=4)
+    .Id                               Hash         offset=0 ref=0
+
+--- instance guid=aed96f1750ac8d670746402aa6e4da24 type=LogicPrefabBlueprint ---
+LogicPrefabBlueprint {
+  .$ = None
+}
+
+--- instance guid=<index 0> type=InterfaceDescriptorData ---
+InterfaceDescriptorData {
+  .$ = None
+  .InputEvents:
+  [
+    DynamicEvent {
+      .Id = 'Hash: 0x00000003'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x00000004'
+    }
+  ]
+  .OutputEvents:
+  [
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x00000000'
+    }
+    DynamicEvent {
+      .Id = 'Hash: 0x00000004'
+    }
+  ]
+  .InputLinks:
+  [
+  ]
+  .OutputLinks:
+  [
+  ]
+}
+
+--- instance guid=<index 1> type=SchematicChannelEntityData ---
+SchematicChannelEntityData {
+  .$ = None
+  .Realm = 'Realm.Realm_ClientAndServer'
+  .Channel = '<external ref: instance=85130b02a877ff76918fef6727744f0b in file=44a9c71c2494e511a0e5ea0cfaaf6c53>'
+  .InputProperties:
+  [
+  ]
+  .InputRefProperties:
+  [
+  ]
+  .OutputProperties:
+  [
+  ]
+  .OutputRefProperties:
+  [
+  ]
+}
+

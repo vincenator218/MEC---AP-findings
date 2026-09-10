@@ -1,0 +1,139 @@
+=== ./gameconfigs/FontConfiguration.bin[0] ===
+version=1 bigEndian=False
+complexes=7 fields=26 instances=1 arrays=12 guids=11
+
+class DataContainer  (size=8, align=4)
+class Asset  (size=12, align=4)
+    .$                                Void         offset=8 ref=0
+    .Name                             Sid          offset=8 ref=0
+class UIImmediateModeFontConfigurationAsset  (size=32, align=4)
+    .$                                Void         offset=8 ref=1
+    .FontBundles                      DbObject     offset=12 ref=3
+    .FontDpi                          Hash         offset=16 ref=0
+    .GlyphCachePadding                Hash         offset=20 ref=0
+    .GlyphGeometryPadding             Float32?     offset=24 ref=0
+    .GlyphCachePremultipliedAlpha     Int16        offset=28 ref=0
+    .AutoHinting                      Int16        offset=29 ref=0
+class array  (size=4, align=4)
+    .member                           FileRef      offset=0 ref=4
+class UIImmediateModeFontBundle  (size=12, align=4)
+    .Language                         FileRef      offset=0 ref=5
+    .BundlePath                       Sid          offset=4 ref=0
+    .TtfAssets                        DbObject     offset=8 ref=6
+class LanguageFormat  (size=4, align=4)
+    .LanguageFormat_English           Void         offset=0 ref=0
+    .LanguageFormat_French            Void         offset=1 ref=0
+    .LanguageFormat_German            Void         offset=2 ref=0
+    .LanguageFormat_Spanish           Void         offset=3 ref=0
+    .LanguageFormat_Italian           Void         offset=4 ref=0
+    .LanguageFormat_Japanese          Void         offset=5 ref=0
+    .LanguageFormat_Russian           Void         offset=6 ref=0
+    .LanguageFormat_Polish            Void         offset=7 ref=0
+    .LanguageFormat_TraditionalChinese Void         offset=8 ref=0
+    .LanguageFormat_BrazilianPortuguese Void         offset=9 ref=0
+    .LanguageFormat_Count             Void         offset=10 ref=0
+    .LanguageFormat_Undefined         Void         offset=11 ref=0
+class array  (size=4, align=4)
+    .member                           GUID         offset=0 ref=0
+
+--- instance guid=8531362a7923c5c3d23e4d4880a17f10 type=UIImmediateModeFontConfigurationAsset ---
+UIImmediateModeFontConfigurationAsset {
+  .$ = None
+  .FontBundles:
+  [
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat.LanguageFormat_English'
+      .BundlePath = 'urations/FontConfiguration'
+      .TtfAssets:
+      [
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=37)'
+      .BundlePath = 'ameConfigurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=97)'
+      .BundlePath = 'meConfigurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=156)'
+      .BundlePath = 'eConfigurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=215)'
+      .BundlePath = 'Configurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=275)'
+      .BundlePath = 'onfigurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=335)'
+      .BundlePath = 'nfigurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=396)'
+      .BundlePath = 'figurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=456)'
+      .BundlePath = 'igurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+    UIImmediateModeFontBundle {
+      .Language = 'LanguageFormat(unresolved=515)'
+      .BundlePath = 'gurations/FontConfiguration'
+      .TtfAssets:
+      [
+        '<local ref: UIImmediateModeFontConfigurationAsset guid=8531362a7923c5c3d23e4d4880a17f10>'
+        '<local ref: out-of-range index 2>'
+      ]
+    }
+  ]
+  .FontDpi = 'Hash: 0x00000060'
+  .GlyphCachePadding = 'Hash: 0x00000002'
+  .GlyphGeometryPadding = 'Float32?: 0x3f800000'
+  .GlyphCachePremultipliedAlpha = 257
+  .AutoHinting = 1
+}
+
