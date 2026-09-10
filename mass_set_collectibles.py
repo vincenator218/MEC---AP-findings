@@ -37,6 +37,8 @@ import re
 import struct
 import sys
 
+from save_checksum import recompute_checksums
+
 
 def djb2a(data: bytes) -> int:
     h = 5381
@@ -217,8 +219,9 @@ def main():
     del data[-total_inserted_bytes:]
 
     assert len(data) == original_size, f"size mismatch: {len(data)} != {original_size}"
+    recompute_checksums(data)
     open(args.out, "wb").write(data)
-    print(f"\nwrote {args.out} ({original_size} bytes, unchanged size). Inserted {total_inserted_bytes} bytes total, trimmed equal padding off the end.")
+    print(f"\nwrote {args.out} ({original_size} bytes, unchanged size). Inserted {total_inserted_bytes} bytes total, trimmed equal padding off the end. Header/body checksums recomputed.")
     print(f"\nStill uncollected (go find these in-game): {sorted(hold_back)}")
     return 0
 

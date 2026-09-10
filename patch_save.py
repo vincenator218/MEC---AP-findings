@@ -24,6 +24,8 @@ import argparse
 import struct
 import sys
 
+from save_checksum import recompute_checksums
+
 
 def djb2a(data: bytes) -> int:
     h = 5381
@@ -130,8 +132,9 @@ def main():
         return 1
 
     assert len(data) == len(open(args.save_file, "rb").read()), "file size changed -- aborting, something is wrong"
+    recompute_checksums(data)
     open(args.out, "wb").write(data)
-    print(f"wrote {args.out} ({patched} record(s) patched, file size unchanged)")
+    print(f"wrote {args.out} ({patched} record(s) patched, file size unchanged, header/body checksums recomputed)")
     return 0
 
 

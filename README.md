@@ -159,24 +159,52 @@ as the live game expects.
 
 ### File format
 
+Cross-referenced and confirmed byte-exact against
+[`ploxxxy/frostnibble`](https://github.com/ploxxxy/frostnibble) (a
+pre-existing web save editor, linked to us by Meteor — see
+`FINDINGS.md` §14 for the full derivation), which pinned down the header
+precisely:
+
 ```
-"FBCHUNKS" magic (8 bytes) + ~38 byte header, then a flat sequence of blocks:
+offset  0  u64   magic "FBCHUNKS"
+offset  8  u16   version            (1)
+offset 10  u32   headerSize         (8)
+offset 14  u32   bodySize           (file_size - 26; fixed 1,024,000-byte capacity)
+offset 18  u32   headerHash         (CRC32 checksum, see below)
+offset 22  u32   headerEntries      (section count; 13 observed)
+offset 26  u32   bodyHash           (CRC32 checksum, see below)
+offset 30  —     headerEntries sections, each:
 
-  block := u32 entry_count, entry_count * entry
+  section := u32 entry_count, entry_count * entry
 
-  entry := u32 type            (1=float-as-text, 2=bool/int-as-text,
-                                 4=stat-as-text, 5=binary blob)
+  entry := u32 type            (1=Float-as-text, 2=Integer-as-text, 3=Long,
+                                 4=String-as-text, 5=Binary blob)
            u32 keylen          (strlen(key)+1, NUL included)
            keylen bytes        key, NUL-terminated ASCII
            u32 vallen
            vallen bytes        value (ASCII text, or binary for type 5)
 ```
 
-Everything after the last block is solid zero padding out to a fixed file
-size (1,024,026 bytes observed) — the game pre-allocates a big buffer and
-only the first ~40KB is ever actually used. This matters for editing: you
-can grow the used region and shrink the padding (or vice versa) and the
-game doesn't seem to care, as long as total file size stays constant.
+Most of the 13 sections are empty (`entry_count = 0`); in every save
+examined the real data lives in a handful of them, including the one
+holding the `ProgressionManagerData*` blobs below. Everything after the
+last used entry is solid zero padding out to a fixed file size
+(1,024,026 bytes observed = 26-byte header + 1,024,000-byte body
+capacity) — the game pre-allocates a big buffer and only a small fraction
+is ever actually used. This matters for editing: you can grow the used
+region and shrink the padding (or vice versa) and the game doesn't seem
+to care, as long as total file size stays constant.
+
+**Checksums:** both `headerHash` and `bodyHash` use a non-standard CRC32
+(standard table/polynomial, seeded with `0x12345678` instead of the usual
+`0xFFFFFFFF` — exactly `zlib.crc32(data, 0x12345678)` in Python).
+`headerHash = crc32(le_bytes(headerEntries))`; `bodyHash =
+byteswap32(crc32(data[30:end_of_file]))`. Verified against
+`frostnibble`'s own bundled sample save, byte for byte. None of our live
+in-game write tests showed the game rejecting a save with a stale
+`bodyHash`, so it doesn't appear to be strictly enforced at load — but
+`save_checksum.py` (below) recomputes both correctly, and every write
+tool calls it before writing output, so this is a non-issue either way.
 
 Three `type=5` entries hold the real progression data: `ProgressionManagerData`,
 `ProgressionManagerData_<accountID1>`, `ProgressionManagerData_<accountID2>`
@@ -259,6 +287,11 @@ individually:
 - **`clear_category.py PROF_SAVE static_dump.txt --category GridLeaks
   --out out.sav`** — the inverse: removes every record for a category
   outright (not just value=0), for a clean "0/N" starting state.
+- **`save_checksum.py`** — shared helper (imported by the three tools
+  above, not usually run directly) that recomputes the header's two CRC32
+  checksums after an edit; run standalone against any save
+  (`python save_checksum.py PROF_SAVE`) to check whether its checksums are
+  currently valid or stale.
 
 ### Confirmed live, in-game (not just decoded — actually tested)
 
@@ -337,6 +370,7 @@ changes.
 | `patch_save.py` | **Write**: flip one existing record's value |
 | `mass_set_collectibles.py` | **Write**: bulk-insert new "collected" records |
 | `clear_category.py` | **Write**: remove every record for a category |
+| `save_checksum.py` | Recomputes/checks the header's two CRC32 checksums (used by the three write tools above) |
 | `me_catalyst_hint_bridge.py` | Working AP hint-bridge proof of concept |
 
 ---
@@ -399,10 +433,17 @@ changes.
 - **The save format's blocks are self-describing but not obviously so** —
   the `[type][keylen][key][vallen][val]` shape only became clear by diffing
   known-length strings against the bytes immediately preceding them.
+- **A pre-existing tool for the same format can save a lot of guessing** —
+  cross-referencing `ploxxxy/frostnibble` (independently reverse-engineered
+  the same save format) pinned down the exact header layout and a CRC32
+  checksum we'd been leaving stale, in minutes, that would otherwise have
+  taken real effort to notice from the raw bytes alone. Worth checking for
+  prior art before assuming something has to be brute-forced from scratch.
 
 ## Credits
 
 - **Meteor** (Discord) — shared the `SDK.zip` live RTTI class dump and the
   `PamProgressionData` struct offsets that seeded Part 2's live-memory
-  work, and pointed at the djb2a hash algorithm that ended up cracking the
-  save file in Part 3.
+  work, pointed at the djb2a hash algorithm that ended up cracking the
+  save file in Part 3, and linked `ploxxxy/frostnibble` (Part 3's header
+  layout + checksum cross-reference, §14 of `FINDINGS.md`).

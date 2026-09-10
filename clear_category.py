@@ -13,6 +13,8 @@ import re
 import struct
 import sys
 
+from save_checksum import recompute_checksums
+
 CATEGORY_PATTERNS = {
     "GridLeaks": re.compile(r"^([A-Za-z]+)GridLeaks_\1CompulsionOrb[0-9A-Fa-f-]{36}$"),
 }
@@ -148,8 +150,9 @@ def main():
     data.extend(b"\x00" * total_removed_bytes)
 
     assert len(data) == original_size, f"size mismatch: {len(data)} != {original_size}"
+    recompute_checksums(data)
     open(args.out, "wb").write(data)
-    print(f"\nwrote {args.out} ({original_size} bytes, unchanged size). Removed {total_removed_bytes} bytes total, padded back out with zeros.")
+    print(f"\nwrote {args.out} ({original_size} bytes, unchanged size). Removed {total_removed_bytes} bytes total, padded back out with zeros. Header/body checksums recomputed.")
     return 0
 
 

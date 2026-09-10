@@ -1840,3 +1840,105 @@ same bridge using the same hash-table pattern; consider smarter location
 selection (progression-item weighting like `ap-client.js`'s
 `getRandomMissingLocation`, rather than uniform random); reconnect/backoff
 resilience for longer unattended runs.
+
+## 14. Cross-referenced against `ploxxxy/frostnibble` (credit: Meteor) -- header format + checksums fully pinned down
+
+Meteor linked a pre-existing web-based PROF_SAVE editor,
+[ploxxxy/frostnibble](https://github.com/ploxxxy/frostnibble) (React +
+TypeScript, `src/lib/{reader,writer,save-file,crc32}.ts`). It targets the
+exact same file format §12 reverse-engineered independently -- its magic
+constant `6001977056592872006n` read as 8 little-endian bytes decodes to
+literally `FBCHUNKS`, confirming both projects arrived at the same format
+from different directions. Reading `save-file.ts`/`writer.ts` (not yet
+looked at when §12/§13 were written) filled in two things our own tooling
+had left as open questions: the exact header layout, and the two CRC32
+checksums it carries that our write tools weren't computing.
+
+**Full header, byte-exact (offsets from file start):**
+
+| Offset | Size | Field | Notes |
+|---|---|---|---|
+| 0 | 8 | magic | `"FBCHUNKS"` |
+| 8 | 2 | version | `1` in every save seen |
+| 10 | 4 | headerSize | `8` in every save seen |
+| 14 | 4 | bodySize | `file_size - 26`; a fixed 1,024,000-byte capacity in every save seen (so total file size is always 1,024,026) |
+| 18 | 4 | **headerHash** | see below |
+| 22 | 4 | headerEntries | section count -- `13` in every save seen |
+| 26 | 4 | **bodyHash** | see below |
+| 30 | — | entries begin | `headerEntries` sections, each `u32 count` + that many `[type][key][value]` records |
+
+This refines §12's "flat sequence of blocks starting at offset 46" model:
+entries actually start at **offset 30**, as exactly `headerEntries` (13)
+fixed sections in a row, each individually prefixed with its own record
+count. In every save examined, sections 0-3 are empty (`count = 0`,
+4 bytes each = 16 bytes, landing at offset 46 -- which is why our
+own block-scanner, starting its search at 46, never noticed anything was
+missing: it just happened to find the first non-empty section there).
+Sections 4-7 hold the real data (one of them, with ~700 KV entries, is
+where the three `ProgressionManagerData*` binary blobs live); sections
+8-12 are empty again. Doesn't change anything about how `decode_save.py`
+et al. read/patch records -- it just explains *why* 46 worked as a
+starting point, and confirms the section count itself never needs to
+change for anything our tools currently do (we only add/remove records
+inside already-occupied sections, never whole sections).
+
+**The two checksums, and the custom CRC32 they use:**
+
+Both `headerHash` (offset 18) and `bodyHash` (offset 26) use a
+non-standard CRC32 variant: the ordinary CRC-32 polynomial/table, but
+seeded with `0x12345678` instead of the usual `0xFFFFFFFF`
+(`frostnibble`'s `crc32.ts`: `let C = ~INITIAL; ...; return ~C`). That is
+*exactly* Python's `zlib.crc32(data, 0x12345678)` -- `zlib.crc32`'s
+second argument is the running/starting CRC and already does the
+invert-in/invert-out bookkeeping, so no manual bit-flipping needed:
+
+```python
+import zlib
+def custom_crc32(data: bytes) -> int:
+    return zlib.crc32(data, 0x12345678) & 0xFFFFFFFF
+```
+
+- `headerHash = custom_crc32(struct.pack("<I", headerEntries))` -- CRC32
+  of just the 4 little-endian bytes of the section count.
+- `bodyHash = byteswap32(custom_crc32(data[30:end_of_file]))` -- CRC32 of
+  everything from the first entry onward (all sections + all zero
+  padding, i.e. offset 30 through EOF), written into the file **byte-swapped**
+  (`frostnibble` calls `swapEndian()` on it before writing, but not on
+  `headerHash`).
+
+**Verified byte-for-byte** against the sample `PROF_SAVE` bundled in
+`frostnibble`'s own repo (`public/assets/PROF_SAVE`): computed
+`headerHash` and `bodyHash` both matched the file's stored values exactly
+using the formulas above. This is about as confirmed as a reverse-engineered
+checksum gets.
+
+**Practical implication for our write tools:** `patch_save.py`,
+`mass_set_collectibles.py`, and `clear_category.py` never touched either
+checksum -- every edit they made left `bodyHash` stale (it covers all the
+entry data, which those tools modify) while `headerHash` stayed valid
+(section count never changes). And yet every one of §12a/§12b/§12c/§13's
+live in-game tests worked perfectly on saves with a stale `bodyHash` --
+counter changed correctly, a real GridLeak vanished from the world, the
+100%-completion RunnerKit reward fired, hints sent live over a real AP
+connection. So Mirror's Edge Catalyst does **not** appear to hard-enforce
+`bodyHash` at load time (at least not to the point of rejecting or
+resetting a save) -- but since it costs nothing to keep correct (and a
+future patch, or Steam Cloud's own integrity checks, could start caring),
+added a small shared helper, `save_checksum.py` (new, in `runtime/`), and
+wired `recompute_checksums()` into all three write tools right before
+they write their output. Nothing else about how those tools work changed.
+
+**One more thing worth a note:** `frostnibble`'s `Entry.typeString` lists
+a type `3 = "Long"` alongside the four we'd already observed (1=Float,
+2=Integer, 4=String, 5=Binary) -- we haven't seen a real `type=3` record
+in any save examined yet, but it's evidently a valid tag in the format,
+worth keeping in mind if a not-yet-understood record ever turns up with
+it. Separately, `frostnibble`'s `PlayerTagEditor.tsx` decodes one
+particular string-type entry as JSON (`{"tagData":{"bg":{"tag":<hash>},
+"detail":{"tag":<hash>},"frame":{"tag":<hash>}}}`) holding the player's
+emblem/card cosmetic choices (background/detail/frame, each a numeric
+hash matched against a hardcoded list of ~140 cosmetic asset names) --
+purely cosmetic, out of scope for a progression randomizer, but confirms
+the save format is used for more than just progression flags and that at
+least one entry's "value" is itself a nested JSON document rather than a
+flat number/string.
