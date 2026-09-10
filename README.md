@@ -8,154 +8,94 @@ screenshots and all — lives in [`FINDINGS.md`](FINDINGS.md) alongside it;
 read that if you want the *why* behind a decision, read this for the *what*
 and *how*.
 
-## Status at a glance
+## Where this stands right now
 
-- **Static game data is fully parsed and named.** Every collectible
-  location, mission, reward, and flag/flag-group in the game's EBX data is
-  extracted, cross-referenced, and given a real name — see Part 1.
-- **The save file format is fully reverse-engineered, and it's the real
-  foundation for a client.** It's uncompressed, unencrypted, and holds
-  every piece of per-save progress (collectibles, missions, security hubs,
-  etc.) as a flat hash table. The hash algorithm is cracked. Both reading
-  *and writing* are confirmed working, live, in-game — see Part 3. **This
-  supersedes the live-memory approach in Part 2**; a client almost
-  certainly doesn't need to touch the running process at all.
-- **A working proof of concept exists**: a standalone script that watches
-  the save file and fires real Archipelago hints the moment you collect a
-  GridLeak in-game. Tested live, works. See Part 4.
-- **Not yet done**: wiring every collectible/objective category (only
-  GridLeaks is wired into the hint bridge so far), granting *new* items
-  from an actual randomizer (only removing/adding "collected" state has
-  been tested, not the full send-and-receive item loop), and finding
-  real in-world coordinates for individual collectibles (nothing found
-  yet — see Open Questions).
+**The hard problem is solved and proven live, end to end.** Mirror's Edge
+Catalyst's save file holds every piece of per-save progress as a flat,
+readable/writable hash table, and a working Archipelago integration already
+exists on top of it:
 
-## Repository layout
+1. **Reading works.** `decode_save.py` turns any `PROF_SAVE` file into full
+   JSON with real names for ~99% of every record — collectibles, missions,
+   security hubs, grid nodes, billboard hacks, everything.
+2. **Writing works, confirmed live in-game, three different ways:**
+   - Flipping one existing record dropped the in-game GridLeaks counter by
+     exactly 1, nothing else changed.
+   - Bulk-inserting 323 "collected" records made a real, physical GridLeak
+     the player was standing in front of **disappear from the world** — the
+     actual object-spawn flag, not just a UI cache.
+   - Pushing a category to a true 100% and reloading triggered a real
+     **"RUNNER KIT DROPPED"** in-game notification — the full mission→reward
+     chain firing for real, purely from a save-file edit.
+3. **A working Archipelago proof of concept exists.**
+   `me_catalyst_hint_bridge.py` watches the save file and fires a real AP
+   hint the moment you collect a GridLeak in-game — **tested live against a
+   real Archipelago room, every GridLeak sent a hint, every time.**
+4. **The file format itself is fully decoded, including both of its CRC32
+   integrity checksums**, cross-referenced and verified byte-exact against
+   an independent save editor ([`ploxxxy/frostnibble`](https://github.com/ploxxxy/frostnibble),
+   linked by Meteor) — see "The save file format" below.
 
-Everything currently sits flat in the repo root (no subfolders) except the
-static dumps and a few early-exploration folders:
+All of this needs **zero live game-memory access** — no injection, no
+Cheat Engine, nothing running alongside the game. It's pure save-file
+read/write, which is what makes it viable as the actual foundation for a
+randomizer client.
+
+**What's not done yet:**
+
+- Only GridLeaks is wired into the hint bridge — other categories
+  (Secret Bags, Electronic Parts, Audio Pickups, Intel, missions, security
+  hubs) are all named and readable, they just need their own hash tables
+  added to the bridge (mechanical, same pattern).
+- Only the "mark collected/uncollected" direction has been tested. A real
+  randomizer also needs *receiving* items from the AP server and writing
+  them into the save — untried so far.
+- No real in-world coordinates for individual collectibles have been found,
+  which would matter for a "go find this specific item" style check.
+
+See "Open questions / next steps" near the bottom for the full list.
+
+## Use what's already built
+
+You don't need to regenerate anything to use the tools below — the parsed
+static data (`gameconfig_dumps/`) and the hash tables are already in this
+repo. All you need is a copy of your own `PROF_SAVE` file (Steam Cloud
+location varies; check `Documents\My Games\Mirror's Edge Catalyst\` first).
+**Always work on a copy, and set Steam offline before testing an edited
+save in-game** — see "Lessons learned" for why.
 
 ```
-FINDINGS.md                        full chronological research log (long)
-README.md                          this file
-.gitignore                         excludes junk/huge/sensitive files, see below
-ebx_parser.py                      hand-built EBX/DbObject parser (Part 1)
-gameconfig_dumps/                  static .bin -> parsed .txt dumps (Part 1)
-build_dependency_graph.py          mission -> reward -> flag graph builder
-dependency_graph.json              ...its output
-extract_ground_truth.py            builds ground_truth.json
-ground_truth.json                  flag-group/location catalog, by name
-dump_progression_state.py          live-memory reader (Part 2, superseded)
-dump_region.py, raw_dump_flags.py, read_addresses*.py, test_walk_oracle.py
-                                    live-memory debugging tools (Part 2)
-decode_save.py                     ** read a save file -> full JSON **
-patch_save.py                      flip one existing record's value
-mass_set_collectibles.py           insert many new records (bulk-collect)
-clear_category.py                  remove every record for a category
-gridleaks_hashes.json              precomputed hash->name table (324 GridLeaks)
-me_catalyst_hint_bridge.py         ** working AP hint-bridge proof of concept **
-SDK/, Collectibles/, Missions/, ui_widgets/, list.csv, usage_list.txt
-                                    earlier exploration / third-party data,
-                                    see .gitignore note on SDK/ before pushing
+# Read: decode a save to full JSON, names resolved
+python decode_save.py PROF_SAVE gameconfig_dumps\PlayerProgressionData_full.txt --out decoded.json
+
+# Write: flip one existing record (safest possible edit)
+python patch_save.py PROF_SAVE --name "ElectronicPartsAcSh_Chip07Taken" --value 0 --out out.sav
+
+# Write: bulk-collect a whole category, holding a few back to still find in-game
+python mass_set_collectibles.py PROF_SAVE gameconfig_dumps\PlayerProgressionData_full.txt --category GridLeaks --leave-uncollected 3 --out out.sav
+
+# Write: reset a category to a clean 0/N starting state
+python clear_category.py PROF_SAVE gameconfig_dumps\PlayerProgressionData_full.txt --category GridLeaks --out out.sav
+
+# The Archipelago proof of concept
+pip install websockets
+python me_catalyst_hint_bridge.py --save "PROF_SAVE" --host <ap-server-host> --port <port> --slot <your-slot-name>
 ```
 
-**Before pushing this folder publicly**, a `.gitignore` is included that
-excludes: Cheat Engine `.CT` tables and other live-memory-era scratch
-output (superseded by Part 3), a ~47MB raw `strings.txt` dump, any real
-`PROF_SAVE*` file (can contain account-identifying data), and the `SDK/`
-folder specifically — that's the RTTI header dump shared privately on
-Discord by Meteor (see Credits), thousands of files, kept locally for
-reference but not this project's to redistribute in bulk.
+Full details on each tool, and on the file format they all operate on, are
+below. If you ever need to *regenerate* the static data dumps from scratch
+(new game version, missing a file, etc.), see "Static game data (EBX)"
+further down — that's optional background, not a prerequisite.
 
 ---
 
-## Part 1 — Static game data (EBX)
+## The save file format
 
-The game's asset/config data (`.bin` files, EBX format) describes every
-collectible, mission, reward, and progression flag in the game, at design
-time. `ebx_parser.py` is a hand-built parser for this format (no official
-EBX library was used) that reads a `.bin` file's field reflection metadata
-and its instance data, and prints/returns a Python structure.
-
-### Key discoveries
-
-- **`Sid` fields are on-disk string-table offsets, not hashes.** They look
-  like small integers but are literally offsets into the file's own string
-  table — trivial to resolve to real text once you know that. This was the
-  single biggest unlock for getting readable names everywhere (mission
-  titles, flag `SyncStatName`s, etc.).
-- **A separate `Hash` field type uses djb2a** (`h = ((h*33) ^ byte) & 0xFFFFFFFF`,
-  seed 5381) — this turned out to be the *general-purpose* string-hashing
-  primitive this engine uses, and resurfaces in Part 3 for the save file's
-  own record keys.
-- **`DbObject`-typed list fields are over-inclusive** (`PamProgressionFlagGroup.Flags`,
-  `PamReward.RewardConditions`, etc.) — they mix in noise refs alongside the
-  real members. The fix: real members are always one specific ref-kind
-  (local ref within the same file, or external ref into a specific other
-  file, depending on the field) and the noise is the other kind. Filtering
-  by ref-kind+type gives clean results.
-- **`FileRef` fields can actually be nested structs**, not always file
-  references — caught this because a naive parse was silently dropping real
-  data (e.g. `PamProgressionMission.MissionDescription`).
-
-### What's extracted
-
-- `PlayerProgressionData.bin` → every `PamProgressionFlag`, `PamProgressionFlagGroup`,
-  and `PamProgressionMission` (152 missions, ~2,500 flags), with real names.
-- `RewardsData.bin` → every `PamReward` and its `RewardCondition`s (9 known
-  subtypes: flag threshold, flag-group completion, mission(s) completed, etc.)
-- **Zone/district naming fully solved** by cross-referencing in-game
-  "World Progression" screenshots against summed flag-group counts:
-  `Rz`=Rezoning, `Dt`=Downtown, `Ac`=Anchor, `Vw`=The View, plus
-  `Trainstation`=Zephyr Transit Hub and `TheShard`=the final story mission.
-  Separately, the save file revealed the internal name **"Construction"
-  displays in-game as "Glass"**.
-- **`build_dependency_graph.py`** ties `PlayerProgressionData.bin` and
-  `RewardsData.bin` together into one real graph: which flag/flag-group/
-  mission-completion unlocks which reward. Output: `dependency_graph.json`
-  (67 rewards, 162 conditions, zero unresolved lookups).
-- **`ground_truth.json`** (via `extract_ground_truth.py`) is the flat
-  catalog of every flag group and its real flag count, used throughout as
-  a source of truth to check live/save data against.
-
----
-
-## Part 2 — Live memory (superseded, kept for reference)
-
-Before the save file was discovered, the plan was to read/write the
-game's live process memory. This is **no longer the recommended
-approach** — Part 3 does everything this was trying to do, more reliably,
-without touching the running game at all. Kept here because the
-architectural understanding might still be useful (e.g. for a "detect a
-change right now without waiting for a save" nice-to-have).
-
-- Meteor shared a full C++ header dump (`SDK.zip`,
-  generated from the game's own RTTI) giving real struct offsets for
-  `PamProgressionData` and friends. `dump_progression_state.py` walks
-  `module_base + 0x257cb98 → PamProgressionSettings* → +0x20 →
-  PamProgressionData*` and reads out every flag/flag-group/mission live —
-  confirmed working, matches static data almost field-for-field.
-- **Critical finding: this address chain only exposes static config, never
-  per-save state.** Byte-diffed the entire live allocation pool around real
-  collection events — zero bytes changed, ever. Whatever tracks "have I
-  collected this" is not here.
-- Spent a long live-debugging session (Cheat Engine, manual disassembly)
-  tracing the write path for *aggregate* counters (e.g. "GridLeaks:
-  181/324") instead. Found a generic, reflection-based field-write
-  mechanism and a shared observer/broadcast system, confirmed identical
-  across two independent categories — architecturally interesting, but it
-  only ever reaches aggregate UI counters, never the per-item state either.
-  This whole thread is what the save-file discovery in Part 3 made moot.
-
----
-
-## Part 3 — The save file (the real foundation)
-
-**This is the important part.** Mirror's Edge Catalyst's save file
-(`PROF_SAVE`) holds every piece of per-save progress, is **not compressed
-or encrypted** (whole-file entropy ~0.4 bits/byte — trivially readable with
-`strings`), and both reading and writing it are confirmed to work exactly
-as the live game expects.
+Mirror's Edge Catalyst's save file (`PROF_SAVE`) holds every piece of
+per-save progress, is **not compressed or encrypted** (whole-file entropy
+~0.4 bits/byte — trivially readable with `strings`), and both reading and
+writing it are confirmed to work exactly as the live game expects (see the
+tested-live list above).
 
 ### File format
 
@@ -236,12 +176,13 @@ def djb2a(data: bytes) -> int:
 ```
 
 Applied to the **UTF-8 bytes of the item's internal name** (`Name` /
-`SyncStatName` / `ActiveNameSid` / etc. from Part 1's static data), **no
+`SyncStatName` / `ActiveNameSid` / etc. from the static game data), **no
 trailing NUL**. Building a candidate dictionary from every resolved name
 string already known from `PlayerProgressionData_full.txt` (3,342 unique
 strings, zero collisions) resolves **99%+ of every record on the first
-try** — this is the same djb2a already known from Part 1's `Hash` field
-type; turns out to be the engine's general string-hashing primitive.
+try** — this is the same djb2a used by the static EBX data's own `Hash`
+field type (see "Static game data" below); turns out to be the engine's
+general string-hashing primitive.
 
 Example of what a decoded record looks like:
 
@@ -309,8 +250,9 @@ individually:
    — this is the actual object-spawn flag, not a UI-only cache.
 4. **Rewards fire correctly**: pushing a category to a true 100% (324/324
    GridLeaks) and reloading triggered a real **"RUNNER KIT DROPPED"**
-   notification in-game — the full mission→reward chain from Part 1's
-   `dependency_graph.json` firing for real, purely from a save-file edit.
+   notification in-game — the full mission→reward chain from the static
+   data's `dependency_graph.json` firing for real, purely from a save-file
+   edit.
 
 **Gotcha**: Steam Cloud will silently re-sync your original save over an
 edited one if it's online — always set Steam offline before swapping in a
@@ -319,7 +261,7 @@ not a real negative result.
 
 ---
 
-## Part 4 — Archipelago hint bridge (working proof of concept)
+## The Archipelago hint bridge (working proof of concept)
 
 `me_catalyst_hint_bridge.py` is a standalone Python script proving out the
 actual use case: **real ME:C gameplay driving a real Archipelago
@@ -362,39 +304,152 @@ changes.
 
 | Script | Purpose |
 |---|---|
-| `ebx_parser.py` | Parses a raw `.bin` EBX file into Python structures |
-| `extract_ground_truth.py` | Builds `ground_truth.json` (flag-group catalog) |
-| `build_dependency_graph.py` | Builds `dependency_graph.json` (mission→reward→flag) |
-| `dump_progression_state.py` | Live-memory reader (superseded — Part 2) |
 | `decode_save.py` | **Read** a save file → full JSON, names resolved |
 | `patch_save.py` | **Write**: flip one existing record's value |
 | `mass_set_collectibles.py` | **Write**: bulk-insert new "collected" records |
 | `clear_category.py` | **Write**: remove every record for a category |
 | `save_checksum.py` | Recomputes/checks the header's two CRC32 checksums (used by the three write tools above) |
 | `me_catalyst_hint_bridge.py` | Working AP hint-bridge proof of concept |
+| `ebx_parser.py` | Parses a raw `.bin` EBX file into Python structures |
+| `extract_ground_truth.py` | Builds `ground_truth.json` (flag-group catalog) |
+| `build_dependency_graph.py` | Builds `dependency_graph.json` (mission→reward→flag) |
+| `dump_progression_state.py` | Live-memory reader (superseded, see below) |
 
 ---
 
-## Getting started (picking this up from scratch)
+## Static game data (EBX)
 
-1. You need the game's static data extracted as EBX `.bin` files (via
-   Frosty Editor or similar) — `PlayerProgressionData.bin` and
-   `RewardsData.bin` at minimum. Parse them with `ebx_parser.py` (see
-   `gameconfig_dumps/*_full.txt` for the expected output shape) or re-run
-   `extract_ground_truth.py` / `build_dependency_graph.py` to regenerate
-   the JSON catalogs.
-2. You need a copy of the game's `PROF_SAVE` file (and ideally its
-   siblings — `PROF_SAVE_profile` etc., only lightly examined so far).
-   Typical location hasn't been 100% pinned down in this doc — check
-   `Documents\My Games\Mirror's Edge Catalyst\` first, or wherever Steam
-   Cloud/your OS keeps it.
+Background material: this is *how* the real names used everywhere above
+were resolved, and it's what `gameconfig_dumps/` already contains
+pre-extracted. You only need this section if you're regenerating that data
+from scratch (new game version, or a missing/corrupt dump).
+
+The game's asset/config data (`.bin` files, EBX format) describes every
+collectible, mission, reward, and progression flag in the game, at design
+time. `ebx_parser.py` is a hand-built parser for this format (no official
+EBX library was used) that reads a `.bin` file's field reflection metadata
+and its instance data, and prints/returns a Python structure.
+
+### Key discoveries
+
+- **`Sid` fields are on-disk string-table offsets, not hashes.** They look
+  like small integers but are literally offsets into the file's own string
+  table — trivial to resolve to real text once you know that. This was the
+  single biggest unlock for getting readable names everywhere (mission
+  titles, flag `SyncStatName`s, etc.).
+- **A separate `Hash` field type uses djb2a** (`h = ((h*33) ^ byte) & 0xFFFFFFFF`,
+  seed 5381) — this turned out to be the *general-purpose* string-hashing
+  primitive this engine uses, and resurfaces above for the save file's own
+  record keys.
+- **`DbObject`-typed list fields are over-inclusive** (`PamProgressionFlagGroup.Flags`,
+  `PamReward.RewardConditions`, etc.) — they mix in noise refs alongside the
+  real members. The fix: real members are always one specific ref-kind
+  (local ref within the same file, or external ref into a specific other
+  file, depending on the field) and the noise is the other kind. Filtering
+  by ref-kind+type gives clean results.
+- **`FileRef` fields can actually be nested structs**, not always file
+  references — caught this because a naive parse was silently dropping real
+  data (e.g. `PamProgressionMission.MissionDescription`).
+
+### What's extracted
+
+- `PlayerProgressionData.bin` → every `PamProgressionFlag`, `PamProgressionFlagGroup`,
+  and `PamProgressionMission` (152 missions, ~2,500 flags), with real names.
+- `RewardsData.bin` → every `PamReward` and its `RewardCondition`s (9 known
+  subtypes: flag threshold, flag-group completion, mission(s) completed, etc.)
+- **Zone/district naming fully solved** by cross-referencing in-game
+  "World Progression" screenshots against summed flag-group counts:
+  `Rz`=Rezoning, `Dt`=Downtown, `Ac`=Anchor, `Vw`=The View, plus
+  `Trainstation`=Zephyr Transit Hub and `TheShard`=the final story mission.
+  Separately, the save file revealed the internal name **"Construction"
+  displays in-game as "Glass"**.
+- **`build_dependency_graph.py`** ties `PlayerProgressionData.bin` and
+  `RewardsData.bin` together into one real graph: which flag/flag-group/
+  mission-completion unlocks which reward. Output: `dependency_graph.json`
+  (67 rewards, 162 conditions, zero unresolved lookups).
+- **`ground_truth.json`** (via `extract_ground_truth.py`) is the flat
+  catalog of every flag group and its real flag count, used throughout as
+  a source of truth to check live/save data against.
+
+### Regenerating the dumps
+
+1. Extract the game's static data as EBX `.bin` files (via Frosty Editor or
+   similar) — `PlayerProgressionData.bin` and `RewardsData.bin` at minimum.
+2. Parse them with `ebx_parser.py` (see `gameconfig_dumps/*_full.txt` for
+   the expected output shape) or re-run `extract_ground_truth.py` /
+   `build_dependency_graph.py` to regenerate the JSON catalogs.
 3. Run `decode_save.py your_save PlayerProgressionData_full.txt --out
-   decoded.json` to confirm the pipeline works end to end on your data —
-   should resolve ~99% of records.
-4. From there: use `patch_save.py`/`mass_set_collectibles.py`/
-   `clear_category.py` to experiment (always on a copy, Steam offline), or
-   go straight to `me_catalyst_hint_bridge.py` if the goal is the
-   Archipelago integration.
+   decoded.json` to confirm the pipeline still resolves ~99% of records
+   against your regenerated data.
+
+---
+
+## Live memory access (superseded, kept for reference)
+
+Before the save file was discovered, the plan was to read/write the
+game's live process memory. This is **no longer the recommended
+approach** — everything above does what this was trying to do, more
+reliably, without touching the running game at all. Kept here because the
+architectural understanding might still be useful (e.g. for a "detect a
+change right now without waiting for a save" nice-to-have).
+
+- Meteor shared a full C++ header dump (`SDK.zip`,
+  generated from the game's own RTTI) giving real struct offsets for
+  `PamProgressionData` and friends. `dump_progression_state.py` walks
+  `module_base + 0x257cb98 → PamProgressionSettings* → +0x20 →
+  PamProgressionData*` and reads out every flag/flag-group/mission live —
+  confirmed working, matches static data almost field-for-field.
+- **Critical finding: this address chain only exposes static config, never
+  per-save state.** Byte-diffed the entire live allocation pool around real
+  collection events — zero bytes changed, ever. Whatever tracks "have I
+  collected this" is not here.
+- Spent a long live-debugging session (Cheat Engine, manual disassembly)
+  tracing the write path for *aggregate* counters (e.g. "GridLeaks:
+  181/324") instead. Found a generic, reflection-based field-write
+  mechanism and a shared observer/broadcast system, confirmed identical
+  across two independent categories — architecturally interesting, but it
+  only ever reaches aggregate UI counters, never the per-item state either.
+  This whole thread is what the save-file discovery above made moot.
+
+---
+
+## Repository layout
+
+Everything currently sits flat in the repo root (no subfolders) except the
+static dumps and a few early-exploration folders:
+
+```
+FINDINGS.md                        full chronological research log (long)
+README.md                          this file
+.gitignore                         excludes junk/huge/sensitive files, see below
+ebx_parser.py                      hand-built EBX/DbObject parser
+gameconfig_dumps/                  static .bin -> parsed .txt dumps
+build_dependency_graph.py          mission -> reward -> flag graph builder
+dependency_graph.json              ...its output
+extract_ground_truth.py            builds ground_truth.json
+ground_truth.json                  flag-group/location catalog, by name
+dump_progression_state.py          live-memory reader (superseded)
+dump_region.py, raw_dump_flags.py, read_addresses*.py, test_walk_oracle.py
+                                    live-memory debugging tools (superseded)
+decode_save.py                     ** read a save file -> full JSON **
+patch_save.py                      flip one existing record's value
+mass_set_collectibles.py           insert many new records (bulk-collect)
+clear_category.py                  remove every record for a category
+save_checksum.py                   recomputes the save's two CRC32 checksums
+gridleaks_hashes.json              precomputed hash->name table (324 GridLeaks)
+me_catalyst_hint_bridge.py         ** working AP hint-bridge proof of concept **
+SDK/, Collectibles/, Missions/, ui_widgets/, list.csv, usage_list.txt
+                                    earlier exploration / third-party data,
+                                    see .gitignore note on SDK/ before pushing
+```
+
+**Before pushing this folder publicly**, a `.gitignore` is included that
+excludes: Cheat Engine `.CT` tables and other live-memory-era scratch
+output (superseded), a ~47MB raw `strings.txt` dump, any real
+`PROF_SAVE*` file (can contain account-identifying data), and the `SDK/`
+folder specifically — that's the RTTI header dump shared privately on
+Discord by Meteor (see Credits), thousands of files, kept locally for
+reference but not this project's to redistribute in bulk.
 
 ---
 
@@ -443,7 +498,7 @@ changes.
 ## Credits
 
 - **Meteor** (Discord) — shared the `SDK.zip` live RTTI class dump and the
-  `PamProgressionData` struct offsets that seeded Part 2's live-memory
-  work, pointed at the djb2a hash algorithm that ended up cracking the
-  save file in Part 3, and linked `ploxxxy/frostnibble` (Part 3's header
+  `PamProgressionData` struct offsets that seeded the live-memory work
+  above, pointed at the djb2a hash algorithm that ended up cracking the
+  save file, and linked `ploxxxy/frostnibble` (the save file's header
   layout + checksum cross-reference, §14 of `FINDINGS.md`).

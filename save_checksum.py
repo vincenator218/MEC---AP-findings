@@ -5,7 +5,7 @@ that live in every PROF_SAVE header, so our write tools stop leaving them
 stale after an edit.
 
 Full header layout (confirmed byte-exact against ploxxxy/frostnibble's
-save editor -- see FINDINGS.md Part 3 for the derivation and a worked
+save editor -- see FINDINGS.md §14 for the derivation and a worked
 example against a real save file; that repo was shared with us by Meteor
 on Discord):
 
@@ -25,7 +25,7 @@ on Discord):
     offset 26 (u32 LE): bodyHash     = byteswap32(crc32(data[30:EOF]))
     offset 30:          entries begin (headerEntries sections, each a u32
                          count followed by that many [type,key,value]
-                         records -- see FINDINGS.md Part 3)
+                         records -- see FINDINGS.md §12)
 
 Both hashes use a *non-standard* CRC32: the normal CRC-32 polynomial/
 table, but seeded with 0x12345678 instead of the usual 0xFFFFFFFF.
@@ -34,7 +34,7 @@ second argument is the running/starting CRC and it already does the
 invert-in/invert-out bookkeeping internally, so no manual bit flipping
 is needed on our end.
 
-None of our own live-in-game write tests (see FINDINGS.md Part 3, "write
+None of our own live-in-game write tests (see FINDINGS.md §12a-§12c, "write
 path confirmed") showed the game rejecting or resetting a save with a
 stale bodyHash, so this doesn't appear to be strictly enforced at load
 time -- but it costs nothing to keep correct (Steam Cloud or a future
