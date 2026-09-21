@@ -24,3 +24,11 @@ PROF_SAVE*
 # -- thousands of files, and not this project's to redistribute in bulk.
 # Keep locally for reference; don't publish wholesale.
 SDK/
+
+# Community save sets (real save files without the PROF_SAVE name) and
+# decoded save dumps -- the section keys can carry account-derived IDs.
+0percent*/
+decoded_check.json
+
+# Local working copies of files that also live in runtime/
+Claude outputs/

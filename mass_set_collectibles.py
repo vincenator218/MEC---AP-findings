@@ -28,9 +28,13 @@ Usage:
 AudioPickup/Intel follow a similar but not identical pattern per §10h/§12
 and aren't pattern-matched here yet).
 
-ALWAYS work on a copy, and set Steam (or any cloud sync) offline before
-testing in-game, or the sync can silently revert your edit before the game
-even reads it (see FINDINGS.md §12a round 1).
+ALWAYS work on a copy. The game must be fully closed while you write this
+edit -- a running session never re-reads the save file at all and will
+overwrite your edit with its own stale state (see FINDINGS.md §15/§15a/§15b).
+Steam's online/offline state does not matter either way -- an earlier note
+here blamed a failed test on Steam Cloud, but that was a misdiagnosis of a
+mis-executed command, not real cloud interference (see FINDINGS.md's
+correction note right after §12a).
 """
 import argparse
 import re

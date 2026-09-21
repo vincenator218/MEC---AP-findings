@@ -4,10 +4,7 @@ save_checksum.py -- computes and patches the two CRC32 integrity fields
 that live in every PROF_SAVE header, so our write tools stop leaving them
 stale after an edit.
 
-Full header layout (confirmed byte-exact against ploxxxy/frostnibble's
-save editor -- see FINDINGS.md §14 for the derivation and a worked
-example against a real save file; that repo was shared with us by Meteor
-on Discord):
+Full header layout:
 
     offset  0 (u64 LE): magic "FBCHUNKS"
     offset  8 (u16 LE): version
@@ -22,7 +19,7 @@ on Discord):
                                         records inside them, so this
                                         never changes and headerHash
                                         never goes stale)
-    offset 26 (u32 LE): bodyHash     = byteswap32(crc32(data[30:EOF]))
+    offset 26 (u32 LE): bodyHash     = crc32(data[30:EOF])
     offset 30:          entries begin (headerEntries sections, each a u32
                          count followed by that many [type,key,value]
                          records -- see FINDINGS.md §12)
@@ -33,6 +30,21 @@ That's exactly Python's zlib.crc32(data, 0x12345678) -- zlib.crc32's
 second argument is the running/starting CRC and it already does the
 invert-in/invert-out bookkeeping internally, so no manual bit flipping
 is needed on our end.
+
+Neither field has any byte-swap applied -- both are stored as the plain
+CRC32 result, same as any other u32 in this format. (An earlier version
+of this file copied a byte-swap from ploxxxy/frostnibble's write code,
+on the theory it matched the real save format -- it didn't. Checked
+directly against two of the project's original, completely untouched
+save files [never run through any of our tools or frostnibble's], both
+predating any of this project's editing: bodyHash matches the swap-free
+formula exactly, headerHash always did. frostnibble's own write path
+has a bug here [it has an unfinished/WIP writer, by their own TODO
+comment] -- harmless for their tool since they never re-read their own
+writes against the real game, but worth not propagating further. This
+also retroactively explains an early, never-identified raw byte sequence
+from this project's own notes, `e95dbf3f` -- that's the byte-swapped
+misreading of this exact field.)
 
 None of our own live-in-game write tests (see FINDINGS.md §12a-§12c, "write
 path confirmed") showed the game rejecting or resetting a save with a
@@ -56,10 +68,6 @@ def custom_crc32(data: bytes) -> int:
     return zlib.crc32(data, CUSTOM_CRC32_SEED) & 0xFFFFFFFF
 
 
-def swap32(value: int) -> int:
-    return struct.unpack(">I", struct.pack("<I", value))[0]
-
-
 def recompute_checksums(data: bytearray) -> None:
     """Patches offsets 18 (headerHash) and 26 (bodyHash) in place so they
     match the current contents of `data`. Safe to call on any buffer that
@@ -68,7 +76,7 @@ def recompute_checksums(data: bytearray) -> None:
     header_hash = custom_crc32(struct.pack("<I", header_entries))
     struct.pack_into("<I", data, 18, header_hash)
 
-    body_hash = swap32(custom_crc32(bytes(data[30:])))
+    body_hash = custom_crc32(bytes(data[30:]))
     struct.pack_into("<I", data, 26, body_hash)
 
 

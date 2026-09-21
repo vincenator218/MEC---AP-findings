@@ -32,9 +32,10 @@ exists on top of it:
    hint the moment you collect a GridLeak in-game — **tested live against a
    real Archipelago room, every GridLeak sent a hint, every time.**
 4. **The file format itself is fully decoded, including both of its CRC32
-   integrity checksums**, cross-referenced and verified byte-exact against
-   an independent save editor ([`ploxxxy/frostnibble`](https://github.com/ploxxxy/frostnibble),
-   linked by Meteor) — see "The save file format" below.
+   integrity checksums**, cross-referenced against an independent save
+   editor ([`ploxxxy/frostnibble`](https://github.com/ploxxxy/frostnibble),
+   linked by Meteor) and verified byte-exact against the project's own
+   original, unedited save files — see "The save file format" below.
 
 All of this needs **zero live game-memory access** — no injection, no
 Cheat Engine, nothing running alongside the game. It's pure save-file
@@ -47,9 +48,13 @@ randomizer client.
   (Secret Bags, Electronic Parts, Audio Pickups, Intel, missions, security
   hubs) are all named and readable, they just need their own hash tables
   added to the bridge (mechanical, same pattern).
-- Only the "mark collected/uncollected" direction has been tested. A real
-  randomizer also needs *receiving* items from the AP server and writing
-  them into the save — untried so far.
+- Only "mark collected/uncollected" has been tested, and it's now
+  confirmed the game has to be **fully closed** while the save is edited
+  — editing while it's running gets silently overwritten by the game's
+  own stale in-memory state, but closed-edit-then-launch works reliably
+  (tested directly both ways — see `FINDINGS.md` §15/§15a/§15b). So a
+  receive-item design needs to queue items and apply them between
+  sessions, not try to inject them into an already-running one.
 - No real in-world coordinates for individual collectibles have been found,
   which would matter for a "go find this specific item" style check.
 
@@ -59,8 +64,8 @@ See "Open questions / next steps" near the bottom for the full list.
 
 You don't need to regenerate anything to use the tools below — the parsed
 static data (`gameconfig_dumps/`) and the hash tables are already in this
-repo. All you need is a copy of your own `PROF_SAVE` file (Steam Cloud
-location varies; check `Documents\My Games\Mirror's Edge Catalyst\` first).
+repo. All you need is a copy of your own `PROF_SAVE` file — confirmed
+location: `Documents\Mirrors Edge Catalyst\settings\PROF_SAVE`.
 **Always work on a copy, and set Steam offline before testing an edited
 save in-game** — see "Lessons learned" for why.
 
@@ -137,13 +142,17 @@ to care, as long as total file size stays constant.
 
 **Checksums:** both `headerHash` and `bodyHash` use a non-standard CRC32
 (standard table/polynomial, seeded with `0x12345678` instead of the usual
-`0xFFFFFFFF` — exactly `zlib.crc32(data, 0x12345678)` in Python).
-`headerHash = crc32(le_bytes(headerEntries))`; `bodyHash =
-byteswap32(crc32(data[30:end_of_file]))`. Verified against
-`frostnibble`'s own bundled sample save, byte for byte. None of our live
-in-game write tests showed the game rejecting a save with a stale
-`bodyHash`, so it doesn't appear to be strictly enforced at load — but
-`save_checksum.py` (below) recomputes both correctly, and every write
+`0xFFFFFFFF` — exactly `zlib.crc32(data, 0x12345678)` in Python), with
+**no byte-swap on either field**: `headerHash = crc32(le_bytes(headerEntries))`,
+`bodyHash = crc32(data[30:end_of_file])`. Verified against the project's
+own two original, completely unedited save files (predating any tool
+touching them) — both match exactly. (An earlier version of this doc had
+`bodyHash` byte-swapped, copied from `frostnibble`'s write code — that
+turned out to be a bug specific to their tool, not the real format; see
+`FINDINGS.md` §15a for the full story, including how it got caught.) None
+of our live in-game write tests showed the game rejecting a save with a
+stale `bodyHash`, so it doesn't appear to be strictly enforced at load —
+but `save_checksum.py` (below) recomputes both correctly, and every write
 tool calls it before writing output, so this is a non-issue either way.
 
 Three `type=5` entries hold the real progression data: `ProgressionManagerData`,
@@ -297,6 +306,50 @@ pattern — one regex per category) for Secret Bags / Electronic Parts /
 Audio Pickups / Intel / missions / security hubs (naming patterns are all
 documented above), merge into one table, and the polling loop barely
 changes.
+
+---
+
+## A real randomizer game design (skip the story, gate abilities as items)
+
+Full writeup: `FINDINGS.md` §17. Short version: skip tracking story
+missions at all — ship a starting save with the story already marked
+complete (map/fast travel/security hubs all open) but none of the
+movement/combat ability unlocks granted, then have Archipelago items
+grant those one at a time. Time Trials become the replayable content the
+player actually engages with, and since individual completions aren't
+save-tracked (see above), the Electronic Parts sitting along trial routes
+serve as the real, save-verifiable checks instead.
+
+This is concretely buildable with what's already been found:
+
+- **58 individually-flagged `Unlocks_*` abilities** (movement, combat,
+  health tiers) — confirmed live, not just in static data: a reference
+  save has 34/58 unlocked and 24 still locked, and they're already
+  readable/writable with `patch_save.py` today, no new tooling needed for
+  single flags.
+- **`XP` / `XP_Gained` / `XP_Used`** — the skill-point currency behind
+  them, confirmed in the same save (`81952` gained / `29000` spent).
+  Zeroing or capping this is what stops a player from just buying every
+  ability at the menu the moment the save loads.
+- **The grapple hook is the one hard exception** — story-gated separately
+  (`CriticalPathProgression_HasCollectedMagRope*`), not part of the
+  general unlock pool, since it's required to physically progress at all.
+
+Two things still need a live test (not yet run, same style as every other
+write test in this project): whether forcing missions "complete" leaves
+`Unlocks_*` alone or recomputes/grants them at load, and whether clearing
+an already-`true` `Unlocks_*` flag actually disables that ability in-game
+the way it did for GridLeaks (§12b).
+
+Also explored: actually intercepting the game's now-dead online traffic,
+since EA shut down Catalyst's servers in December 2023 and there's a real
+community effort already rerouting this game's network calls
+([Beat Revival](https://github.com/Beat-Revival),
+[`ploxxxy/pamplona-future`](https://github.com/ploxxxy/pamplona-future),
+[`grid-leak/blaze`](https://github.com/grid-leak/blaze)) — none of them
+have published the time-trial wire format yet, and doing this ourselves
+would be a genuinely separate project (Docker/Rust, DNS or hosts-file
+redirection, a real MITM setup), not an extension of the save-file tools.
 
 ---
 
@@ -464,12 +517,23 @@ reference but not this project's to redistribute in bulk.
   once to be safe. Worth isolating.
 - **Only GridLeaks is wired into the hint bridge.** Other categories need
   their own hash tables (mechanical, same pattern).
-- **The write path has only been tested for "mark as collected/
-  uncollected."** A real randomizer client also needs the *receive*
-  direction — granting an item from the AP server should presumably also
-  write into this same table; untested whether that's sufficient or if
-  something else (inventory, unlocks outside progression flags) also needs
-  touching for certain item types.
+- **RESOLVED — the write path needs the game fully closed during the
+  edit, confirmed both ways.** First tried editing while the game stayed
+  running (`FINDINGS.md` §15a): mass-set all 324 GridLeaks, then tried
+  every trigger from standing still up through pause menu, checkpoint
+  respawn, zone transition, explicit reload, and a full quit+relaunch —
+  none of them showed the edit. A checksum check proved why: the
+  already-running process still held its old in-memory progression state
+  and wrote that whole state back over our edit before any reload had an
+  edited file to actually load. Redid it with the game **fully closed**
+  during the edit (§15b): same edit, then launched fresh — **324/324
+  GridLeaks, confirmed in-game.** So the rule for a receive-item design is
+  settled: the game must not be running while the save is written to;
+  queue items and apply them between sessions, don't try to inject them
+  into an already-running one. Whether some in-game action can force an
+  already-running session to safely reload without losing its own
+  concurrent progress is a separate, still-open question, but no longer
+  a blocker for a first working design.
 - **~1% of records still don't resolve** to a known name — likely need a
   wider static-data source (achievements, `RunnerKitDefinitionsMeta`, full
   `MissionDescription` sub-fields) added to the candidate-string dictionary.

@@ -1643,6 +1643,21 @@ Documents 14, Secret Bags 11, Electronic Parts 116, Security Hubs 8/8,
 GridNodes 3/4, Opportunity Missions 6/40, Billboard Hacks 2/12) stayed
 byte-for-byte identical, as expected from a single-record edit.
 
+**Correction, added later (§19-adjacent): round 1's "Steam Cloud"
+diagnosis above was wrong.** Retested much later with Steam online (not
+offline) on a game-closed edit, and the edit held fine -- no cloud
+reversion. Round 1's actual cause is now believed to be a mis-executed
+command on that very first attempt (a mis-paste), not cloud sync fighting
+the write. Combined with §15/§15a/§15b's later, much more rigorous
+finding (a *running* game session never re-reads the save file at all,
+completely independent of Steam's online/offline state), the honest
+conclusion is: **Steam Cloud sync has never actually been shown to
+interfere with a save edit in this entire project.** The "set Steam
+offline first" caution baked into some tool docstrings below predates
+this correction and is stricter than necessary -- harmless to keep doing,
+but not something a receive-item design needs to rely on or automate
+around.
+
 **This is the confirmation the whole project has been building toward:**
 the save file is not just readable, it's *writable* -- flipping one
 `{hash, value}` record is enough to change what the live game reports as
@@ -1942,3 +1957,3325 @@ purely cosmetic, out of scope for a progression randomizer, but confirms
 the save format is used for more than just progression flags and that at
 least one entry's "value" is itself a nested JSON document rather than a
 flat number/string.
+
+## 15. Open concern: does a live game session ever re-read the save file, or only reload it?
+
+Raised directly: if a future AP client wants to *grant* a received item
+mid-session by writing into the save file, will the already-running game
+actually notice? Worth being precise about what §12/§13 actually showed,
+because the two directions aren't equally proven:
+
+- **Game -> file, confirmed continuous, no special trigger needed.** §13's
+  hint bridge polls the save file every few seconds *while the player is
+  actively playing* and picks up every new collection in near-real-time --
+  so the running game does write per-item state out to disk during live
+  play, not just at an explicit "Save Game" menu action.
+- **File -> game, only confirmed at a load boundary, not proven mid-play.**
+  Re-reading §12b's own wording closely: the disappearing GridLeak was
+  observed "the moment **the edited save loaded**" -- i.e. there was a
+  load event (the player swapped the file in, then continued/loaded the
+  save) between the edit and the effect. Every other confirmed write test
+  (§12a's counter drop, §12c's RunnerKit drop) followed the same
+  edit-then-load pattern. **None of them tested editing the file while an
+  already-running session just kept playing, with no menu/reload/respawn
+  in between.** So "will a live session pick up an external edit with zero
+  trigger at all" is genuinely untested, not confirmed -- and the more
+  likely architecture (common in this kind of engine) is that progression
+  state gets loaded into memory once at a load boundary and only flows
+  memory-to-disk from there, not the other way, until the next load.
+
+**Why this matters for "receive item mid-game":** if that guess is right,
+writing a newly-received item into the save file while the player keeps
+playing uninterrupted would do exactly what the concern predicts --
+nothing, until *something* forces the game to reload progression state
+from disk. The open question is how cheap that "something" is. Candidates,
+cheapest to most disruptive, none tested yet:
+1. Opening/closing the pause menu.
+2. A checkpoint respawn (dying, or using an in-game "reset to checkpoint").
+3. Crossing a district/zone streaming boundary (this is an open-world
+   Frostbite game -- streaming loads happen constantly as you move, and
+   might carry a partial resync with them).
+4. Fully reloading the save from the main menu.
+5. Fully restarting the game process.
+
+**Save file location, confirmed:** `Documents\Mirrors Edge Catalyst\settings\PROF_SAVE` (previously unconfirmed/guessed at in this doc).
+
+**Suggested next test, cheap and conclusive:** with Steam offline, start a
+session, note a specific not-yet-collected item, then *while staying in
+that same session* edit the save to mark something new as collected/
+granted -- but this time deliberately test the candidate triggers above
+one at a time (just keep walking first and confirm nothing changes; then
+try opening/closing the pause menu; then try a checkpoint respawn; then a
+zone transition) rather than going straight to a full save-reload like
+every test so far has. Whichever is the *cheapest* trigger that actually
+works is the one a receive-item flow should lean on -- e.g. if a pause-menu
+open/close is enough, a companion tool could plausibly even simulate that
+input automatically after writing a new item; if only a full relaunch
+works, a receive-loop instead has to queue items and tell the player
+"restart to receive," which is a materially worse experience worth knowing
+about now rather than after a client is built around the wrong assumption.
+
+### 15a. Ran the test. Result: a live session overwrites an external edit with its own stale state -- and this surfaced a real checksum bug as a side effect.
+
+With Steam confirmed offline, mass-set all 324 GridLeaks to collected
+while the game was already running, then walked through the trigger
+ladder: standing still, pause menu open/close, a checkpoint respawn, a
+zone transition, and an explicit Load/Continue -- **none of them showed
+any change.** Collected one real GridLeak manually along the way (it was
+still there and pickable, confirming none of the lighter triggers had any
+effect up to that point), then did a full quit and relaunch as the final
+step. **Still no change -- World Progression GridLeaks stayed at the
+original baseline**, not the expected 324/324.
+
+This breaks the pattern of every earlier confirmed write test (§12a-§12c),
+which all worked. The difference this time: the game process was left
+*running* through the entire edit, instead of being closed first. Checked
+what was actually on disk afterward with `save_checksum.py`, and its
+`bodyHash` no longer matched what our own tool had written -- **direct
+proof the file was rewritten by something else after our edit**, since
+nothing else in this pipeline writes that field. The most likely
+mechanism: the already-running game process holds its own complete
+in-memory copy of progression state, loaded *before* the file was edited.
+Collecting the GridLeak manually got tracked against that old in-memory
+copy, and at some point (the manual collection's own write-out, an
+autosave, or the quit itself) the game wrote its **entire** in-memory
+state back to disk -- silently overwriting all 323 externally-inserted
+records with the stale pre-edit picture, before the "reload" ever had a
+save reflecting our edit to actually load. Steam Cloud was ruled out
+(confirmed offline throughout), so this looks like the real explanation,
+not a repeat of §12a round 1's confound.
+
+**Practical fix for testing (and a real constraint for any future receive
+design):** the game must be **fully closed, not just at a menu**, before
+externally editing the save -- otherwise a live process can and will
+clobber the edit with its own state at its next write-out. Every earlier
+successful write test (§12a-§12c) was, in hindsight, very likely done with
+the game not actively running through the edit -- which is exactly why
+they worked and this one didn't. This doesn't yet answer whether an
+*already-launched* session can ever be made to pick up new state without
+a full relaunch -- it just rules out "edit while it's running and hope" as
+a way to test that.
+
+**Side effect: this exposed a real bug in §14's checksum formula.**
+Comparing the stored (post-overwrite, game-authored) `bodyHash` against
+what our tool would compute revealed they differed by exactly a 4-byte
+reversal -- i.e. our formula's byte-swap was backwards. Checked directly
+against the project's two *original* save files (`PROF_SAVE` and
+`PROF_SAVE_backup`, uploaded early in this project, never touched by any
+of our tools or by `frostnibble`'s editor): both have `bodyHash` stored as
+the **plain, un-swapped** CRC32 -- exactly matching what the game had just
+written, and *not* matching §14's swapped formula (copied from
+`frostnibble`'s `writer.ts`, which applies a `swapEndian()` before writing
+that its own `reader.ts` never undoes on read -- an asymmetric bug in
+their code, harmless for their own round-trips since they never diffed
+against a real game-authored save, but not something to propagate).
+Confirmed the `frostnibble`-bundled sample save §14 validated against
+*does* need the swap -- meaning that specific sample file had itself been
+through `frostnibble`'s own writer at some point, not a pristine
+game-authored save; the two original uploads settle which convention the
+real game actually uses.
+
+This also retroactively identifies an old, never-resolved loose end: an
+early raw byte sequence `e95dbf3f`, noted in this project's early
+exploration but never identified. That's the byte-swapped misreading of
+this exact `bodyHash` field (`0x3fbf5de9` reversed) -- a small, satisfying
+bit of closure.
+
+**Fixed**: `save_checksum.py`'s `recompute_checksums()` no longer applies
+any swap to `bodyHash` -- it's now `custom_crc32(data[30:])` directly,
+matching `headerHash`'s already-correct plain formula. Re-verified against
+both original save files (now `OK`/`OK`) and against `frostnibble`'s
+bundled sample (now correctly reports a `bodyHash` mismatch, as expected
+for a file carrying their write bug).
+
+### 15b. CONFIRMED -- editing with the game fully closed, then launching, works. The open question from §15/§15a is answered.
+
+Redid the test properly: closed the game completely, ran
+`mass_set_collectibles.py` against the live `PROF_SAVE` (writing directly
+back to the same path -- confirmed safe, since the tool reads the whole
+input into memory before it writes anything) with the game **not
+running**, then launched fresh and loaded the save.
+
+**Result: World Progression read 324/324 GridLeaks.** The edit stuck.
+
+This closes the loop §15 opened and §15a partially answered:
+
+- A **live, already-running** game session will *not* pick up an external
+  save edit, and will actively overwrite it with its own stale in-memory
+  state at its next write-out (§15a) -- confirmed by directly testing it
+  and watching it fail.
+- Editing while the game is **fully closed**, then launching, reliably
+  works -- confirmed by directly testing it and watching it succeed,
+  cleanly, no ambiguity.
+
+**Practical conclusion for a receive-item design:** granting an item by
+writing into the save file only reliably works when the game process is
+not running at the time. The safe pattern for a future client: queue
+received items, write them into the save while the game is closed (or
+between sessions), and have them show up the next time the player
+launches -- not attempt to inject them into an already-running session.
+Whether some in-game action can force an already-running session to
+safely reload from disk without stomping its own concurrent progress
+remains untested and would need a different kind of experiment (see the
+narrower open items still listed below) -- but "close, edit, launch" is
+now a fully confirmed, reliable mechanism on its own, which is enough to
+build a first working receive-path around.
+
+**Quick follow-up, opposite direction:** re-ran the live-edit test with the
+game open, this time using `clear_category.py` to strip all 324 GridLeak
+records out entirely (rather than inserting "collected" ones) -- same
+result as §15a: no change in-game, GridLeaks count stayed put, nothing
+reappeared. Confirms this isn't specific to insertion; a live session
+ignores external edits in both directions (add or remove), consistent
+with the "the running process's own in-memory state is authoritative
+until the next load" explanation.
+
+## 16. Time trial results are not in this save format; and a new clue on which `ProgressionManagerData*` section is live
+
+Asked directly: are individual Time Trials tracked per-item like GridLeaks
+(e.g. a per-track star rating or best time)? Checked three ways before
+testing live: the resolved 99% of the save (nothing shaped like it --
+only two unrelated tutorial flags, `GameContentTutorials_HaveEditedTimeTrial`
+and `SystemTutorials_BeenShownTimeTrialInfo`), the small number of
+still-unresolved hashes (8 total, same 8 across all three sections, none
+of their values fit a 1-3-star or per-track pattern), and the static game
+data (`PamplonaLayerInclusionTable_full.txt` has a `TimeTrialTrackId`
+field, but it's a world-streaming-layer criterion listing track IDs 1-8,
+not a results structure).
+
+**Confirmed empirically, not just guessed:** completed a real time trial
+in-game, then diffed the save against the pre-completion snapshot.
+**Zero new records and zero changed values attributable to the time
+trial.** The only diffs were from an actual Audio Pickup collected along
+the way (`AudioPickupGridLeaks_AudioPickup_NoahIcarus_5`, plus its
+matching `Collectables_GreenOrbsCollected`/`GreenCollectiblesStory_IcarusNoah`
+counters) and the in-game clock advancing (`TimeOfDay_CurrentTime`).
+**Conclusion: Time Trial results are not stored in this save format at
+all** -- almost certainly server-side (an EA leaderboard/ghost-time
+system), which would explain their total absence here.
+
+**Side finding, useful for an open question:** of the three
+`ProgressionManagerData*` sections, only `ProgressionManagerData_2411670393`
+picked up any of this real gameplay (the Audio Pickup collection, the
+clock, `Collectables_OrbsCollected` jumping to 324 reflecting the earlier
+GridLeak edit) -- the other two sections showed no changes at all since
+the last edit. That's a real, if not yet conclusive, data point toward
+"which section is authoritative" (still open, see below): worth
+specifically watching `_2411670393` in future tests as the more likely
+candidate for the live/authoritative copy, though this is one observation,
+not a controlled test.
+
+**Second confirmation, different trial:** completed "The Scenic Route"
+(new best time 01:58:89, 1 star) and diffed again -- same result, zero
+records added or changed that relate to it (the only diffs were an
+unrelated movement-tutorial counter, the clock, and a combat pickup). The
+in-game result card also displayed a name ("King_Dalapa") alongside the
+time and stars -- reads like an online account/leaderboard identity, not
+anything sourced from the local save, which lines up with the
+server-side-leaderboard conclusion above. Two different trials, same
+negative result, both times the only section that changed at all was
+again `ProgressionManagerData_2411670393` -- reinforcing the §16
+observation on which section stays live during real play.
+
+## 17. Randomizer design idea: skip the story, gate movement/combat abilities as AP items, use time-trial-route electronics as checks
+
+Your proposal: don't bother tracking story missions as AP content at all --
+ship a starting save with the story already marked complete (so the whole
+map, fast travel, security hubs etc. are open) but with none of the
+movement/combat ability unlocks granted, then have Archipelago items grant
+those abilities one at a time. Time Trials (which the game already
+naturally gates behind completed abilities/movement) become the
+"content" the player replays for enjoyment, and since individual
+completions/times aren't save-tracked (§16), use the Electronic Parts
+that happen to sit along trial routes as the actual location checks
+instead.
+
+**The ability system exists exactly as described, and it's a real,
+sizeable item pool.** Static data has a `Unlocks_*` flag family -- 58
+distinct names, covering movement (`Unlocks_DoubleWallrun`, `FastClimb`,
+`ExtendedSlide`, `Shift`/`ShiftFluency`, `QuickTurn`,
+`SkillWindowSkillRoll`/`Springboard`/`WallClimb`, `StartBoost`, `Focus`
+and its tiers) and combat/health tiers alongside them. Confirmed live in
+your own save: 34/58 already unlocked, 24 still locked -- direct proof
+these are independently tracked per-flag booleans, stored exactly like
+every other record in this table (`{hash, name, value}`). They're
+readable and writable with the tools that already exist -- `patch_save.py
+--name Unlocks_DoubleWallrun --value 0` works today, no new code needed
+for a single flag; a small bulk-set/bulk-clear helper (same shape as
+`mass_set_collectibles.py`) would be a few minutes of work if bulk
+locking/unlocking all 58 at once is wanted.
+
+**The currency behind them, also confirmed:** `XP`, `XP_Gained`, and
+`XP_Used` -- in the reference save, `81952` gained / `29000` spent. This
+matches the described mechanic exactly (points earned from missions/side
+missions, spent at will in a skill tree) rather than any single mission
+directly granting a specific ability -- with one confirmed exception,
+**the grapple hook is hard story-gated**, tracked separately as
+`CriticalPathProgression_HasCollectedMagRopePullDown/PullUp/Swing/LineConnector`,
+distinct from the general `Unlocks_*` list (makes sense narratively -- you
+need it to physically progress the critical path, so it can't be
+optional).
+
+**What this means for the "ship a save" plan, concretely:** mark story
+missions complete, leave every `Unlocks_*` flag unset, and either zero or
+cap `XP_Gained`/`XP_Used` so the player can't just open the skill menu and
+buy every ability immediately after booting the save -- the abilities only
+existing as AP-grantable items depends on the player not having free
+points sitting there to spend on their own. Two things this idea still
+needs a live test to confirm (nothing found in the static reward data
+settles them either way):
+- Does forcing every mission's `_CompletedTime` flag actually leave the
+  `Unlocks_*` flags alone, or does something at load time recompute/grant
+  them based on mission state? (The reward data mined so far only shows
+  `Unlocks_*` flags used as *conditions* for cosmetic RunnerKit rewards,
+  never as something a specific mission's completion directly sets --
+  which is a good sign, but isn't the same as watching it happen live.)
+- Does removing a currently-*true* `Unlocks_*` flag (e.g. on this
+  reference save, which already has 34 of them) actually disable that
+  ability in-game, the same way §12b confirmed GridLeaks' flag controls
+  the physical object? This is the same kind of test already run
+  successfully for collectibles, just not yet run for this category.
+
+**On using electronics as the check substitute for time trials:** sound
+plan, since it sidesteps §16's dead end entirely by using a category
+that's already fully save-tracked (`ElectronicPartsXxYy_ChipNNTaken`,
+confirmed per-item since early in this project). The one gap: this
+project has no world-coordinate data for anything, so which specific
+chips sit on which specific trial routes isn't something the save or
+static data can answer -- that mapping can only come from actually running
+each route and noting what's there.
+
+**Also investigated: intercepting the game's own network traffic**, since
+its online services are confirmed shut down (EA, December 8 2023) and the
+in-game leaderboard now only ever shows the local player. There's a real,
+active community effort around exactly this for this specific game:
+[Beat Revival](https://github.com/Beat-Revival) reroutes the game's
+requests to a local server (Docker-based), currently restoring
+achievements only; [`ploxxxy/pamplona-future`](https://github.com/ploxxxy/pamplona-future)
+(same author who linked `frostnibble` via Meteor) was explicitly working
+toward Time Trials, Dash leaderboards and Beat L.E. support but is now
+archived/obsolete; its active successor
+[`grid-leak/blaze`](https://github.com/grid-leak/blaze) reimplements EA's
+"Blaze" backend protocol in Rust, currently handling session/auth/config
+but explicitly not yet leaderboards or time trials. None of these have
+published the actual time-trial wire format -- but the infrastructure to
+redirect the game's connection to a capturing proxy is proven to work
+(it's how achievements got fixed), so standing one up ourselves and
+watching what the game tries to send on a time-trial completion is a
+real, viable next step if it's worth pursuing. It's a genuinely separate
+kind of project from everything else here, though (Docker/Rust tooling,
+DNS or hosts-file redirection, a real MITM setup) rather than an extension
+of the save-file tools -- worth treating as its own track rather than a
+quick add-on.
+
+## 18. Reconciling the in-game skill-tree screenshot against the 58-flag `Unlocks_*` catalog -- and a real (but ultimately dead-end) lead on where a category tag might live
+
+The skill-tree UI screenshot shows: `OFFLINE MODE`, `UPGRADE POINTS
+27,666 / 28,000 XP`, and three tabs -- **Movement 19/19**, **Combat
+18/20**, **Gear 11/11** -- 50 nodes total across the three tabs, against
+the 58 raw `Unlocks_*` flags §17 found in static data. (One example node
+shown in full: "Free Running 2," keybind Left Ctrl, "slide, crawl under,
+or slide down obstacles and through small openings" -- consistent with
+the `Unlocks_ExtendedSlide`-style movement flags already catalogued.)
+
+That 27,666/28,000 figure is very likely progress *toward the next
+point*, not the same cumulative total as the `XP_Gained=81952` seen
+in an earlier save snapshot -- those are two different numbers (one a
+running total, one a per-point meter) and shouldn't be read as
+contradicting each other.
+
+The 50-vs-58 gap (8 flags) is still best explained the same way as
+before -- by flag name, not by a confirmed static-data tag -- as the 5
+`IncreasedHealth0`-`IncreasedHealth4` tiers plus `ScavengeLevel`,
+`CombatScavengeLevel`, and `Placeholder`: none of those read as a
+discrete unlockable *move* the way every other flag name does, so
+they're the most likely candidates for stat-only/hidden flags that
+don't get their own skill-tree icon.
+
+**Went looking for an explicit category/tab tag to confirm this rather
+than just infer it from names**, and found something structurally
+promising, then it fell through:
+
+- `PlayerProgressionData`'s schema has a real grouping construct,
+  `PamProgressionFlagGroup` (`Name`, `NameHash`, and a `Flags` list of
+  refs to `PamProgressionFlag`/other entries) -- exactly the shape a
+  Movement/Combat/Gear breakdown would need. There are 124 of these
+  group instances in the static dump.
+- One of them is literally named `'Unlocks'` (guid
+  `7429b7eaf477854caeb1decf691ad093`) and its `Flags` list has almost
+  exactly the right count (~58 entries) -- looked like a direct hit.
+- It isn't, on closer inspection: that list mixes `PamProgressionFlag`
+  refs with several `PamProgressionMission` refs, which the 58-flag
+  ability catalogue never included -- so this "Unlocks" group is a
+  broader **online-stat-sync bucket** (its own fields,
+  `SyncSumOfFlagValuesToOnline`/`ForceSyncAllFlagsToOnline`, only make
+  sense for something reporting to EA's now-dead backend), not the
+  client-side skill-tree UI's tab grouping.
+- Every other `PamProgressionFlagGroup` name in the dump is a
+  collectible/mission/system category (`DowntownGridLeaks`,
+  `SecretBagAcEv`, `SystemTutorials`, `CriticalPathProgression`, etc.) --
+  none named or shaped like "Movement"/"Combat"/"Gear".
+
+**Conclusion: the Movement/Combat/Gear split is a front-end/UI concept
+that isn't encoded anywhere in this EBX config dump.** It's almost
+certainly defined in localization/UI layout data this project hasn't
+pulled (icon layout tables, menu definitions) rather than in
+`PlayerProgressionData` alongside the flags themselves. The
+health-tiers-plus-three-misc-flags mapping for the 8-flag gap stands as
+the best available answer, but stays a name-based inference, not a
+confirmed static-data fact -- flagged here rather than quietly upgraded
+to "confirmed."
+
+## 19. **CONFIRMED LIVE -- clearing an already-true `Unlocks_*` flag disables the ability in-game.** Last open test from §17/§18 is settled.
+
+Ran it exactly like the GridLeaks test (§12b), just in the other
+direction and on an ability flag instead of a collectible: game fully
+closed, `patch_save.py --name Unlocks_ExtendedSlide --value 0` writing
+directly back over the real `PROF_SAVE`, then a fresh launch.
+
+Two independent signals both confirm it took effect:
+
+- **The Progression menu's owned-count changed.** Before the edit,
+  Movement showed `19/19` (§18's screenshot). After, it shows `18/19` --
+  a direct, unambiguous drop of exactly the flag that was cleared. This
+  is the game re-deriving its own UI state from the save at load time,
+  not something we're reading into a static screenshot.
+- **The actual move changed in gameplay**, in exactly the way the
+  tooltip predicts rather than in some vague "it's gone" way: Extended
+  Slide's description is "+ Slide distance -- reduces deceleration in a
+  slide, increases the distance before Faith transitions to a crawl."
+  With it cleared, the base Slide move still works (you can still slide
+  under things), but it doesn't carry as far / transitions to a crawl
+  sooner -- which is exactly what removing a *distance modifier* on top
+  of an always-available base move should look like. Nothing broke,
+  nothing crashed, no attempt to "give it back."
+
+This is an important nuance for the item pool, not just a pass/fail: not
+every `Unlocks_*` flag gates a whole move from nonexistent to existing --
+some (like this one) gate a base move's *unlocked-vs-upgraded* version.
+The tiered-looking names already noted in §17 (`Focus` /
+`Focus_ReachFlow_Increase` / `Focus_ReachFlow_IncreaseExtra`, the
+`FlowAttack`/`FlowAttack_PowerAttack`/`FlowAttack_Special_PowerAttack`
+family, `ImpactAttack_PowerAttack`/`_Special_PowerAttack`) are very
+likely the same pattern -- a base move plus one or two upgrade flags on
+top of it, rather than three independent moves. Worth keeping in mind
+when designing item "impact" for AP: a base-move flag (no game feature
+exists without it) and an upgrade-tier flag (the feature already works,
+just weaker) are different weights of item, even though both are
+mechanically identical `patch_save.py` edits.
+
+**Combined with §15b (closed-game edits load correctly, live-session
+edits don't) and §12b (the same test already passed for a collectible
+category), this closes out every open item from §17/§18's design-viability
+list except one:** whether forcing mission-completion flags to "done"
+leaves `Unlocks_*` flags alone at load time, or whether something
+recomputes/grants them. That's the one remaining test before the
+ability-gating randomizer design can be called fully proven end to end.
+
+## 20. **CONFIRMED -- no mission-completion cascade. The ability-gating design is now proven safe end to end.**
+
+Built `clear_all_unlocks.py` (new, in `runtime/`): clears every one of the
+58 known `Unlocks_*` names at once, in place, no resize -- same safe
+pattern as `patch_save.py`, just batched. Verified in-sandbox against your
+last uploaded save before shipping it (all 34 currently-true flags found
+and zeroed across all 3 sections, checksums OK).
+
+Ran it for real: game closed, cleared all 34 currently-true flags,
+launched, played a real session with missions left exactly as already
+completed (nothing fabricated). Progression menu showed Movement 10/19,
+Combat 2/20, Gear 5/11 -- down substantially from 18/19, 18/20, 11/11, but
+not all the way to zero, which needed settling one way or the other
+before calling this safe.
+
+**Settled it by diffing the actual save file, not the UI.** Uploaded the
+post-session save and compared every single record against the pre-clear
+save: only 35 keys differ in the whole file. 34 are exactly our edit,
+still sitting at `0` -- not one came back. The 35th is
+`TimeOfDay_CurrentTime`, the in-game clock, unrelated. No records were
+added or removed anywhere.
+
+**Conclusion: clearing `Unlocks_*` flags is stable through real
+gameplay and real mission progress -- nothing recomputes or re-grants
+them at load or during play.** This was the last open item from §17/§18/§19's
+design-viability list. Combined with §15b (closed-game edits load
+correctly) and §19 (clearing an already-true flag does disable the
+ability, both signals: menu count and actual physics), the full
+ability-gating design -- ship a save with the story finished and every
+`Unlocks_*` flag unset, then grant them one at a time as AP items -- is
+now proven viable end to end, with every step backed by an actual live
+test rather than an inference from static data.
+
+**Open, but lower-stakes: the 17 nodes (10 Movement/2 Combat/5 Gear) that
+stayed "owned" even with every `Unlocks_*` flag cleared.** Since the save
+diff shows nothing else changed, these aren't cascade-granted -- they
+were never gated by any of the 58 known flags to begin with, and are
+presumably a handful of baseline moves the game always displays as
+available regardless of save state. Not a threat to the design (they
+just wouldn't be usable as gate-able AP items themselves), but worth
+identifying eventually -- likely candidates are basic moves like the
+starting Roll/Slide/Wallrun/block that a fresh, unmodified new save would
+also show as owned, though that hasn't been confirmed against an actual
+fresh save.
+
+## 21. A community "100%" save, decoded and cross-checked -- the real `Unlocks_*` pool is 34, not 58
+
+Checked a heavily-completed community save file (checksums valid, decoded
+cleanly, 1400-1500+ records per section vs ~1050-1075 in your own save).
+Collectibles confirm it's genuinely close to fully finished: **GridLeaks
+324/324** (exactly matching the known total from §12), Electronic Parts
+251/252, Audio Pickups 45/45, Secret Bags 40/41, Intel 79/81, Green Orbs
+80/99 -- not literally perfect in every category, but unambiguously an
+end-game/near-completionist save, good enough as a real ceiling reference.
+
+**The important result: only the same 34 `Unlocks_*` names that exist in
+your own save exist here too -- none of the other 24 static-data-catalogued
+names ever appear as a record, at any value, in either save.** And
+`XP_Used` is `29000` in both saves, identical down to the number --
+exactly the same total spend on exactly the same 34 abilities.
+
+That's not a coincidence between two unrelated saves. It's strong
+evidence that **34, not 58, is the real ceiling for what a normal single
+playthrough can ever unlock.** The other 24 names in
+`PlayerProgressionData` (`IncreasedHealth3`/`4`, `SkillWindowSpringboard`,
+`SkillWindowWallClimb`, `StartBoost`, `ShiftFluency`, `ImpactMomentum`,
+`HardLandingLowDrain`, `LowDrainAtLowSpeed`, `LowDrainInFlow`,
+`CombatFluency`, `CombatReticle`, `GetSpeedAttack`, `BreachDoors`,
+`CityAlertDisrupt`, `CityAlertSafePositions`,
+`Disrupter_Increase_AngleOfEffect`, `Disruptor_Extra_Battery`,
+`ScavengeLevel`, `CombatScavengeLevel`, `Placeholder`, and the three
+`SkillMoveInvulnerabilityLevel0/1/2`) are very likely unused/vestigial,
+gated behind something a normal playthrough never reaches (New Game+?
+a difficulty tier? cut content?), or simply never wired to any purchase
+path at all -- not a gap in either save, a gap in the feature.
+
+**This changes the AP item-pool math for the better: it's a clean,
+already-fully-reachable 34-item pool, not a 58-item pool where a third of
+the items might be unobtainable no matter what the player does.** Doesn't
+change anything about §19/§20's viability conclusions -- gating and
+clearing these flags is already proven safe -- just makes the practical
+pool size a confirmed fact instead of an assumption.
+
+Still open: a genuinely fresh, brand-new save is the one thing that would
+settle the remaining §18/§20 question (which of the 50 UI tree slots, and
+which of these 34 flags, are true from the very start vs. actually
+earned) -- the 100% save answers "what's the ceiling," not "what's the
+floor."
+
+## 22. A full 17-checkpoint story save set -- real per-mission unlock timeline, and the missing mechanism finally explained
+
+Found a community save collection: one `PROF_SAVE` per story mission,
+`0percent00Birdman` through `0percent16TheEnd` (named for 0% *missable
+collectibles* at that checkpoint, not 0% progression -- all 17 checksum
+clean, all decode cleanly).
+
+**First pass used the wrong section and gave a misleading "nothing ever
+changes" read -- caught before reporting it.** Each of these files has
+only *two* `ProgressionManagerData*` sections, and they tell completely
+different stories: one (plain key `ProgressionManagerData`, ~900+
+records) is frozen at 32 `Unlocks_*` flags and `XP_Used=27000` in every
+single one of the 17 files -- a stale, pre-built donor/template slot that
+never gets touched. The other (key
+`ProgressionManagerData_1000106553270`, starting at just 57 records) is
+the real one: its record count climbs steadily (57 -> 373) and its
+`XP_Used` climbs in step with real mission progress (1000 -> 2000 ->
+3000 -> 6000 -> 8000 -> 12000) across the 17 checkpoints. That's the
+authoritative section for this save -- exactly the "up to 3 sections,
+one per linked platform, and they can legitimately disagree" note from
+`patch_save.py`'s own docstring, now seen directly.
+
+**Re-ran the diff against the correct section and got a real, clean
+per-mission unlock timeline** (flags only ever added, never lost, across
+all 17 missions):
+
+| Checkpoint | Unlocks total | XP_Used | Newly true this mission |
+|---|---|---|---|
+| Birdman | 5 | 1000 | Focus, Glove, HandToHandCombat, MoveEnemyAttack, Shift |
+| Old Friends | 6 | 2000 | QuickTurn |
+| Be Like Water | 7 | 2000 | FlowAttack |
+| Back In The Game | 7 | 2000 | -- |
+| Mischief Maker | 8 | 3000 | SkillWindowSkillRoll |
+| Savant | 8 | 3000 | -- |
+| Gridnode | 8 | 3000 | -- |
+| Benefactor | 8 | 3000 | -- |
+| Fly Trap | 11 | 6000 | Coil, DoubleWallrun, FastClimb |
+| Sanctuary | 11 | 6000 | -- |
+| Encroachment | 11 | 6000 | -- |
+| Viva La (Resistance) | 13 | 8000 | Disruptor_StunHumans, ExtendedSlide |
+| Payback | 13 | 8000 | -- |
+| Prisoner X | 13 | 8000 | -- |
+| Kingdom Come | 17 | 12000 | Disruptor_Overload, Disruptor_StunMech, Focus_ReachFlow_Increase, LowerHealthProtector |
+| Tickets Please | 17 | 12000 | -- |
+| The End | 17 | 12000 | -- |
+
+**This finally explains the mechanism behind §20's result, instead of
+just confirming it empirically.** `PamProgressionFlag` in the static
+schema has a `.MissionIndex` field -- each ability has a story-progress
+gate on when it becomes *purchasable*, separate from whether it's been
+purchased. Missions unlock *availability* (new nodes appear as spendable
+in the tree once you've reached that point in the story); they never
+grant the flag directly. The actual `value: 0 -> 1` flip only ever
+happens two ways: the player spending XP in the menu (the real game's
+only in-game path), or a tool like ours writing the record directly. That
+is exactly why §20's test came back clean -- there was never a mechanism
+by which finishing a mission could re-buy something on its own, in this
+game or through our edits.
+
+**Caveat on this data:** this checkpoint set isn't a truly blank-slate
+new game either -- even the first file (`Birdman`) already has
+`GoldCompleted_Release` and `GoldCompleted_Reunion` true, meaning the
+prologue's first two missions are already done and 5 abilities already
+bought before "Birdman" even starts. So it doesn't answer the exact
+"floor" question a truly fresh save would (still open, per §21) -- but it
+answers a more useful question instead: the real order and pace a normal
+playthrough naturally acquires these abilities in, which is genuinely
+useful reference data for pacing an AP item pool (e.g. `HandToHandCombat`
+and `Shift` this early confirms they're basically starting-kit moves in
+vanilla play, while `Disruptor_Overload`/`Focus_ReachFlow_Increase` don't
+even become purchasable until near the end of the story).
+
+## 23. **The floor, finally confirmed: a genuinely fresh save has ZERO `Unlocks_*` records at all**
+
+Got a real one this time -- a brand new game, saved one second after the
+first cutscene. Checksums valid, decodes clean.
+
+It has **four** `ProgressionManagerData*` sections, not the usual 2-3 --
+and three of them (`ProgressionManagerData_2380105275`,
+`ProgressionManagerData_2348898310`, and plain `ProgressionManagerData`,
+1441-1512 records each) turned out to be **byte-for-byte identical** to
+the community "100%" save decoded in §21. Not similar -- identical, every
+record. That's not a coincidence; it means those three slots are stale
+leftovers from having that downloaded file present in the settings
+folder at some point, sitting in unused linked-account slots that a new
+game doesn't reset. The fourth section, `ProgressionManagerData_2411670393`,
+is the real one -- same exact key name §16 already flagged as "the one
+that shows real gameplay changes" in this same player's other saves,
+now confirmed brand new with only **14 records total**.
+
+**All 14 of them, in full:**
+`Collectables_TotalGreenOrbCount=45`, `Collectables_TotalOrbCount=324`,
+`Collectables_TotalCombatDropCount=50`, `Collectables_TotalIntelCount=42`
+(static per-region totals, not progress), `Global_SafeSpawnAllowedOnMission=1`,
+`Global_DisableAbortMenuOption=1`, `Global_SunRotation=88`,
+`Global_HasSeenFirstCutscene=1`, `Global_FaithAppearance=1`,
+`Generated_ActiveMission=35`, `Generated_LastSavedCheckpoint=833973299`,
+`TimeOfDay_CurrentTime=16202`, `TimeOfDay_NextMission=18000`,
+`Release_Available=1`.
+
+**Zero `Unlocks_*` records. Zero `XP`/`XP_Gained`/`XP_Used` records.**
+Not one ability flag exists yet, in any state -- not `0`, just genuinely
+absent, exactly like every other never-touched record in this save
+format works. This is the cleanest possible confirmation of the
+"absence = locked" pattern this whole design has been built on: a real,
+completely untouched save starts with nothing, and every one of the 34
+reachable `Unlocks_*` flags (§21) gets created for the first time only
+when the player actually buys it.
+
+**This retroactively answers §20's "17 mystery nodes" too, at least in
+part:** they can't be some baseline default granted from save-file state,
+because a real fresh save has no ability-related records to grant them
+from. Whatever was keeping those 17 nodes looking "owned" in that test
+must be either a different flag family entirely (not the 58-name
+`Unlocks_*` catalog) or a UI-only display quirk -- not a save-state
+default. Settling exactly which is still open, but it's now clearly a
+narrow, low-stakes question rather than something that could undermine
+the design.
+
+**Bottom line for the "ship a save with story finished, abilities
+locked" plan: that target state is not some artificial configuration
+we're forcing the game into -- it's the game's own real starting state**
+(just with mission-completion flags additionally set). Every open
+question from §17 through §23 is now closed with a real, checksum-valid
+save file backing it up.
+
+## 24. Could missions be unlocked/played in any order instead of using time trials? -- checked the real data, answer is nuanced
+
+Two sources checked: the mission table already built in §11's
+`dependency_graph.json` (152 `PamProgressionMission` entries, each with a
+resolved `CompletedFlag`/`AvailableFlag` name), and a full flag-by-flag
+diff between every consecutive pair of the §22/§23 story checkpoints
+(this time capturing *everything* that changes, not just `Unlocks_*`).
+
+**The story is a strict linear chain, not a branching one.** Every
+transition confirms the same pattern: finishing mission N sets exactly
+one thing that matters for sequencing -- the next mission's `_Available`
+flag (`Old Friends` completing sets `Be Like Water_Available`; `Fly Trap`
+completing sets `Sanctuary_Available`; and so on, unbroken, all the way
+to `The End`). There's no sign anywhere in 152 mission entries or 17
+checkpoint transitions of alternate branches or a non-linear main story --
+side content branches off the spine, but the spine itself is one line.
+So "play mission 14 before mission 3" in the literal Archipelago sense
+isn't how this game's story is built, and treating it as if it were would
+mean fighting the game's own structure rather than working with it.
+
+**More important: each transition is not just one flag.** Real diffs
+between checkpoints show 15-50+ records changing per mission, and it's
+not noise -- alongside the `_Available` flag there's consistently a
+`CharacterState_<Npc>` counter advancing (Nomad, Icarus, Rebecca, Plastic
+-- looks like a per-character "story stage" used to pick dialogue/AI
+behavior), a monotonic `Global_CityUnlockState` counter (1 -> 9 over the
+whole story, looks like the real district-access gate), specific
+`Doors_*`/`TrainstationStates_*`/`DowntownStates_*` flags for exact level
+geometry (doors opening, cranes moving, ziplines becoming usable),
+`LMSProgression_*` scene-sequencing flags, and a wave of side-content
+`_Available` flags that come along for the ride. Setting only a target
+mission's own `_Available` flag and skipping the rest of this would very
+likely leave the world in a state the game never actually produces on
+its own -- locked districts despite an "available" mission inside them,
+doors that were never told to open, NPCs stuck on the wrong dialogue
+stage. This is a fundamentally different (and riskier) kind of edit than
+flipping an `Unlocks_*` flag, which we've now proven six ways to be
+completely self-contained.
+
+**But there's a safer version of the same idea, and we already have the
+building blocks for it.** Because the §22 checkpoint set gives a real,
+complete, game-authored state snapshot at all 17 story points -- not a
+guess at which flags matter, the actual full set the game itself produces
+-- "unlock the next chunk of the story" could be implemented as
+**installing the next checkpoint's entire captured state wholesale**,
+rather than hand-picking which of 50+ flags to set. That sidesteps the
+guesswork entirely: instead of reverse-engineering the minimum required
+flag set per mission (error-prone, easy to miss one), it reuses a state
+the game has already proven it can produce and load correctly (since it
+came from a real playthrough). This reframes the AP design from "items
+unlock mission access in arbitrary order" to "items unlock the next fixed
+checkpoint" -- less flexible than true any-order, but something we could
+plausibly build with real confidence instead of hoping we found every
+required flag.
+
+**Untested, and the right next step if this direction is worth
+pursuing:** take one checkpoint file (e.g. jump straight to
+`0percent08FlyTrap`, mid-story) and load it directly as a save, game
+closed, to see whether the game picks up cleanly at that exact point --
+right area, right doors open, next mission triggerable -- with nothing
+earlier in the story actually played. If that works cleanly, checkpoint-
+splicing is a solid, low-risk mechanism for "story gate" style AP
+progression. If it doesn't, that's worth knowing before designing
+anything around it.
+
+## 25. Side missions can be force-unlocked into the Replay menu -- found the real flag, confirmed live
+
+Follow-up to §24's own suggestion, prompted by a better idea: instead of
+skipping ahead in the linear main story, use the game's own **Missions ->
+Side Missions replay menu**, which lets you jump directly into any
+already-unlocked side mission ("replaying a mission will keep your
+current progress"). Side missions are individually flagged (confirmed in
+static data: `<Name>_Available`, `<Name>_CompletedTime` +
+`_CompletedTimestampPart1/2`, `SilverCompleted_<Name>`, and sometimes
+`<Name>_Timer`/`<Name>_GridLeaks`), so if the game will accept a
+synthetic "already done" state and drop the player straight into it, this
+sidesteps §24's whole world-state-entanglement concern -- side missions
+look far more self-contained than the main story spine.
+
+Built `set_flag.py` (new, in `runtime/`) for this, since it's a genuinely
+different case from every prior tool: `patch_save.py` can only flip a
+record that already exists, and a mission the player has never reached
+has no record at all yet (same "absence = locked" pattern as
+everything else, confirmed again here). `set_flag.py` patches in place if
+a record exists, or inserts a brand-new one (growing the blob, trimming
+equal padding off the end, same mechanism as `mass_set_collectibles.py`)
+if it doesn't -- verified against a sandbox copy first, checksums OK.
+
+**Two real, live, closed-game tests were needed to find the right flag:**
+- Try 1: `Finger on the Pulse_Available = 1` (already true in an older
+  save of the player's own, coincidentally) -- did not appear in the Side
+  Missions list. Ruled out `_Available` as the visibility gate.
+- Try 2: `Finger on the Pulse_CompletedTime = 2699` (a real value copied
+  from the community 100% save) -- also did not appear. Ruled out
+  `_CompletedTime` alone.
+- Try 3: `SilverCompleted_Finger on the Pulse = 1` -- **worked.** The
+  mission immediately appeared in the Side Missions replay list after
+  relaunch, in its correct alphabetical slot, fully selectable, with
+  nothing else in the save touched.
+
+**This is the real mechanism: `SilverCompleted_<Mission Name>` (the
+same per-mission completion-tier flag family already seen gating things
+like the main story's `GoldCompleted_<Mission>` flags) is what the Side
+Missions UI actually checks -- not availability, not a timer. That was
+not discoverable from static data alone (the mission catalog in
+`dependency_graph.json` has no entry linking to any of "Finger on the
+Pulse"'s own flags at all, a known gap per §11) -- only found by
+systematically testing the real candidates live.
+
+**Both follow-up questions confirmed live, in two more real, closed-game
+rounds:**
+
+- **Round 1 (aborted on purpose):** selected "Finger on the Pulse" from
+  the Side Missions list and it loaded in with no problem at all --
+  right location, right briefing text, no missing geometry, nothing
+  broken from never having organically reached it. Quit out without
+  finishing. Uploaded the resulting save afterward: `CompletedTime`
+  and `SilverCompleted_` were both still exactly our synthetic values
+  (`2699`, `1`) -- unchanged, as expected, confirming an abort doesn't
+  silently "complete" or otherwise disturb the record.
+- **Round 2 (played it for real):** selected it again, this time
+  actually finished it ("Help Plastic expand her METAGRID access --
+  tap all the DATAPOINTS before the firewall shuts down"). The in-game
+  result screen showed a real completion time, `00:22.36` -- a
+  genuinely different value from the synthetic `2699` (26.99s) we'd
+  written. The game overwrote our placeholder with the real result on
+  its own, no extra tooling involved.
+
+**Both halves of the mechanism now hold.** A side mission can be
+force-unlocked into the Replay menu with one flag
+(`SilverCompleted_<Name>`), it loads into a fully coherent, playable
+instance regardless of whether the player ever organically reached it,
+and a real completion afterward cleanly overwrites the synthetic seed
+with genuine data -- meaning "the AP item unlocked it" and "the player
+actually finished it" are automatically distinguishable, for free, with
+no new detection logic needed beyond watching whether the value changed.
+This is a materially stronger foundation for AP location checks than
+either time trials (§16, never save-tracked) or skipping ahead in the
+main story (§24, heavily world-state-entangled): individually flaggable,
+individually verifiable-as-done side missions, using a tool
+(`set_flag.py`) general enough to apply to any of them by name. This
+result now stands alongside §19/§20/§23 as one of the handful of things
+in this whole project proven end to end on real hardware, not just
+inferred from static data.
+
+## 26. Starting point for next session
+
+Where this left off, and what was floated for next time:
+
+**Next session's main goal:** start turning this into an actual small
+Archipelago implementation -- pulling together the full side-mission
+catalog (names + their `SilverCompleted_`/`_Available` flags, same
+approach as the ability catalog in §21) alongside the ~34 reachable
+`Unlocks_*` abilities, and sketching the real item/location JSON
+structure. Both mechanisms (§19/§20/§23 for abilities, §25 for side
+missions) are now proven end to end -- this is building on solid ground,
+not still-open research.
+
+**The elephant in the room, raised by the user and worth designing
+around honestly:** every receive-item mechanism proven so far needs the
+game closed to take effect (§15/§15a/§15b) -- there is still no confirmed
+way to grant an item into an *already-running* session. A real AP client
+would need to either (a) require a restart/relaunch to pick up new items
+(clunky but simple, and 100% proven to work), or (b) find some way to
+poke a running session, which is unexplored territory this project has
+not touched.
+
+**One idea floated for (b), not yet investigated: feed XP live via Cheat
+Engine instead of granting moves/missions directly** -- the reasoning
+being that a numeric currency might be a simpler live-injection target
+than a boolean unlock flag, letting the player buy things themselves
+without a restart. Worth being upfront about the relevant history before
+chasing this: this project's own earlier live-memory work (see "Live
+memory access (superseded)" in README.md) already ran into a specific,
+relevant wall -- the address chain it found for progression data exposed
+only *static config*, and a separate reflection-based field-write
+mechanism it traced for aggregate UI counters (e.g. "GridLeaks: 181/324")
+turned out to update the on-screen number without ever touching the real
+per-save state underneath. If XP's live/UI value turns out to be the
+same kind of display-only copy, writing to it would look like it worked
+in the moment and then get silently discarded at the next autosave --
+the exact same failure shape as §15a's very first (misdiagnosed) test.
+**The cheap first sub-test, before building anything around this idea:**
+use Cheat Engine to write a large value to whatever address displays the
+in-game XP counter, let an autosave happen, then check the save file's
+`XP`/`XP_Gained`/`XP_Used` records (via `decode_save.py`) to see whether
+the write actually stuck or got overwritten. That one experiment settles
+whether this path is worth building on before any more time goes into
+it.
+
+---
+
+## §27: Beat Revival investigated -- time trials are NOT currently restored, and time trials remain unusable as an AP mechanism
+
+The user asked whether Beat Revival (the community project reverse-engineering
+EA/DICE's shut-down MEC server software -- https://www.beatrevival.me/,
+GitHub org https://github.com/Beat-Revival) has brought back custom/community
+time trials, since that could revive the time-trial-as-AP-item design this
+project shelved earlier (time trial results were never found to be locally
+save-tracked -- see the earlier, pre-§18 sections of this file).
+
+**Short answer: no, not yet, and this is stated explicitly and recently by
+Beat Revival's own community documentation -- time trials are named as a
+planned *future* feature, not a current one.**
+
+### What was checked
+
+- **beatrevival.me homepage** -- generic marketing copy only, no feature
+  specifics, no changelog.
+- **Beat Revival's own blog** (blog.beatrevival.me), all 4 posts read:
+  - "Welcome!" (14 Dec 2023)
+  - "Interception (Progress Report 1)" (14 Dec 2023) -- pure network
+    protocol reverse-engineering (breaking Blaze's ProtoSSL encryption via
+    an EA-MITM attack, the `catalyst-mitm` tool converting the binary Blaze
+    protocol to JSON). No player-facing features.
+  - "Progress Report 2" (25 Feb 2024) -- decrypting the TDF packet format,
+    building API/Blaze server emulators, getting the game to talk to the
+    emulated server at all. Still no player-facing features.
+  - "Progress Report 3" (21 Jun 2024, the most recent post -- **over two
+    years old as of this writing**) -- first player-facing progress:
+    initial handshake + web API requests working, "Beat L.E" (an in-game
+    placement/leaderboard-adjacent feature) partially working but "a lot of
+    values are still hardcoded," online-exclusive achievements unlockable
+    again via the EA App, plus runner-kit unlocks, player stats, and
+    division/ranking *data* showing up. **No mention of time trials in any
+    of the 4 posts.**
+- **GitHub org** (github.com/Beat-Revival) -- still only 4 repos
+  (`project-website`, `redirector`, `blog`, `.github`); the actual protocol
+  work lives in contributors' personal repos (`catalyst-mitm`, `tdf.js`,
+  and the archived `pamplona-future` / its successor `grid-leak/blaze`,
+  already known from earlier project research to not yet implement
+  leaderboards or time trials).
+- **The current, non-obsolete Steam guide** -- "[2026] FIX ACHIEVEMENTS
+  USING LOCAL SERVER" (steamcommunity.com/sharedfiles/filedetails/?id=3464761006),
+  which explicitly supersedes the older "[OBSOLETE] Achievement fix" guide
+  and is dated to this year. **This is the single clearest, most current
+  piece of evidence found.** It states outright: *"At this point, server is
+  able to provide achievement-popping experience only."* Two specific
+  achievements ("User Generated Finisher" and "You can't keep me down")
+  are called out as still unobtainable because they're *"tied to user
+  created activities"* and *"may be obtainable in future, when developers
+  of Beat Revival implement Time Trials and Beat L.E."* -- i.e. Time Trials
+  are explicitly named as a **planned, not-yet-built** feature.
+- Several other sources (the "Mirror's Edge Catalyst Online is BACK! | Beat
+  Revival Open Beta" YouTube video, a TrueSteamAchievements forum thread,
+  a Steam discussion thread about achievements) were also checked; none of
+  them mention time trials, ghost data, or leaderboards as working. The
+  YouTube video itself could not be fetched (persistent HTTP 429 from the
+  fetch proxy across several retries) -- flagged here as an unresolved gap,
+  but everything else found (especially the 2026-dated Steam guide, which
+  is more current than a video whose only known title is "Open Beta")
+  points the same direction, so this isn't treated as a blocker on the
+  conclusion.
+
+### What "Open Beta" actually seems to mean
+
+Putting the sources together: Beat Revival's "Open Beta" is about restoring
+basic server connectivity and achievement-popping (including
+online-exclusive achievements that were impossible after the real servers
+shut down), plus some early, partially-hardcoded groundwork for "Beat L.E"
+(seems to be the in-game leaderboard/placement UI) and division/rank data
+display. It is explicitly **not** yet a working time trial or ghost-racing
+system. The user's belief that time trials were already back is
+understandable given the "Online is BACK!" video title, but the project's
+own most current documentation says otherwise.
+
+### What this means for the AP design
+
+This doesn't change the earlier conclusion: **time trials are still not a
+usable AP check/item mechanism**, for two independent reasons now instead
+of one --
+1. (Original reason, unchanged) time trial results were never found to be
+   tracked in the local save file at all -- there's nothing for this
+   project's save-editing toolchain to read or write regardless of server
+   state.
+2. (New) even the online side of time trials -- the part a Beat Revival
+   server would need to serve -- isn't implemented yet by Beat Revival's
+   own account, so there's no live system to hook into either.
+
+If Beat Revival ships real Time Trial support later, it would be worth
+revisiting -- but that would mean depending on a third-party unofficial
+server project's roadmap landing, which is a much less solid foundation
+than the two mechanisms already proven firsthand in this project (§19/§20/
+§23 for abilities, §25 for side missions). No action item follows from this
+section beyond "keep an eye on Beat Revival's blog if interested" -- it's a
+dead end for now, not a path to build on.
+
+Sources checked: [beatrevival.me](https://www.beatrevival.me/) |
+[Beat Revival blog](https://blog.beatrevival.me/posts/) |
+[Progress Report 3](https://blog.beatrevival.me/posts/progress-report-3/) |
+[Beat-Revival GitHub org](https://github.com/Beat-Revival) |
+[2026 achievements-only Steam guide](https://steamcommunity.com/sharedfiles/filedetails/?id=3464761006)
+
+**Addendum, same session:** user's take -- worth exploring Beat Revival's
+own MITM/protocol work (`catalyst-mitm`, the tool from §27's Progress
+Report 1 that decrypts the Blaze traffic between game and server) at some
+point, specifically to see what it reveals about in-game time trial data
+once/if that traffic exists to observe. Explicitly **not** the current
+priority -- logged here as a parked idea to come back to, not a task.
+
+**Addendum, XP sub-test in progress:** clarified that the on-screen XP
+number is a cumulative/lifetime counter, not a spendable balance -- buying
+an ability consumes a skill point behind the scenes but does **not**
+decrement the displayed number, and the display simply stops changing once
+it hits 29000 (matches the known real single-playthrough `XP_Used` ceiling
+from §21/§22, "you are done" once every reachable ability is bought).
+Practical effect on the Cheat Engine scan: there is no real "decrease"
+event to scan against, so the exact-value narrowing attempted first (4
+rounds, still ~800 candidates -- likely noise from matching a small,
+unremarkable integer against a lot of incidental memory) was abandoned in
+favor of restarting clean with Unknown-initial-value -> Increased-value
+(repeated 2-3x on real XP gains only), the same technique that narrowed
+the GridLeaks counter down to ~6 candidates in §10e. Test still in
+progress as of this note.
+
+**Addendum, re-confirmed on a fresh save:** user raised a reasonable
+alternative explanation for the "dump_progression_state.py only shows
+static config" finding -- what if that only *looked* static because the
+original test was run on an almost-100%-complete save, where nearly every
+flag was already instantiated? Tested directly: re-ran
+`dump_progression_state.py` on a brand-new, near-0% save and diffed the
+output against the old baseline snapshot. Result: **identical** --
+122/124 flag groups, 1506/2376 flags matched, 152/152 missions, 324/324
+locations, same exact flag names, and identical `maxValue`/`cost`/
+`reputation` for every one of the 1506 flags, zero differences. This
+confirms (rather than just assumes) that this address chain really is
+reading `PamProgressionSettings`' shared static rules object, completely
+independent of which save is loaded -- not an artifact of testing on a
+near-complete save. The XP Cheat Engine sub-test (previous addendum,
+above) remains separately open/unresolved.
+
+**Addendum, terminology + re-check:** user clarified the in-game/community
+name for time trials is "Dash" (confirmed by this project's own earlier
+notes, above -- `pamplona-future`'s own repo description lists "Time
+Trials" and "Dash leaderboards" as separate features). Re-ran the §27 web
+research using "Dash" instead of generic "time trial" wording to make sure
+the right term hadn't surfaced anything missed -- it didn't: same sources,
+nothing new, §27's conclusion (Beat Revival doesn't have this live yet)
+stands. Also spot-checked the static PlayerProgressionData dump for
+"Dash"-named flags: `Demo_CompletedDash` and per-mission ones like
+`"Birdman's Route_OnDash"` exist, but both look like route/mode markers
+(no `SyncStatName`, `SyncToOnline=0`) rather than anywhere an actual
+completion time is stored -- doesn't reopen the "time trial results aren't
+save-tracked" finding, just recorded for completeness.
+
+---
+
+## §28: Survey of how other Archipelago clients solve "grant an item into an already-running game"
+
+User asked how other AP integrations solve the exact problem blocking this
+project (no live receive without a restart), to find other avenues to
+research. Checked two real, public AP clients for native/closed-source PC
+games (not Unity-with-a-scripting-layer, a closer analogue to ME:C's
+Frostbite engine than most AP worlds):
+
+- **[Super Meat Boy AP](https://github.com/PixelShake92/Super-Meat-Boy-AP)**
+  -- raw live-memory read/write via `pymem` (Python wrapper over
+  ReadProcessMemory/WriteProcessMemory, same OS-level mechanism Cheat
+  Engine uses). Confirms the address-hunting approach this project has
+  been doing by hand is a real, legitimate pattern other AP clients ship
+  with -- the open problem here is finding the *right* (live, mutable)
+  object, not the technique itself.
+- **[Sonic Heroes AP](https://github.com/EthicalLogic-Archipelago-Org/Sonic-Heroes-AP-Client)**
+  -- DLL injection via **Reloaded-II**, a general-purpose Windows game mod
+  loader not tied to any specific engine. Once injected, the mod calls the
+  game's own real functions/objects directly instead of guessing at memory
+  layout from outside -- generally the more robust of the two patterns.
+
+Full option list compiled for the user, roughly in order of new-tooling
+cost:
+1. Keep hunting for the live, mutable equivalent of `ProgressionManagerData`
+   (current approach; the target is real, just not yet located -- distinct
+   from the confirmed-static `PamProgressionSettings` and the confirmed
+   display-only UI-counter writes from the earlier live-memory work).
+2. DLL injection (Reloaded-II or similar) once the actual "buy ability"
+   function is located (e.g. by breaking on the write to `XP_Used` and
+   reading the surrounding function, the same "find out what writes"
+   technique already used successfully for the GridLeaks counter) --
+   call/hook the real function instead of poking raw bytes.
+3. **Frida** -- a popular engine-agnostic dynamic instrumentation
+   framework, lower-ceremony than a full injected DLL mod loader, worth
+   trying for hooking/calling native functions directly.
+4. **Leverage Beat Revival's own infrastructure**: several
+   `PamProgressionFlag` entries carry a `SyncToOnline` field -- if the
+   game's real online-sync path is a genuine live-apply mechanism, a local/
+   fake EA server (which Beat Revival's `catalyst-mitm`/redirector tooling
+   already proves is achievable) could be a ready-made live write path.
+   Worth raising in the Discord alongside the existing question about where
+   the mutable per-save state lives.
+5. Input automation as a fallback (script the exact keypresses to buy an
+   ability through the real menu), only viable once/if getting spendable
+   points in live is solved some other way -- sidesteps write-correctness
+   risk entirely by using the game's own legitimate purchase path.
+
+Also pointed the user at the wider Archipelago GitHub ecosystem
+(`github.com/ArchipelagoMW` and community `-AP`/`APWorld` repos) as
+primary-source prior art worth browsing directly for other native-PC-game
+clients' exact address-hunting/hooking code.
+
+---
+
+## §29: PamProgressionFlagEntityData -- likely the missing live "current value" object (major lead)
+
+Following up on §28's option list, searched the `SDK/` header dump (the
+same `SDK.zip`/FrostbiteGen tool from §10 that already gave the correct,
+working `PamProgressionSettings` address chain -- not a new/unproven
+source) for a live counterpart to the confirmed-static
+`PamProgressionFlag`. Found **`PamProgressionFlagEntityData`**:
+
+```
+PamProgressionFlagEntityData : EntityData   // total size 0x40
+  Realm                  @ 0x18
+  FlagGroup* (pointer)   @ 0x20   -> PamProgressionFlagGroup*
+  Flag* (pointer)        @ 0x28   -> PamProgressionFlag* (the static one)
+  Value (int)            @ 0x30   <-- live, mutable current value
+  GeneratedFlagNameHash  @ 0x34
+  ValueAsBool            @ 0x38
+  OnlySetValueOnEvent    @ 0x39
+  OnlyReadValueOnEvent   @ 0x3a
+```
+
+One instance's address is given directly by the header:
+`GetInstance()` reads a pointer from `fb::GetModuleBase() + 0x2873500`.
+`GetTypeInfo()` (usable as a vtable-scan seed to enumerate every live
+instance, not just this one) is at `module + 0x28734e0`.
+
+**Why this is a strong lead and not just a guess:** `PamProgressionFlagEntityData`
+was independently identified *months earlier*, from a completely different
+angle (static EBX/prefab parsing, §7) -- every "green" collectible pickup's
+level prefab contains one, and its `.FlagGroup`/`.Flag` fields were already
+proven (via the GUID-resolution fix in §6) to resolve to real
+`PamProgressionFlagGroup`/`PamProgressionFlag` instances. That's the same
+class, doing "bind a flag to a live game thing," confirmed from the
+world-data side long before this live-memory header surfaced its `Value`
+field. §10's own open question ("none of the classes we checked expose a
+current-value field") was scoped only to the three classes a Discord
+modder pointed at at the time (`PamProgressionData`/`FlagGroup`/`Settings`)
+-- this class just hadn't been looked at yet.
+
+**Not yet tested live.** Proposed protocol, in order of confidence:
+1. Resolve `module + 0x2873500` as a pointer in Cheat Engine (Add Address
+   Manually, tick Pointer). Check `+0x28` looks like a valid pointer into
+   the already-known static `PamProgressionFlag` pool, and read `+0x30`
+   as a sanity check.
+2. That's likely only one arbitrary instance, not necessarily a flag we
+   care about -- use `GetTypeInfo()` (`module+0x28734e0`) to vtable-scan
+   for every live `PamProgressionFlagEntityData` instance (see §28's RTTI/
+   vtable-scan writeup), then match each one's `+0x28` pointer against the
+   known static address for a specific flag (start with `Unlocks_ExtendedSlide`,
+   the project's established safe repeat-test case) to find the right
+   instance.
+3. Write to that instance's `+0x30` Value field with the game running and
+   see if it takes effect live, no restart -- the actual test this whole
+   thread has been building toward.
+
+**If confirmed, this solves both open threads at once**: `XP_Gained`/
+`XP_Used` are just more named `PamProgressionFlag` entries in the same
+static catalog, so the same mechanism would cover live XP writes too, not
+just ability/mission flags.
+
+**Update -- steps 1 and 2 done live, exactly as planned, and it worked
+mechanically.** In-game, on `MirrorsEdgeCatalyst.exe` at module base
+`0x140000000`:
+
+- `module+0x2873500` resolved as a pointer; its `+0x0` (real C++ vtable,
+  not `GetTypeInfo()` -- see the correction below) read as
+  `5398652632` (`0x141C8E6D8` = `module+0x1C8E6D8`), confirming a live,
+  standard, non-Frostbite-quirky vtable at instance offset 0.
+- *(Correction to the plan above: `GetTypeInfo()` at `module+0x28734e0`
+  turned out to be a separate Frostbite reflection descriptor, not the
+  actual vtable pointer -- confirmed by reading `DataContainer.h`'s
+  `GetEntry(instance, index) { return (*(void***)instance)[index]; }`
+  and `EntityData.h`'s own distinct vtable func table. The simpler, correct
+  seed for a vtable scan is just the live vtable pointer read directly off
+  the one already-resolved instance, as done above.)*
+- Exact-value memory scan (8 Bytes) for `5398652632` -> **633 raw hits**.
+- Lua filter (non-null `+0x28` Flag pointer) -> **519 real instances**.
+- Lua name-resolution (read `Flag->+0x18` as a C string) -> full
+  `Name = Value (entity base=...)` table for all 519, sorted and pulled
+  for offline analysis.
+
+**The 519-entity table changes the picture, though.** Parsed
+programmatically (253 unique flag names across the 519 instances):
+
+- **All 146 instances of every `Unlocks_*` / `XP_*` name read exactly 0.**
+  Not "mostly" -- *all* of them, across all 44 unique `Unlocks_*` names
+  and both `XP_Used`/`XP_Gained`, including `Unlocks_ExtendedSlide` (the
+  project's standard test flag, known to be *unlocked* on the current
+  save) and `XP_Gained`/`XP_Used` (known from `decode_save.py` to be
+  27481/27000 on the current save). Every single one of these
+  progression-catalog instances is sitting at its type's default value,
+  not the save's real value.
+- **Only 22 of the 519 instances are nonzero at all**, and none of them
+  are progression/unlock flags. They're level/scene state:
+  `CharacterState_Nomad` (2, 4, 6 across 3 instances), `Collectables_OrbsEnabled`
+  (2), `Global_SunRotation` (88), and 14 `Music_MusicSegment` instances
+  holding distinct values 1-14 (almost certainly "which music layer/cue
+  is this segment object currently playing").
+- **3 of the 519 are garbage** -- corrupted/unreadable names, absurd
+  values (~7.6-11 million), at addresses `142873530`, `2D6B2C40`,
+  `2D6B2C38`. The latter two are the *exact same addresses* from this
+  investigation's very first live screenshot (`P->2D6B2C38`/`P->2D6B2C40`,
+  both read as `0` at that time). They now read huge garbage -- almost
+  certainly a coincidental 8-byte match on the vtable-pointer value in
+  memory that was never actually a live instance, or a heap slot that's
+  since been reused for something else. Not a lead; the raw exact-value
+  scan has no type-safety, so a few false positives out of 633 is
+  expected and these should just be filtered out (e.g. validate the
+  `Flag` and `Name` pointers land inside sane module/heap ranges before
+  trusting an entry).
+
+**Working interpretation:** `PamProgressionFlagEntityData` is real and its
+`Value` field is genuinely live/mutable -- but the 519 instances found by
+a class-wide vtable scan are dominated by *level-placed, per-object*
+entities (music cues, per-level lighting/sun state, a specific NPC's
+state machine, a specific collectible's on/off toggle) that happen to use
+the same class as a generic "named int with a value" container. The
+`Unlocks_*`/`XP_*` instances found this way look like they're either (a)
+freshly-constructed default/template copies that only get pushed the real
+save-backed value at the moment something actually queries them (lazy
+sync), or (b) a genuinely different, disconnected copy from whatever
+struct actually backs the persisted save state -- not yet distinguishable
+from this data alone.
+
+**Proposed next steps, cheapest/most informative first:**
+1. **Prove the write mechanism on a safe, currently-nonzero instance**
+   first, decoupled from the progression question entirely -- e.g. write
+   a different segment ID to one of the 14 live `Music_MusicSegment`
+   instances, or a different value to the one live `Global_SunRotation`
+   instance, and watch/listen for an immediate in-game effect. Cheap,
+   fast, and answers "does writing to this class's `+0x30` do anything at
+   all" before spending more time on the harder progression-specific
+   question.
+2. **Test the lazy-sync hypothesis**: re-run the same scan right after
+   doing something that should force the game to read
+   `Unlocks_ExtendedSlide`'s real value -- e.g. open the Progression/moves
+   menu, or walk up to whatever normally checks that ability -- and see if
+   that specific instance flips from `0` to `1`. If it does, the sync
+   point is identified and a live write becomes plausible right after
+   triggering it.
+3. **Decode `Realm`** (`+0x18`, currently undecoded, likely a small enum)
+   on a couple of instances -- e.g. one of the two `Unlocks_ExtendedSlide`
+   entities (bases `15B713AE8`, `15B96F800`) vs. one of the live
+   `Music_MusicSegment` entities -- to see whether it distinguishes
+   "authoritative/global" scope from "local/per-object" scope, which
+   would explain why an `Unlocks_*` flag shows up twice while
+   `Music_MusicSegment` shows up 14 times.
+
+**Update -- step 1 (prove the write mechanism) done, with a genuinely
+important positive result.** Wrote `270`, then `360`, to
+`Global_SunRotation`'s `Value` field (`15BD91548 + 0x30 = 15BD91578`, 4
+bytes) with the game running. No visible sky/lighting change either
+time -- but critically, **the written value stuck**: re-checking the
+address afterward still showed `360`, and it *survived a death and small
+(checkpoint) reload*, still reading `360` on respawn. This rules out "the
+game is continuously overwriting this field from elsewhere" (would have
+snapped back to something near the real sun position) and instead shows
+this class's `Value` field is genuinely live-writable **and persists
+across at least a checkpoint-level reload, not just within the same
+frame** -- which is direct evidence against the "no live receive without
+a full game restart" problem, independent of whether `Global_SunRotation`
+itself does anything visible.
+
+Most likely explanation for the lack of visual effect: this instance
+either isn't the copy actually driving the skybox renderer (matches the
+Frostbite "default vs. active instance" duplication quirk flagged
+earlier), or `Global_SunRotation` isn't a continuous render input at all
+(e.g. scripted-cutscene keyframe data, or feeds something non-visual).
+Not chasing that further for now -- the mechanism is validated, which is
+the part that matters.
+
+**Next: test it directly on `Unlocks_ExtendedSlide`.** Two instances
+found: base `15B713AE8` and base `15B96F800`. For each, write `1` to
+`Value` (`+0x30`) and also `1` to `ValueAsBool` (`+0x38`, 1 byte) in case
+the game reads the bool field rather than re-deriving it from the int:
+- `15B713AE8 + 0x30 = 15B713B18` (Value, 4 bytes)
+- `15B713AE8 + 0x38 = 15B713B20` (ValueAsBool, 1 byte)
+- `15B96F800 + 0x30 = 15B96F830` (Value, 4 bytes)
+- `15B96F800 + 0x38 = 15B96F838` (ValueAsBool, 1 byte)
+
+Then check the in-game Moves/Progression menu for a visible "unlocked"
+state, and separately test the actual mechanic (slide under something
+that requires the extended distance) to see if it's functionally granted,
+not just cosmetically shown.
+
+**Update -- test result and a self-correction.** Wrote `1` to both
+`Value` and `ValueAsBool` on both `Unlocks_ExtendedSlide` instances. No
+change: the ability screen still showed "LOCKED: Complete mission
+BENEFACTOR" before and after (identical screenshots), and the slide
+mechanic itself was tested in-game and does not appear to actually grant
+the extra distance either.
+
+Before interpreting that, a correction to the framing used earlier in
+this section: I compared the live-session values (all `Unlocks_*`/`XP_*`
+reading 0) against `decode_save.py`'s output for the player's *main*
+`PROF_SAVE` (`XP_Used=27000`, `XP_Gained=27481`, from earlier this
+project) and called it a contradiction. That was comparing two different
+saves -- the entire live-memory investigation in this section has been
+running against the *fresh* save made specifically for this testing (`"I'll
+restart a fresh save"`), not the main save. A fresh/early save reading 0
+across the board is not a red flag at all; per §23, a genuinely fresh save
+has zero `Unlocks_*` records full stop. So the "146 instances, all 0" data
+point doesn't actually indicate wrong/default/disconnected instances --
+it's consistent with these being the real, correctly-read live values for
+this save's real (early) progress. Worth keeping in mind, but it doesn't
+change today's negative result.
+
+**Why the write likely had no effect: confirmed via this project's own
+earlier data (§22) that every ability is mission-gated on *purchasability*,
+separately from the owned flag.** `PamProgressionFlag`'s static schema has
+a `.MissionIndex` field, and §22's real 17-checkpoint timeline shows
+`ExtendedSlide` doesn't become purchasable until the "Viva La
+(Resistance)" checkpoint (well after "Benefactor"). Cross-checked against
+`runtime/dependency_graph.json`'s `missions` list: the actual story
+mission named "Benefactor" is `mission_index: 81` (`PamProgressionMissionType_Gold`,
+active/available name IDs resolve to `ID_MIS_MQ08...`, i.e. Main Quest 8),
+with `completed_flag_name: "Benefactor_Timer"` -- almost certainly the
+flag the ability-shop screen's "Complete mission BENEFACTOR" check reads
+(a nonzero completion timestamp = mission done, matching the
+`X_CompletedTime`/`X_Timer` naming pattern used elsewhere in this data).
+That flag is **not currently live** in our 519-entity dump -- only
+`Benefactor_HelicopterCrowds` showed up, meaning the level content that
+would instantiate `Benefactor_Timer` isn't currently streamed in at the
+player's location. Most likely explanation for the failed test: the
+ability system's unlock check is gated on mission-complete first (both for
+the shop UI and for the actual slide mechanic), and without `Benefactor_Timer`
+set, nothing even looks at `Unlocks_ExtendedSlide`'s value -- so the write
+may well have been fine, just invisible behind an earlier gate. This
+doesn't yet distinguish that from "wrong instance found" as an
+explanation, but it's the more likely one given `Global_SunRotation`
+already proved the write path itself works and persists.
+
+**Every `Unlocks_*` flag is mission-gated in some way (per §22), so there
+is no gate-free ability to test on a fresh save** -- the earliest
+possible unlocks (`Focus`, `Glove`, `HandToHandCombat`, `MoveEnemyAttack`,
+`Shift`) still require the prologue (`Release`, `Reunion`) to be done
+first. **Next step:** check the in-game Moves/Progression menu for any
+ability currently showing a point cost (purchasable) rather than "LOCKED:
+Complete mission X" -- if the player has cleared the prologue, one should
+be available. Testing a live write on an already-purchasable-but-unbought
+ability removes the mission-gate confound entirely and would cleanly
+confirm (or rule out) whether this class is genuinely the live
+authoritative store the ability system reads from.
+
+**Update -- clean test run, and this hypothesis is now most likely dead
+for progression purposes.** Player's actual (different, further along than
+the fresh save used for the earlier tests) save had a genuinely gate-free
+case: Combat tree, `Unlocks_PositionalAdvantage`, shown red/available
+(no lock, no mission gate) with 5,375/6,000 points banked. Found and wrote
+`1` to `Value` (`+0x30`) and `ValueAsBool` (`+0x38`) on all three live
+instances of that flag:
+- base `15A77A520`
+- base `15B714218`
+- base `15BB81D30`
+
+Closed and reopened the Progression menu afterward. **No change** --
+still showed as available-but-unpurchased, identical to before. With no
+mission gate to blame this time, and a clean write to all three known live
+copies, this is a real negative result, not just "found the wrong
+instance among duplicates."
+
+**Conclusion: `PamProgressionFlagEntityData`'s live-writability and
+persistence (proven via `Global_SunRotation`) are real, but this class is
+most likely *not* what the ability/unlock system actually reads from.**
+Best explanation: it's a generic "named int+bool flag on a level object"
+component used broadly for level scripting (matches everything actually
+observed live -- music cue IDs, sun angle, an NPC's state machine, a
+collectible toggle) that happens to share the same class as the
+*definition* side of progression flags (already proven in §7/§10/§18 via
+static `.FlagGroup`/`.Flag` fields on prefabs), without being the
+*storage* side the running game consults for "is this owned."
+
+**The more architecturally-plausible lead, already sitting in the SDK
+dump and not yet chased:** `PamClientProgressionFlagEntity` (`Entity`,
+size `0x58`) and `PamServerProgressionFlagEntity` (`Entity`, size `0x88`)
+-- both explicitly named for a client/server split, both flagged by the
+SDK generator with "No traversal chain found... use `fb::PatternScan()` or
+manual pointer chains," and both undecoded (raw byte blobs, no field
+offsets known). There's also `PamServerProgressionPurchaseEntity`
+(`Entity`, size `0x40`, same "no traversal chain" warning) which, by name,
+sounds like it could be the actual "buy this ability" handler rather than
+passive storage. A client/server-replicated progression store would
+explain everything cleanly: it fits this game's asymmetric online
+features (ghost data / social play), and it would sit in a completely
+different part of the object graph than the level-scripting flag class we
+just spent this whole thread testing -- which is exactly why the
+FrostbiteGen tool couldn't auto-resolve a traversal chain to it the way it
+did for `PamProgressionFlagEntityData`.
+
+Three ways forward from here, meaningfully different in cost and risk:
+1. **Hunt `PamClientProgressionFlagEntity`/`ServerProgressionFlagEntity`
+   directly** via Cheat Engine's "find out what accesses this address"
+   breakpoint technique -- set a break-on-access on a known *static*
+   flag-definition address (e.g. the long-established
+   `PamProgressionSettings`/`PamProgressionFlag` static chain from early
+   in this project), open the ability menu to force the game to read it,
+   and step through the resulting breakpoint hits in the disassembler to
+   trace the code path down to wherever it actually stores "owned."
+   Significantly more advanced than anything done so far (live
+   disassembly, register/stack reading, likely no symbols) and slow, but
+   directly targets the real object.
+2. **Skip memory-hunting and call the game's own purchase function**
+   instead (the DLL-injection/Frida route surveyed in §28) -- if
+   `PamServerProgressionPurchaseEntity` or similar exposes a "purchase"
+   method, hooking/calling it directly sidesteps the "which struct is
+   authoritative" question entirely, since the game's own code already
+   knows where to write. Requires standing up an injected DLL or Frida
+   script, i.e. new tooling, but is the most robust long-term answer to
+   the underlying "no live receive" problem either way.
+3. **Stop live-memory hunting for now** and pick it up fresh next
+   session -- this thread has produced a real, useful, fully-documented
+   result (the write mechanism and persistence are proven real, this
+   specific class is proven not to be the answer, and the next two best
+   leads are named and reasoned out) even though it didn't land the final
+   answer tonight.
+
+**Session ended here, by choice (option 3 above).**
+
+## 30. Starting point for the next session (supersedes §26 for the restart-problem thread)
+
+**What's actually settled now, stated plainly so it doesn't need
+re-deriving:**
+- The "no live receive without a restart" problem (§15/§15a/§15b/§26) is
+  still open -- nothing found this session lets an item be granted into
+  an already-running session in a way that sticks and is reflected by the
+  game's own systems.
+- But two real, reusable facts came out of tonight's work: (1) a class's
+  `Value` field being technically live-writable and even surviving a
+  checkpoint reload does **not** mean it's the object the game logic
+  reads from -- both need to be checked separately, and only checking the
+  first one is how this thread almost mis-reported a false positive; (2)
+  `PamProgressionFlagEntityData` (found via the vtable-scan technique in
+  §29) is now fairly conclusively a generic level-scripting "named flag"
+  component, not the progression store -- confirmed by two independent
+  negative tests (`Unlocks_ExtendedSlide` under a mission gate,
+  `Unlocks_PositionalAdvantage` with no gate at all), both after writes
+  that provably stuck in memory.
+
+**Next session, pick one of the two live leads named in this update to
+§29** (both already reasoned out above, no need to re-research):
+1. `PamClientProgressionFlagEntity` / `PamServerProgressionFlagEntity` --
+   client/server-replicated, no auto traversal chain in the SDK dump.
+   Approach: CE "find out what accesses this address" breakpoint on a
+   long-known static flag address (the original
+   `PamProgressionSettings`/`PamProgressionFlag` chain), triggered by
+   opening the ability menu, then trace the disassembly from the
+   breakpoint hit.
+2. `PamServerProgressionPurchaseEntity` -- sounds by name like the actual
+   "buy ability" handler. If a DLL-injection/Frida approach (§28) gets
+   built, hooking or calling this directly would sidestep the "which
+   struct is authoritative" question altogether.
+
+**Also still on the shelf, unchanged from §26:** the full side-mission +
+ability item/location JSON catalog build-out (deprioritized again this
+session in favor of the restart-problem investigation) -- both underlying
+mechanisms are proven, so this is ready to build whenever the
+restart-problem thread is paused or solved.
+
+**Update -- the cheap XP-display sub-test was attempted same night,
+inconclusive, still open.** With the Progression menu showing `5,385 /
+6,000 XP` live, tried an Exact Value / 4 Bytes scan directly for the
+on-screen number (`5385`) instead of the raw `XP_Gained`-style catalog
+value. First scan: ~1000-1048 hits, essentially unchanged across many
+Next Scan passes while sitting in the menu -- consistent with world
+simulation being paused/throttled while a menu is open, so nothing else
+in memory was changing to filter the noise out. After leaving the menu
+and moving around, it finally started shrinking (1,048 -> ~800) but the
+session ended there for the night before it could be narrowed further or
+tested for a real write+autosave persistence check.
+
+**Not yet ruled out:** the displayed points value might not live at a
+single stable address at all -- some UI systems recompute a shown number
+like this at render time from other underlying data rather than caching
+it as one persistent int, which would explain the unusually slow
+narrowing even with the game running. Worth continuing the same
+narrowing process (Next Scan while actually moving/playing, not
+menu-idle) before concluding either way -- this sub-test is genuinely
+still open, not negative yet.
+
+## 31. Attempted RTTI-based vtable derivation for the client/server flag
+entities -- the MSVC RTTI premise was wrong, but a real, different lead
+turned up instead
+
+Picked up §30's first lead: finding `PamClientProgressionFlagEntity` /
+`PamServerProgressionFlagEntity` live, since neither has a `GetInstance()`
+traversal chain in the SDK. The plan was to derive each class's real
+vtable analytically from MSVC RTTI (`GetTypeInfo()` address -> assumed
+`TypeDescriptor` -> scan for the `RTTICompleteObjectLocator` referencing
+it -> scan for what points at *that* -> vtable), instead of the harder
+live-breakpoint technique floated in §30, reusing the same "exact-value
+scan for a known pointer" method that already worked for
+`PamProgressionFlagEntityData`.
+
+**The premise was wrong.** A live-memory scan for the literal
+`TypeDescriptor` RVA bytes (`50 FE 85 02` for the Client class), with
+every protection filter removed (Writable and Executable both unchecked,
+full "All" region), found **zero** matches anywhere in the process. That
+rules out standard MSVC RTTI being what `GetTypeInfo()` points to for
+these two classes -- consistent with something already learned earlier
+this project: `GetTypeInfo()` is a Frostbite-internal reflection
+descriptor, not the raw C++ vtable, and evidently not a standard
+`type_info`/`TypeDescriptor` object either.
+
+**But the raw bytes at that address are real, structured data, not
+garbage -- and they contain something useful.** Reading 64 bytes starting
+at `PamClientProgressionFlagEntity::GetTypeInfo()`'s own address
+(`14285FE50`) directly: bytes at struct offset `+0x15` are
+`B0 86 7E 42 01 00 00 00`, which as a little-endian pointer is
+`module+0x27E86B0` -- **exactly** `Entity::GetTypeInfo()`'s own address
+(`PamClientProgressionFlagEntity`'s base class). Not a coincidence at
+that level of precision. So whatever this structure actually is, it's a
+real, per-class Frostbite reflection object with at least one meaningful
+field: a back-pointer to the parent class's equivalent structure. The
+offset being unaligned (`0x15`, not a clean 4/8 boundary) suggests this
+is packed/serialized reflection data rather than a plain compiler-emitted
+C++ struct, which makes further manual field-guessing slow going.
+
+**Where this leaves things:** the MSVC-RTTI vtable-derivation plan is
+dead for these two classes -- there's no `RTTICompleteObjectLocator` to
+find because there's no real C++ RTTI backing `GetTypeInfo()` here.
+Whether this Frostbite reflection structure eventually leads anywhere
+(e.g. a pointer to a live-instance registry, or the real vtable, sitting
+elsewhere in the same struct) is unknown -- promising in that it's
+clearly real, structured, per-class metadata, not proven useful yet.
+Session paused here to decide whether to keep hand-decoding this
+structure, ask Meteor/the SDK tool's author for a manual traversal chain
+to these two specific classes (the tool that generated the SDK already
+resolves hundreds of other classes automatically -- these two are just
+the ones it couldn't), or fall back to the live-breakpoint technique from
+§30 after all.
+
+**Update -- fully decoded what this structure actually is, and it's a
+dead end for the original goal (finding live instances), though a real,
+confirmed finding in its own right.** Dumped the raw bytes at
+`GetTypeInfo()` for `PamClientProgressionFlagEntity`,
+`PamServerProgressionFlagEntity`, and (for comparison) the already-working
+`PamProgressionFlagEntityData`, then cross-referenced every 8-byte window
+across all of them for anything landing in the module's address range.
+
+Both unresolved classes share an identical field layout (byte-for-byte
+matching structure, just different content per field) that the known-good
+class does *not* share -- consistent with `PamProgressionFlagEntityData`
+extending a different base (`EntityData`) than the other two (`Entity`
+directly), so a different reflection layout for that hierarchy is
+expected, not a contradiction.
+
+Two fields fully decoded and confirmed on both classes:
+- **`+0x15`: a pointer to the base class's own `GetTypeInfo()`** -- both
+  resolve to `module+0x27E86B0`, exactly `Entity::GetTypeInfo()`. Direct
+  confirmation this is real per-class reflection metadata with a working
+  parent-class back-reference, not garbage.
+- **`+0x07`: a pointer to `(this record's own address) + 0xA0`** --
+  confirmed on *both* classes independently (`14285FE50 -> 14285FEF0`,
+  `1428641A0 -> 142864240`). Followed that pointer and dumped the target:
+  it's **another record with the identical shape** (same `+0x15`
+  back-pointer to `Entity::GetTypeInfo()`, same `+0x07` pattern pointing
+  to *its own* `+0xA0`, confirmed by dumping a third link in the chain
+  from the second one). This is a **linked list of fixed-size
+  (~0xA0-byte) type-descriptor records**, walkable via the `+0x07` "next"
+  pointer -- almost certainly Frostbite's global reflection type registry
+  (every `Entity`-derived class in the game gets a node), not anything
+  specific to progression flags or live instances.
+
+**Conclusion: this data answers "what class is this" and "what's its
+parent class," not "what live objects of this class currently exist."**
+It's the class-level registry, structurally analogous to what
+`GetTypeInfo()` already gave us to begin with -- walking it further just
+visits *other classes'* descriptor nodes, not instances of these two.
+Continuing to decode the remaining undecoded fields in this same record
+(the still-unexplained bytes at `+0x00`-`+0x06` and `+0x0F`-`+0x14`) is
+unlikely to change that conclusion, since nothing about a flat class
+registry would carry a live-instance list. Real, useful reverse-engineering
+result (confirms the shape of the engine's type-registration system, in
+case that's useful for a future, different investigation), but a dead end
+for the specific goal this thread was chasing.
+
+---
+
+## §32. Live-breakpoint technique succeeds: real code found reading a `PamProgressionFlag` object
+
+Continuing the "hunt the client/server flag entity" session, after the `Name`
+field (`+0x18`) produced zero hits under extensive testing, three numeric
+fields on the same live `Unlocks_PositionalAdvantage` flag object (address
+`0x2A192820` this session, per `progression_snapshot.json`) were broken on
+simultaneously via Cheat Engine's "Find out what accesses this address":
+
+| Field | Offset | Address | Hits | Instruction(s) |
+|---|---|---|---|---|
+| `cost` | `+0x24` | `2A19285C` | 1 | `143A1BF8A - 8B 41 24 - mov eax,[rcx+24]` |
+| `maxValue` | `+0x20` | `2A192858` | 1 | `143A1BFD8 - 8B 41 20 - mov eax,[rcx+20]` |
+| `nameHash` | `+0x10` | `2A192848` | 2 | `1439E2274 - 8B 51 10 - mov ecx,[rax+10]`<br>`143A1BF63 - 8B 41 10 - mov eax,[rcx+10]` |
+
+This is the first positive result from the live-breakpoint technique this
+project has produced. It proves real game code touches this exact
+`PamProgressionFlag` object during live execution (menu open, most likely —
+these are classic "populate a UI row" reads), which the earlier
+`PamProgressionFlagEntityData` line of investigation never achieved (that
+class was write-tested directly and shown to be inert instead).
+
+Two observations worth tracking into the next step:
+
+- `143A1BF8A` (cost) and `143A1BFD8` (maxValue) are only `0x4E` bytes apart
+  and both read off `rcx` — almost certainly the same function, reading
+  multiple fields off the same object pointer to build one UI element
+  (e.g. an ability tile: cost to display, maxValue for a pips/level bar).
+  This is the more promising thread to pull first, since it's a single
+  function with multiple confirmed field reads to anchor on.
+- The two `nameHash` hits are at different addresses and use different
+  register pairs (`rax`->`ecx` vs `rcx`->`eax`), i.e. two distinct call
+  sites. `143A1BF63` is close to the cost/maxValue pair (same function,
+  reading `nameHash` too, presumably to key a localization/lookup table —
+  consistent with the earlier hypothesis for why the raw `Name` pointer
+  itself was never read). `1439E2274` is a separate, currently unidentified
+  call site — possibly earlier UI construction (building the full ability
+  list) rather than a per-row detail read.
+
+**Important framing point:** this `PamProgressionFlag` struct (fields
+`nameHash`, `missionIndex`, `name`, `maxValue`, `cost`, `reputation`,
+`syncStatName`, `clamp`, `syncToOnline`) is the *static definition* of an
+ability slot — cost and maxValue are constants, not per-save state. Finding
+code that reads them confirms UI code walks this table, but does **not** by
+itself locate the runtime "is this owned" bit, which must live somewhere
+else (a separate owned/purchased array or bitset, most likely indexed by
+the same `nameHash` or by position in the `PamProgressionFlagGroup.Flags`
+array). The next step is to use these confirmed hit addresses as an entry
+point into the surrounding disassembly and look for a sibling read (off the
+same base pointer, or a related one) of what would be an "owned" boolean —
+or a call out to a function that returns one.
+
+**Not yet done:** opening the disassembler on any of these hits. That's the
+immediate next action for the next session/step.
+
+---
+
+## §33. Disassembly of the hit addresses: identified as a stat-formatting function, not the ownership check
+
+Opened the disassembler on the `cost` hit (`143A1BF8A`) and the `nameHash`
+hit (`143A1BF63`). Both land in the **same function**, roughly spanning
+`MirrorsEdgeCatalyst.exe+3A1BF4x` to `+3A1BFF2` (`3A1BF63 < 3A1BF8A`, both
+inside one `push rbx ... pop rbx; ret` body). This also explains the earlier
+"two nameHash call sites" observation only partially: `143A1BF63` is one of
+them (inside this function); the other, `1439E2274`, is a separate,
+still-unexamined call site elsewhere.
+
+**Function shape (prologue seen at the bottom of the disassembler view):**
+```
+push rbx
+sub  rsp, 20
+mov  rbx, rcx          ; rbx = "this" (a UI element/widget pointer)
+add  rcx, 48
+cmp  qword ptr [rcx], 00
+je   +...
+```
+Then a repeating block runs once per "stat slot" at `rbx+30`, `rbx+38`,
+`rbx+40`, `rbx+50` (slot addresses aren't evenly spaced — not a simple
+array, more likely distinct named fields on a UI widget struct: probably
+nameHash-slot, cost-slot, maxValue-slot, reputation-slot):
+```
+cmp  qword ptr [rbx+<slot>], 00      ; is this UI slot's target object set?
+mov  rax, [rbx+28]                   ; rax = pointer field on the widget
+mov  rcx, [rax+20]                   ; rcx = the PamProgressionFlag* itself
+mov  eax, [rcx+<field>]              ; read nameHash(+10) / maxValue(+20) / cost(+24) / reputation(+28)
+lea  rcx, [rbx+<slot>]               ; rcx = destination slot pointer
+mov  [rsp+30], eax                   ; stash raw value on the stack
+je   ...                             ; (tests the earlier cmp's flags) skip if slot pointer was null
+lea  rdx, [rsp+30]
+mov  r8b, 01
+call MirrorsEdgeCatalyst.exe+2A430F0 ; generic value->text formatter, called once per slot
+```
+`+2A430F0` is called identically for all four fields (same calling
+convention: `rcx`=destination slot, `rdx`=`&rawValue`, `r8b`=1) — almost
+certainly a generic "format this number into this UI text slot" helper, not
+anything progression-specific.
+
+**Conclusion: this function formats an ability's stat panel (name-hash
+lookup key, cost, maxValue, reputation) into on-screen text. It does not
+branch on, or reveal, ownership state at all** — it unconditionally
+formats whatever the flag object's static fields say, gated only by
+"does this UI slot exist" (a widget-construction guard), not "is this
+ability owned." The immediately-following code in the same memory region
+(a call into an `"Enlighten"`-tagged function) is unrelated Frostbite
+global-illumination code that happens to sit next in the binary — a red
+herring, not connected to progression at all.
+
+**Next step, not yet done:** find the *caller* of this stat-formatting
+function, since the caller is what decides whether/how to show this panel
+per ability, and is a much likelier place to find an ownership branch.
+Approach: set a plain execution breakpoint on the function's first
+instruction (the `push rbx` seen in the prologue), trigger the ability
+detail UI again in-game, and when it breaks, read the return address off
+the stack (top of stack right after `push rbx`, or via CE's Stack pane) to
+identify the call site, then jump there with Ctrl+G.
+
+---
+
+## §34. Caller identified via execution breakpoint + call stack
+
+Set a plain execution breakpoint on the stat-formatter function's entry
+point (`push rbx` at `143A1BF30`, confirmed by `RIP` matching exactly on
+hit). Triggering the ability detail UI again hit it, and Cheat Engine's
+Memory Viewer showed the full call stack (not just the immediate return
+address), 17 frames deep down to `ntdll.RtlUserThreadStart` — consistent
+with this being deep inside nested UI/menu framework code.
+
+**Immediate caller (top of stack, the address right after whichever `call`
+invoked the stat-formatter): `MirrorsEdgeCatalyst.exe+3A11461`.**
+
+Rest of the stack, for reference (each is a return address into
+progressively higher-level UI code, not yet examined):
+`3A101BA`, `31671E3`, `31C45D7`, `325362F`, `3254584`, `2D37D37`,
+`2D39138`, `2A98B07`, `2A98555`, `326930C`, `31A4ECF`, `2A2E069`,
+`2A315B5`, `agsGetEyefi...` (partial symbol, an AGS/AMD-related import,
+likely an unrelated thunk in this same jump table), `2A6342B`, `2C7884D`,
+then MSVCR120/KERNEL32/ntdll thread-launch boilerplate.
+
+**Next step (not yet done):** jump to `+3A11461` (the actual `call`
+instruction is ~5 bytes earlier, around `+3A1145C`), and read the
+surrounding code for a branch that could be gating *whether*/*how* the
+stat panel gets built — e.g. an owned-vs-locked UI state check. This is
+the current best candidate location for the actual ownership/purchase
+check.
+
+---
+
+## §35. Caller identified as tile-display-data builder (text + stats), not ownership; confirms localization-by-ID hypothesis
+
+Jumped to the caller (`+3A11461`) and confirmed the exact call site:
+`3A1145C: call MirrorsEdgeCatalyst.exe+3A1BF30` (our known stat-formatter
+from §33), immediately followed by `3A11461: nop` — matches the return
+address from §34 exactly.
+
+The containing function starts at `3A11257` (prologue: `push rbp/rsi/rdi;
+sub rsp,40`, params renamed `rsi=rcx, rbx=rdx, rdi=r8`, then an early
+`call +3160100` setup/validation call). Immediately before calling the
+stat-formatter, it runs **six near-identical blocks**, each:
+```
+mov  [rsp+28], r14
+mov  [rsp+20], <context pointer, usually a fixed lea to +27B0D38>
+mov  r9d, <32-bit constant, shown decoded as a small decimal in the CE comment>
+mov  r8, rdi
+lea  rdx, [rsp+68]
+mov  rcx, [rbx]
+call MirrorsEdgeCatalyst.exe+31462A0
+mov  rax, [rsp+68]
+mov  [rsi+<slot>], rax
+```
+with `r9d` constants `236`, `0`, `149`, `207` (plus two more not fully
+captured) and destination slots `rsi+30/38/40/48/50/58` in sequence, then
+finally `mov rcx, rsi; call +3A1BF30` (our stat-formatter) to fill in the
+numeric fields on the same object.
+
+**This is a "resolve localized text by numeric ID" pattern** — six calls
+into `+31462A0` with distinct small-integer IDs, writing each resolved
+value into consecutive slots on the tile object. This directly confirms
+the hypothesis from the earlier `Name`-field zero-hit result (§ from prior
+session): ability names/descriptions aren't read from a raw string pointer
+on the `PamProgressionFlag` object at all — they're looked up by ID through
+a separate localization table, which is why breaking on that pointer never
+fired.
+
+**Conclusion: this whole function (`3A11257`+) builds one ability tile's
+full display payload — six localized text fields, then four numeric
+stats — unconditionally, for every tile regardless of ownership.** No
+ownership branch found in it. This is expected: locked tiles still need a
+name, description, and cost shown.
+
+**Next step (not yet done):** climb one more frame in the call stack to
+`MirrorsEdgeCatalyst.exe+3A101BA` (the next return address from §34's
+stack), which is a better candidate for the actual per-row ownership/lock
+logic (icon selection, "owned" badge, enabling the Buy button) than the
+pure content-population code found here.
+
+---
+
+## §36-37. Exact match found: code references `PamClientProgressionFlagEntity::GetTypeInfo()` directly during ability-tile construction
+
+Climbing the call stack from the stat-formatter (§34) surfaced a family of
+near-identical sibling functions (seen at `3A100A0` and `3A10160`), each
+shaped like:
+```
+call <hash-resolve function, +31668F0>      ; resolve some object by a 32-bit hash constant
+test rax,rax / rbx,rbx ...                  ; null checks
+mov  r8,[rbx+000000D0]                      ; read a field off the outer "this"
+call <per-field helper, e.g. +3A11260 or +3A11330>
+mov  rsi,rax
+...
+lea  rdx,[<a type-descriptor address>]
+mov  rcx,rsi
+call MirrorsEdgeCatalyst.exe+3166EA0        ; (rcx=widget, rdx=type descriptor, r8=extra)
+mov  rcx,rbx
+call +3168210
+xor  r8d,r8d
+mov  rdx,rsi
+mov  rcx,rbx
+call +31668A0
+mov  rax,rsi
+ret
+```
+
+**First instance** (`3A10160`) loaded `rdx` from `module+0x285FDB0` — exactly
+`0xA0` (one type-registry record stride, confirmed in §31) before the known
+`PamClientProgressionFlagEntity::GetTypeInfo()` RVA (`0x285FE50`). Verified
+by direct calculation, not approximation.
+
+**Second instance** (`3A100A0`, a sibling of the first with a different hash
+constant) loaded `rdx` from `module+0x285FE50` directly — this is the
+*exact, literal* RVA for `PamClientProgressionFlagEntity::GetTypeInfo()`
+from the SDK header, byte-for-byte identical, not merely nearby.
+
+**This is the first confirmed reference in live game code to this specific
+class's type info found so far.** Both instances funnel into the same
+function, `MirrorsEdgeCatalyst.exe+3166EA0`, called with (widget object,
+type descriptor, extra pointer). Its return value is not tested/branched
+on in either call site, which argues against a simple pass/fail
+cast-and-check and leans toward something like "register/subscribe this
+widget to entities of this type" — a live-update wiring mechanism, which
+if true would mean `+3166EA0`'s internals are where the game actually
+locates or tracks live `PamClientProgressionFlagEntity` instances.
+
+**Next step, not yet done:** disassemble `MirrorsEdgeCatalyst.exe+3166EA0`
+itself. This is currently the highest-value unknown function in the whole
+trace, since it's the one piece of code definitively tied to the class
+that defeated the entire previous session's RTTI/type-registry hunt.
+
+---
+
+## §38. `+3166EA0` disassembled: a generic dirty-flag utility, not a type check — correcting the §37 hypothesis
+
+`MirrorsEdgeCatalyst.exe+3166EA0` turned out to be a **tiny 18-byte
+function**, not the large block initially visible in the same screenshot
+(that larger block, starting at `+3166EC0` after `int 3` padding, is a
+separate, unrelated function that just happens to sit next in memory —
+same pattern as the `"Enlighten"` red herring in §33; not part of this
+call chain and shouldn't be read into).
+
+The actual body of `+3166EA0`:
+```
+or   dword ptr [rcx+18], 02      ; set bit 0x02 in a flags field on rcx (the widget)
+test r9b, r9b
+je   +3166EB2                    ; -> ret
+mov  rax, [rcx]                  ; rax = rcx's vtable
+mov  rdx, r8                     ; overwrite rdx (the type-descriptor arg!) with r8
+jmp  qword ptr [rax+68]          ; tail-call rcx's vtable slot +0x68, passing (rcx, r8)
+ret
+```
+
+**Correction to §37's hypothesis: the type-descriptor pointer passed in
+`rdx` at the call site is not used by this function at all** — it's
+clobbered by `mov rdx,r8` before the one branch that would do anything
+with it, so it never reaches the vtable dispatch either. This function is
+just "mark this widget dirty (flag `0x02` at `+0x18`), and conditionally
+forward a virtual call passing a *different* argument (`r8`)." Generic UI
+widget-property-binding plumbing, not a type check/cast.
+
+**This specific lead is a dead end.** The exact-address match to
+`PamClientProgressionFlagEntity::GetTypeInfo()` found in §37 is still a
+real, verified fact about what the caller loads into a register — but
+whatever consumes it meaningfully (if anything does) isn't this function.
+It's possible the type-descriptor argument is simply dead/vestigial in
+this particular call-site instantiation of a templated helper (common in
+Frostbite's generated property-binding code, where the same call shape is
+reused across many field types regardless of whether every parameter is
+needed by every specialization).
+
+**State of the investigation:** several call-stack frames climbed so far
+(stat-formatter -> tile-content-builder -> per-widget-type helper) have
+all turned out to be generic UI/content-binding infrastructure, not an
+ownership check. The `PamProgressionFlag` object itself (nameHash,
+missionIndex, name, maxValue, cost, reputation, syncStatName, clamp,
+syncToOnline) is confirmed to hold only the *static definition* of an
+ability slot -- no candidate "owned" field exists on it. The live
+ownership/purchase state is very likely stored on a completely separate
+object, not discoverable by continuing to climb display-code call stacks
+that were only ever going to explain *what gets shown*, not *whether it's
+unlocked*.
+
+**Open options for next session, not yet decided:**
+1. Keep climbing the call stack (many frames remain per §34's captured
+   stack, but risk of more generic UI glue is high based on this pattern).
+2. Pivot to a direct value-scan technique: use Cheat Engine's classic
+   "Unknown initial value -> scan for changed value" workflow timed around
+   an actual in-game ability purchase, rather than continuing to trace
+   display code -- this could locate the authoritative live flag much
+   faster than further disassembly climbing.
+3. Stop here for the session; substantial forward progress has been made
+   documenting the UI construction pipeline even though the core "owned"
+   question remains open.
+
+---
+
+## §39. Next frame up (`+31671E3`) is generic vector/transform math — call stack has left progression-specific territory
+
+Jumped to the next call-stack frame, `MirrorsEdgeCatalyst.exe+31671E3`
+(a `jmp` to `+3167674`, meaning the real return context is a few
+instructions earlier around `+3167188`). Unlike every frame examined so
+far, this one is unambiguously **generic engine-level code**, not
+UI-content binding:
+
+- Heavy SIMD throughout: `movaps`/`movss`/`pshufd` moving 16-byte XMM
+  registers in/out of `[rdi+40]`, `[rdi+50]`, `[rdi+60]`, `[rdi+70]` —
+  the classic shape of a 4-row matrix or a set of 4 vector/quaternion
+  slots (transform/animation blending).
+- A small `dec ecx; je ...` chain (three cases) — a switch on a small
+  integer enum, most likely a layout/anchor-type or interpolation-mode
+  selector.
+- A comparison against the sentinel constant `0xAFAFAFAF` — a classic
+  "uninitialized memory" debug-fill pattern, further suggesting this is
+  generic/shared code with defensive checks, not something specific to
+  one particular UI element type.
+- Calls out to `+46513D0` and `+2A424B0`, both unnamed and consistent
+  with generic math/formatting helpers rather than progression-specific
+  logic.
+
+**Assessment: this frame is very likely a generic UI transform/animation
+update routine, shared by every widget in the menu system (position,
+scale, blend state), not anything progression- or ownership-specific.**
+Combined with the outcome of §38 (the immediately-lower frame was also
+generic, a dirty-flag/vtable-dispatch utility), this is a second
+consecutive frame with no connection to ability-specific data. The call
+stack from here upward is likely to continue through general
+engine/rendering machinery (frame update, layout, animation) rather than
+back toward per-ability ownership logic, since that logic is more likely
+computed earlier -- when the ability list's data is first built/filtered,
+before any of this per-widget rendering machinery runs -- than
+discoverable by climbing further up a rendering call stack.
+
+Flagged to the user as a signal worth reconsidering the "keep climbing"
+approach in favor of the direct live-purchase value-scan alternative
+(option 2 from §38), pending their decision.
+
+---
+
+## §40. Pivot: live purchase value-scan (in progress)
+
+Decided to stop climbing the display-code call stack (§39) and pivot to
+a direct memory value-scan technique, timed around a real in-game ability
+purchase, to find the authoritative "owned" state directly rather than
+inferring it from UI code.
+
+**Planned procedure (CE main scanner, not Memory Viewer):**
+1. Pick a currently-locked-but-affordable, mission-unlocked ability as the
+   test target (note its name and known `PamProgressionFlag` address from
+   `dump_progression_state.py`/`progression_snapshot.json` for later
+   cross-referencing).
+2. First Scan: Value Type `4 Bytes`, Scan Type `Unknown initial value`.
+3. In-game, purchase that ability.
+4. Next Scan: Scan Type `Changed value` (try `Increased value` too if
+   `Changed value` is unmanageably large -- an owned/purchased-count flag
+   going from 0 to a positive value is a very plausible pattern).
+5. Prune remaining noise with 2-3 rounds of `Next Scan` -> `Unchanged
+   value` while sitting idle for a couple seconds each round, to kill off
+   animation/timer values that keep changing independent of the purchase.
+6. If the result set is still large, repeat the whole process on a
+   *second*, different ability (fresh `New Scan`) and cross-reference:
+   look for a hit in both result sets at the same relative offset from
+   each ability's own known flag-object address -- strong evidence of a
+   per-ability array entry (owned/purchased state stored in a parallel
+   array to `PamProgressionFlagGroup.Flags`, indexed the same way).
+7. If `4 Bytes` doesn't produce a clean candidate, retry the same
+   procedure with Value Type `Byte` (owned/purchased could plausibly be a
+   1-byte bool rather than an int).
+
+Not yet executed at time of writing -- next screenshot(s) should show the
+scan results.
+
+---
+
+## §41. Save-file edit: boosted `XP_Gained` for easier testing
+
+Between value-scan setup steps, boosted `XP_Gained` in the live `PROF_SAVE`
+to make testing many ability purchases easier (target ability chosen:
+"Fiber Weave", +1 Stamina, Combat tree).
+
+Read current values first (via `patch_save.py`'s own hash/section-walking
+logic against a staged copy of the real save):
+
+| Section | XP_Gained (old) | XP_Used |
+|---|---|---|
+| `ProgressionManagerData_2411670393` | 5405 | 5000 |
+| `ProgressionManagerData` | 27481 | 27000 |
+| `ProgressionManagerData_1000106553270` | 7357 | 6000 |
+
+Patched `XP_Gained` -> `999999` in all three sections with `patch_save.py`
+(file size unchanged, checksums recomputed), left `XP_Used` untouched so
+whichever section the game actually reads has a large spendable pool.
+Backed up the pre-edit save alongside it as `PROF_SAVE.before_xpboost`.
+Confirmed game was fully closed before writing (per the established
+§15/§15a/§15b safe-write rule), then wrote both files to
+`Documents\Mirrors Edge Catalyst\settings\`.
+
+Not yet verified in-game that the displayed "Upgrade Points" number
+changed as expected -- worth noting the earlier open question (referenced
+elsewhere in this doc) that the on-screen number doesn't always equal the
+raw `XP_Gained - XP_Used` for a single section cleanly; this is a
+practical test of that too.
+
+---
+
+## §42. Value-scan breakthrough: found a live category owned-count write, single clean write site
+
+Following the pivot to a direct value-scan (§40-41), narrowed a purchase
+of "Fiber Weave" (+1 Stamina, Combat tree, 5/20 -> 6/20) from 5.7M
+candidates down to 4 via: `Unknown initial value` -> `Increased value` ->
+several rounds of idle `Unchanged value` pruning -> a final `Exact value
+= 6` filter (since the Combat tree count was known to land on exactly 6).
+
+Final 4 candidates:
+| Address | First | Previous | Value |
+|---|---|---|---|
+| `03DE3010` | 5 | 6 | 6 |
+| `25CD12A8` | 5 | 6 | 6 |
+| `25CD2E68` | 5 | 6 | 6 |
+| `2E0136094` | 0 | 6 | 6 (outlier -- doesn't fit the 5->6 pattern, likely coincidental, deprioritized) |
+
+Ran "Find out what writes to this address" on all three 5->6 candidates
+simultaneously. Result:
+- `25CD2E68` and `25CD12A8`: **identical single hit**,
+  `1439E19AA - 89 43 28 - mov [rbx+28],eax` (module RVA `0x39E19AA`,
+  computed and verified). Same write instruction for both addresses --
+  strong evidence these are two live instances of the same per-category
+  struct (most likely Combat's and Movement's category-count objects,
+  both updated through one shared function), with the owned/purchased
+  count sitting at `+0x28`.
+- `03DE3010`: zero hits -- wasn't written during this purchase at all.
+  Dropped as a coincidental false positive.
+
+**This is a single, clean write site** -- a sharp contrast to the deep,
+generic UI-rendering call stack climbed in §33-39. Since bumping the
+category count and flipping the individual ability's owned state almost
+certainly happen in the same transaction/function, the code around
+`module+0x39E19AA` is the best candidate yet for finally revealing the
+per-ability ownership write.
+
+**Next step, not yet done:** open the disassembler at `1439E19AA` (or
+nearby) and read the surrounding function.
+
+---
+
+## §43. First transactional (locked) code found -- disassembly of the category-count write function
+
+Opened the disassembler at `1439E19AA` (module RVA `0x39E19AA`, from §42).
+This is a genuinely different kind of code from everything examined in
+§33-39: **wrapped in a critical section**. Immediately after our target
+write, the function calls `ntdll.RtlLeaveCriticalSection` (via
+`MirrorsEdgeCatalyst.exe+4815140` import) and returns `true`
+(`movzx eax,r13b` where `r13b` was set to `01`). A matching
+`EnterCriticalSection` must exist earlier in the function, not yet seen.
+This is the first genuinely transactional, non-UI-rendering code found in
+the entire investigation.
+
+**The target write is a copy, not an increment:**
+```
+mov  rax, [rsp+000000A0]
+mov  eax, [rax+04]
+mov  [rbx+28], eax        ; our known write -- copies rax's +4 field into rbx's +28 field
+```
+So the actual "+1" computation happens somewhere upstream of this
+function (or upstream in a caller), on whatever object `[rsp+A0]` points
+to -- this function is a sync/commit step, not the primary counter logic.
+
+**A promising array-walk immediately precedes it**, matching the
+length-prefixed `Array<T>` shape already known from
+`dump_progression_state.py` (`PamProgressionFlagGroup.Flags`):
+```
+mov  r15, [r8+28]          ; array data pointer
+mov  eax, [r15-04]         ; length (stored 4 bytes before the data -- Frostbite Array<T> convention)
+lea  r13, [r15+rax*8]      ; end pointer
+cmp  r15, r13
+je   <skip>                 ; empty-array guard
+...loop body...
+```
+Inside the loop, a call to `MirrorsEdgeCatalyst.exe+2A34880` is made with
+`r8=r15` (the current array element -- quite possibly a specific ability
+flag pointer), `rdx=rbp`, `rcx=rbx`. This is the current best candidate
+for the actual per-ability ownership write, pending investigation.
+Immediately after that call: `inc [r14+68]` -- increments a *different*
+counter field on a different object (`r14`), not yet identified.
+
+**Not yet seen:** the true entry point of this function (everything above
+is mid-function; screenshots so far start at `39E18FE`). Next step is to
+scroll further up in the disassembler to find the `EnterCriticalSection`
+call and initial parameter setup, which should identify what each of
+`rbx`, `r14`, `r8`, `rbp`, `rsi` actually are.
+
+---
+
+## §44. Function structure clarified: three tree lookups, gated cache-sync write, common inner call
+
+Scrolled up through the rest of this function (`39E1775` through `39E19AA`
+now fully mapped). Cleaner picture:
+
+**The function performs three near-identical tree/map search-and-insert
+blocks** (classic red-black-tree walk shape: `cmp rbx,rbp/r15; je <empty>;
+call +2A34820 <comparator>; cmp [node+20],rsi; setb al; ...` walking left
+or right based on the comparison), each keyed against a value held
+constant in `rsi` throughout the whole function -- very likely the
+ability's `nameHash` or an equivalent unique ID. After each search, if no
+matching node was found, a new one is allocated (`call +2A647D0`, a
+generic allocator/constructor: `[node]=rsi; [node+8]=0; [node+10]=0`).
+
+**Each of the three blocks ends by calling `MirrorsEdgeCatalyst.exe+2A34880`**
+with a consistent register shape (`rcx`=container object, `rdx`=the
+found/inserted tree node, `r8`=an iteration cursor, `r9`=a small
+int/flag), immediately followed by `inc [r14+68]` (a counter bump on a
+shared object, separate from the per-category count). This is the one
+piece of actual mutation logic common to all three lookups -- strongest
+remaining candidate for where real per-ability state gets written.
+
+**Confirmed: our known write (`mov [rbx+28],eax`, §42-43) is gated,
+not unconditional:**
+```
+mov  rax, [rsp+A0]
+mov  eax, [rax+04]
+cmp  [rbx+28], eax
+je   +39E19B0          ; <-- if already equal, skip straight to the end (no write, no lock release change)
+```
+This confirms the write is a "sync the cached/displayed count only if it
+differs from the canonical value" pattern, not the place where the
+canonical value is computed. The real counting/ownership logic is further
+upstream -- almost certainly inside the tree-node work or `+2A34880`.
+
+**Next step, not yet done:** disassemble `MirrorsEdgeCatalyst.exe+2A34880`
+directly -- it's the one consistent "do the real work" call shared by all
+three tree-search blocks in this function, and the best remaining lead
+for the actual per-ability ownership mutation.
+
+---
+
+## §45. Major reframe: `+2A34880` is generic red-black-tree insert, not custom ownership logic -- but that changes the hypothesis for the better
+
+Disassembled `MirrorsEdgeCatalyst.exe+2A34880` fully. **This is not
+progression-specific code at all -- it's a textbook red-black-tree
+insert-and-rebalance routine**, matching the MSVC STL `_Tree_node` layout
+almost exactly: node fields `+0x00`=left child, `+0x08`=right child,
+`+0x10`=parent, `+0x18`=color byte (checked via `cmp byte ptr[x+18],00`
+throughout, classic red/black test). The function links a new node in
+under its parent, then performs the standard rotate/recolor fixup
+(`+2A348C0` onward: the parent/grandparent color-flip and rotation
+pattern is unmistakably `std::map`/`std::set`-style insert-fixup logic).
+Confirmed by cross-checking against the earlier `+2A34820`/`+2A34810`
+calls too, which fit the shape of a tree comparator and a
+"find-or-insert" driver respectively.
+
+**This means `+2A34880` itself has zero ability-specific logic** -- it's
+identical, generic container plumbing the engine would use for any
+red-black tree anywhere. The three tree-search-and-insert blocks in the
+caller (§44) aren't three different progression checks; they're the same
+generic "find or insert a key" operation performed against three
+different tree instances (fields at `r14+0x40/0x48/0x58/0x70`-ish
+offsets -- likely a small set of indices/caches maintained per category
+or per manager).
+
+**But this reframes the hypothesis in a promising way.** If ownership
+isn't a boolean field at all, but rather **set membership** -- i.e. "this
+ability is owned" == "this ability's hash (`rsi` throughout the caller)
+is present as a key in this tree" -- then the *insertion itself*, not
+some flag write, is the actual grant operation. This would be a clean,
+idiomatic design (`std::set<uint32_t>` of owned-ability hashes, or
+similar) and would explain why no dedicated "owned" boolean field was
+ever found on the `PamProgressionFlag` object (§38) or anywhere else in
+this entire investigation: there isn't one. Ownership is presence in a
+tree, not a bit.
+
+**If confirmed, this also changes what "grant an ability live" would
+require**: not finding-and-flipping a flag, but performing a correct
+tree insert with the target ability's hash -- either by replicating the
+insert logic directly, or (far simpler and safer) by calling this exact
+game code via injection with the right arguments, letting the game's own
+insert-and-rebalance logic do the work correctly.
+
+**Next step, not yet done:** identify the actual tree root object (what
+`r14` and its `+0x40/+0x48/+0x58/+0x70`-shaped fields belong to), dump/walk
+it in Cheat Engine, and check directly: does it now contain a node keyed
+by Fiber Weave's hash? And do other, still-locked abilities' hashes
+correctly *not* appear? That would definitively confirm or refute the
+set-membership hypothesis, and if confirmed, identify exactly which tree
+instance is "the" owned-abilities index.
+
+---
+
+## §46. Starting point for the next session
+
+**Immediate first step, no scanning needed:** attach Cheat Engine, set a
+breakpoint directly on `MirrorsEdgeCatalyst.exe+0x39E19AA` (the known
+category-count sync write from §42-43 -- `mov [rbx+28],eax`). Buy any
+ability in-game to trigger it. This instantly gives fresh, current-session
+values for `rbx` (the category-count struct) and, by scrolling up in the
+same disassembler view, `r14` (the object whose `+0x40/+0x48/+0x58/+0x70`
+fields hold what look like tree roots -- see §44-45). No need to repeat
+the 5.7M-result value-scan or the call-stack climb; the code addresses are
+stable across restarts, only the live heap addresses change.
+
+**What to chase from there:** the set-membership hypothesis from §45 --
+that "is this ability owned" means "is this ability's `nameHash` present
+as a key in one of these red-black trees," rather than a boolean field
+anywhere. Concretely:
+1. Identify which of `r14`'s tree-root-shaped fields is the one that
+   received Fiber Weave's hash on this purchase (the block whose tree
+   search used the matching `rsi` value -- may need to watch which of the
+   three tree-search blocks in the `+0x39E19AA`-containing function
+   actually inserts vs. just finds-already-present, by single-stepping or
+   comparing before/after tree contents).
+2. Dump/walk that tree's nodes in Cheat Engine (standard RB-tree walk:
+   each node has left-child/right-child/parent/color at
+   `+0x00/+0x08/+0x10/+0x18`; the actual key, given the comparator reads
+   `[node+20]`, is very likely stored at `+0x20`).
+3. Confirm Fiber Weave's known `nameHash` (or an equivalent per-ability
+   hash/id -- may need to recompute via the same `djb2a`-style hash used
+   for save-file flag names, or find where this tree's key differs from
+   that) is now present, and that a still-locked ability's hash is
+   correctly absent.
+4. If confirmed: this either directly gives a live-grant mechanism
+   (replicate the insert, or call the game's own insert function via
+   injection with the right register setup) or at minimum tells us
+   precisely what a "grant" needs to write and where.
+
+**Status recap for whoever picks this up:** the restart-blocker
+investigation has moved from "no leads" (start of this session) to "a
+specific, disassembled, cross-verified code path with a concrete,
+testable hypothesis about the storage mechanism." This is the strongest
+position this thread has been in across the whole project so far.
+
+---
+
+## §47. New session: fresh breakpoint hit, R14 struct decoded, first tree node dumped
+
+Following §46's plan exactly: attached CE, set a breakpoint directly on
+the known code address `+0x39E19AA` (no re-scanning needed), bought
+"Fiber Weave" again. Hit immediately, confirmed by `RIP` matching.
+
+**Live register capture (this session, will differ next launch):**
+- `RBX = 0x25AD2800` (category-count struct)
+- `R14 = 0x2BBC3160`
+- `R15 = 0x2BBC31A8` (confirmed = `R14+0x48`, as predicted in §44)
+- `RSI = RDX = 0x2A1D8848` -- the tree search key throughout the function;
+  looks like a heap pointer, not a raw hash, supporting the "keyed by
+  object pointer identity" reading of the tree from §45. Best candidate
+  for the live `PamProgressionFlag*` of the ability just purchased.
+
+**`R14`'s struct, decoded field by field (all offsets from `R14`):**
+| Offset | Value | Interpretation |
+|---|---|---|
+| `+0x00` | `0x141C64B38` | code pointer (module+0x1C64B38) -- likely vtable |
+| `+0x18` | `0x141C64BA8` | another nearby code pointer |
+| `+0x40` | ASCII `"2b8a73ff"` | inline debug-tag string, not a pointer |
+| `+0x48` | `0x25AD36C0` | heap pointer -- **candidate tree root #1** |
+| `+0x58` | `0x25AA0780` | heap pointer (different heap page) -- **candidate tree root #2** |
+| `+0x68` | (plain counter) | incremented via `inc [r14+68]` in the purchase code (§43-44) |
+| `+0x70` | `0x1423606D0` | code pointer -- a callback/vtable slot, not tree-related |
+
+**First node of candidate tree #1 dumped** (`0x25AD36C0`), matching the
+assumed RB-tree node layout (`+0x00`=left, `+0x08`=right, `+0x10`=parent,
+`+0x18`=color byte, `+0x20`=key):
+- `left = NULL`
+- `right = 0x25ADF8C0`
+- `parent = 0x25AD5B40`
+- `color = 1` (confirms the `+0x18` byte offset cleanly)
+- `key = 0x2A1DB700` -- same heap region as `TARGET` (`0x2A1D8848`) but not
+  an exact match, and numerically larger. A plain BST search would go
+  left for a smaller target, but left is NULL here -- ambiguous whether
+  this is genuinely "not found" or whether `0x25AD36C0` is actually a
+  sentinel/header node rather than the true root (its `parent` field,
+  `0x25AD5B40`, is a plausible alternate root to check).
+
+**Built `walk_ownership_tree.lua`** (committed to
+`C:\not garbage\Archipelago\ME-AP\runtime\walk_ownership_tree.lua`) to
+automate the rest of this rather than continuing one-field-at-a-time
+screenshots. It recursively walks both candidate trees (and each
+candidate's parent, in case of a sentinel/header node) searching for
+`TARGET = 0x2A1D8848`, printing the full path and every node visited.
+Not yet run -- next step.
+
+---
+
+## §48. v1 tree walk: header/root structure clarified, but left/right sense was flipped
+
+Ran `walk_ownership_tree.lua` (v1). Full output revealed the real
+structure, and a bug in the walk direction:
+
+**`R14+0x48` (`0x2BBC31A8`) is the tree's embedded header/sentinel node**,
+not a separate tree -- its fields: `left=0x25AD36C0`, `right=0x25AA0B00`,
+`parent=0x25AA0780`, `color=0`. In standard STL-style RB-tree containers
+the header's `parent` field holds the true root. That means **the real
+root is `0x25AA0780`** (which is exactly the value stored at `R14+0x58`,
+confirming `R14+0x58` is a cached direct pointer to the root). `R14+0x48`
+and `R14+0x58` are not two separate trees (§47's original framing) --
+they're two different access paths (header vs. cached root) into the
+*same* single tree.
+
+**Bug found via the walk output:** descending via the `+0x00` field
+(labeled "left" by assumption) from the root produced a strictly
+*increasing* key sequence (`2A1DA098 -> 2A1DA458 -> 2A1DA988 -> 2A1DAFB8
+-> 2A1DB700`) even though the walk logic only takes that branch when
+`target < key` -- backwards from normal BST convention (should decrease).
+So either the `+0x00`/`+0x08` fields are the reverse of "left"/"right", or
+the tree's comparator sense is inverted. Since the specific semantics
+don't matter for our actual question (does `TARGET` appear anywhere),
+**wrote `walk_ownership_tree_v2.lua`**: an exhaustive DFS that visits every
+node via both child pointers regardless of ordering, with a visited-set
+guard against cycles, reporting every key found and whether `TARGET`
+(`0x2A1D8848`) appears anywhere in the tree. Committed to
+`runtime/walk_ownership_tree_v2.lua`. Not yet run -- next step.
+
+---
+
+## §49. v2 tree walk: TARGET found -- but at the same node as the count-write, raising a new ambiguity
+
+Ran `walk_ownership_tree_v2.lua` (exhaustive DFS from the confirmed real
+root `0x25AA0780`). Result: **25 total nodes visited, and `TARGET`
+(`0x2A1D8848`) IS present**, at node `0x25AD2800`.
+
+All 25 keys found (sorted): `2A1D87F8, 2A1D8848, 2A1D8A58, 2A1D8AA8,
+2A1D8D18, 2A1D8F28, 2A1D9078, 2A1D9258, 2A1D9358, 2A1D97C0, 2A1D9A68,
+2A1D9DA8, 2A1D9FC8, 2A1DA098, 2A1DA0E8, 2A1DA138, 2A1DA2D0, 2A1DA458,
+2A1DA508, 2A1DA8B8, 2A1DA988, 2A1DAD48, 2A1DAFB8, 2A1DB270, 2A1DB700`.
+All fall within a tight, contiguous-looking range (`2A1D87F8`-`2A1DB700`,
+~0x2F00 apart, evenly-ish spaced), consistent with 25 same-sized objects
+packed in one heap region -- plausibly all 25 (or close to it) of the
+Combat category's `PamProgressionFlag` objects, or all currently-visible
+tile records, not obviously distinguishable from the key list alone.
+
+**Important wrinkle: node `0x25AD2800` is the *exact same address* as
+`RBX` captured at this session's `+0x39E19AA` breakpoint** (§47) -- i.e.
+the object whose `+0x28` field is the count-sync write target from
+§42-43. So this one object is simultaneously: (a) a node in this tree,
+keyed at `+0x20` by the just-purchased ability's own pointer, and (b) the
+thing that receives the "sync the displayed count" write.
+
+**This is genuinely ambiguous between two readings**, both consistent
+with every observation so far:
+1. **Ownership-as-membership (§45's original hypothesis) is correct**:
+   this tree tracks owned abilities, keyed by their live pointer: each
+   node also caches a display-relevant count.
+2. **This is actually a UI-side display/format cache**, keyed by
+   whatever data pointer the currently-rendered tile is bound to
+   (owned or not), holding cached formatted/synced values for that
+   tile -- not an authoritative ownership store at all.
+
+**Proposed disambiguating test, not yet run:** capture the live pointer
+of a still-*locked* ability (one never purchased) the same way Fiber
+Weave's was captured (via the tile-builder breakpoint chain, §33-39, or
+another live-breakpoint route), then re-run `walk_ownership_tree_v2.lua`
+with that pointer as `TARGET`. If a locked ability's pointer is found in
+this tree, it's a display cache (hypothesis 2). If only owned abilities
+ever appear regardless of recent viewing, it supports hypothesis 1.
+
+Session paused here pending the user's choice of whether to run this
+test now or pick it up later.
+
+---
+
+## §50. Disambiguating test result: ownership-as-tree-membership CONFIRMED
+
+Built an automated capture tool instead of continuing manual step-by-step
+register reads (which had twice produced a clobbered `RCX` from
+over-stepping past the breakpoint). `runtime/log_tile_pointers.lua`
+installs a `debugger_onBreakpoint` handler on the existing
+`MirrorsEdgeCatalyst.exe+3A1BF63` breakpoint (the `nameHash` read inside
+the tile stat-formatter, `mov eax,[rcx+10]`): at the exact instant the
+breakpoint fires -- before anything can execute and clobber `RCX` -- it
+reads `RCX` (the struct pointer) and computes `nameHash = [RCX+0x10]`
+directly via `readInteger`, logs both, and auto-continues (`return 1`).
+Reopening the progression menu fired it ~37 times per pass (one per
+visible tile), auto-continuing cleanly with zero manual stepping.
+
+Cross-referenced all 37 captured `(pointer, nameHash)` pairs against the
+static hash dictionary (`runtime/hash_lookup.py`, same djb2a dictionary
+`decode_save.py` uses) **and** against the live save file (staged via the
+device bridge, checked with `runtime/resolve_and_check.py` against all 3
+`ProgressionManagerData*` sections). This immediately resolved an earlier
+loose end from §49 too: `Unlocks_Focus_ReachFlow_Increase` (the very
+first capture, thought possibly-locked) turned out to already be owned
+(`value=1`) -- the name mismatch with what's visible in the in-game Focus
+tab is expected, since the tile UI resolves a separate localized display
+string, not the raw internal `Name`/`SyncStatName`.
+
+Three candidates came back **absent from every single save section**
+(not merely `0` -- no record exists at all, the strongest possible
+signal of "never purchased, ever"):
+- `2A1729E8` -> `Unlocks_FlowAttack_Special_PowerAttack`
+- `2A16E5F0` -> `Unlocks_FlowAttack_PowerAttack`
+- `2A16D1F0` -> `CriticalPathProgression_HasCollectedAlertRadar` (excluded --
+  a collectible/story flag, not a skill-tree ability)
+
+Picked `2A1729E8` (`Unlocks_FlowAttack_Special_PowerAttack`) as the
+confirmed-locked target and re-ran `walk_ownership_tree_v2.lua` with
+`TARGET = 0x2A1729E8` against the same tree (`ROOT = 0x25AA0780`, same
+live session, same 25-node tree as §49). Ran it **twice** for safety:
+
+```
+RESULT: target 2A1729E8 was NOT found among the 25 node(s) visited.
+```
+
+(identical both times). Meanwhile Fiber Weave's pointer (`2A1D8848`,
+owned) IS in that same 25-node tree, at the same node found in §49.
+
+**Conclusion: hypothesis 1 from §45/§49 is confirmed.** The red-black
+tree rooted at `R14+0x58` (`0x25AA0780` this session, cached directly;
+also reachable via the header at `R14+0x48`) is the authoritative
+per-category ownership store -- an ability is "owned" if and only if its
+live struct pointer is a key in this tree. It is not a display cache:
+only owned abilities appear in it, confirmed both by presence (Fiber
+Weave) and by absence (a genuinely-never-touched ability), cross-checked
+against the actual save file rather than assumed from UI naming.
+
+**Practical implication for the original goal (grant an ability live,
+no restart):** the purchase-commit function at `+0x39E19AA`'s surrounding
+code (§43-45) already shows *how* an insert happens -- three RB-tree
+search-and-insert blocks via the generic container routine at `+2A34880`,
+followed by the gated cache-sync write. If we can call into that same
+insert logic ourselves (or the whole purchase-commit function) with a
+chosen ability's live pointer substituted in place of whatever the UI
+purchase button would normally supply, that should be functionally
+equivalent to "receiving" that ability -- without going through the
+purchase-menu UI at all, which is exactly the mechanism an Archipelago
+item-receive handler needs.
+
+**Next step, not yet started:** find the purchase-commit function's true
+entry point (walk backward from `+0x39E19AA` to the prologue) and its
+calling convention (what `RBX`/the target pointer need to be set to on
+entry -- captured by breakpointing entry during a normal purchase, the
+same way Fiber Weave's pointer was captured at the write site). Then
+attempt an actual live call into that function via Cheat Engine's Auto
+Assembler / "execute code at address," substituting a locked ability's
+pointer, and check whether the game then treats it as owned (UI
+reflects it, ability becomes usable) -- the first real test of live
+ability-granting.
+
+---
+
+## §51. Open concern: is §50's disambiguation test actually apples-to-apples? Two different object pools found
+
+While hunting for the purchase-commit function's true entry point (following
+the `+39E19AA` call stack, which this time showed a completely different,
+non-UI chain: immediate caller `+39E24A9`, called from `+39E1700` -- see
+next section), bought a second, different ability (`Shock Protector`,
+Combat category, confirmed via in-game screenshot) with the same
+`+39E19AA` breakpoint set. Captured `RDX`/`RSI` at the write site again:
+**`0x2A1D8848` -- the exact same value captured for Fiber Weave's purchase**,
+a completely different ability.
+
+This is a red flag. Cross-referencing against §50's own data:
+`Unlocks_LowerHealthShockProtector` (Shock Protector's actual definition
+struct, resolved via nameHash `0x56E000EC`) has pointer `0x2A187AF0` --
+nowhere near `0x2A1D8848`. In fact **every single "Unlocks_*" definition
+struct pointer captured by `log_tile_pointers.lua` in §50 falls in the
+`0x2A16xxxx`-`0x2A19xxxx` range**, while **every key found in the
+ownership tree walk (§49/§50) falls in the `0x2A1D87xx`-`0x2A1DB7xx`
+range** -- two distinct, non-overlapping heap regions / object pools.
+
+**This means the tree we walked and the "Unlocks_*" definition structs
+the UI reads from are NOT the same kind of object.** `0x2A1D8848` staying
+constant across two different ability purchases in the same category
+strongly suggests it's something category-scoped, not ability-scoped --
+plausibly the category's own summary/progress-counter record (consistent
+with the `+39E19AA` write itself, `mov [rbx+28],eax`, plausibly just
+updating the on-screen "X/20" counter, not an ownership flag).
+
+**Why this matters for §50's conclusion:** the disambiguating test used
+`0x2A1729E8` (a locked ability's *definition* struct pointer, from the
+`0x2A16xxxx`-range pool) as `TARGET` against a tree keyed by
+`0x2A1Dxxxx`-range objects. If those pools are simply incompatible
+namespaces, the locked ability's definition pointer was *never going to
+be found in that tree regardless of ownership status* -- the negative
+result could be a trivial type-mismatch, not a real ownership check. The
+positive match (`0x2A1D8848` "found") is also suspect now, since it
+isn't clearly tied to Fiber Weave specifically at all (same value
+appeared for Shock Protector).
+
+**§50's hypothesis-1 conclusion should be treated as unconfirmed pending
+further work**, not retracted -- it's still possible the tree really is
+an ownership store keyed by some OTHER per-ability object (not the
+"Unlocks_*" definition struct, but a distinct per-ability *purchase
+record* or *runtime state* object in the `0x2A1Dxxxx` pool) and
+`0x2A1D8848` genuinely is that record for whichever ability was *most
+recently processed*, not a category-wide singleton -- this hasn't been
+ruled out either. Needs a cleaner test.
+
+## §52. True entry point of the purchase-commit function found: `+39E1700`
+
+The call stack captured for this purchase (Shock Protector) was
+completely different from the earlier UI-chain capture (§ tile-builder
+work) -- immediate caller `+39E24A9`, then `+39DDF91`, `+39E407F`,
+`+3A79113`, `+2A395B9`, `+347C5AB`, ... all in deep game-logic address
+ranges, nothing resembling the UI-menu-building chain. This is very
+likely the real purchase/grant transaction path, distinct from the
+UI-refresh pass that happens to also touch the same write instruction.
+
+Found the actual `call` instruction immediately before the return
+address: `MirrorsEdgeCatalyst.exe+39E24A4 -- call MirrorsEdgeCatalyst.exe
++39E1700`, landing back at `+39E24A9` (`mov r14,[rbp+000000A8]`) right
+after. **`+39E1700` is the confirmed true entry point** of the function
+containing the `+39E19AA` write.
+
+**Next step, not yet done:** breakpoint directly on `+39E1700`, buy
+another ability, and capture `RCX`/`RDX`/`R8`/`R9` (Win64 fastcall
+argument registers) at the exact moment of entry, before the prologue
+shuffles anything into `RBX`/`R14`/`R15`/`RSI`. This should also help
+resolve §51's open concern -- if one of the true entry arguments is an
+ability-specific pointer that changes between the Fiber Weave and Shock
+Protector purchases (unlike the mid-function `RDX`/`RSI` we've been
+capturing), that's the real per-ability identity to use in a future
+disambiguation test, and possibly the right value to substitute when
+attempting a live grant later.
+
+Session paused here -- user is going to complete missions to unlock more
+abilities to test with.
+
+---
+
+## §53. Major structural finding: the tree is per-category, not global -- explains the whole `RDX`/`RBX` mystery
+
+Tried filtering `+2A34880` (generic tree-insert) by `RCX == 0x2BBC3160`
+during a live purchase (Double Wallrun) -- zero matches, despite the
+breakpoint clearly still firing constantly from ordinary menu navigation
+(confirming §51's finding that `+2A34880` is pervasive, generic,
+non-progression-specific plumbing). This ruled out `0x2BBC3160` as the
+right filter value for this specific call site.
+
+Pivoted to a much more direct method: **diff the tree's full key list
+before and after a purchase**, instead of trying to catch the right
+register at the right instant. Captured the full 29-key list right
+before buying Double Wallrun, bought it, then captured the full key list
+again immediately after:
+
+```
+Before: 2A1D87F8, 2A1D8848, 2A1D8A58, 2A1D8AA8, 2A1D8C18, 2A1D8D18,
+2A1D8F28, 2A1D9078, 2A1D9258, 2A1D9358, 2A1D97C0, 2A1D9A68, 2A1D9DA8,
+2A1D9F78, 2A1D9FC8, 2A1DA098, 2A1DA0E8, 2A1DA138, 2A1DA2D0, 2A1DA458,
+2A1DA508, 2A1DA8B8, 2A1DA988, 2A1DAD48, 2A1DAF08, 2A1DAFB8, 2A1DB270,
+2A1DB700, 2A1DB7E0
+
+After:  2A1D87F8, 2A1D8848, 2A1D8A58, 2A1D8AA8, 2A1D8C18, 2A1D8D18,
+2A1D8F28, 2A1D9078, 2A1D9258, 2A1D9358, 2A1D97C0, 2A1D9A68, 2A1D9DA8,
+2A1D9F78, 2A1D9FC8, 2A1DA098, 2A1DA0E8, 2A1DA138, 2A1DA2D0, 2A1DA458,
+2A1DA508, 2A1DA8B8, 2A1DA988, 2A1DAD48, 2A1DAF08, 2A1DAFB8, 2A1DB270,
+2A1DB700, 2A1DB7E0
+```
+
+**Identical, zero new keys.** Buying Double Wallrun (Traversal category)
+did not touch this tree at all.
+
+**This resolves the §51/§52 mystery cleanly: the tree rooted at
+`0x25AA0780` is scoped to ONE category (almost certainly Combat), not a
+global ownership store.** Every ability we've successfully seen affect
+this specific tree -- Fiber Weave, and very likely Shock Protector -- is
+Combat. Climb Efficiency and Double Wallrun are both Traversal-category
+abilities ("climb pipes/ladders faster", "wallrun") and neither one grew
+this tree at all, which is exactly what a Combat-only tree should do.
+The earlier confusing result (§51/52: `RDX`/`RSI`/`RBX` reading identical
+values across Fiber Weave/Shock Protector/Climb Efficiency purchases) is
+now explained too -- the outer function `+39E1700` is a shared, generic
+per-category worker (same code path for every category), but which
+specific tree instance it operates on for a given call is selected by
+something not visible as a simple constant argument at entry; the
+constant `RDX=0x2A1D8848` and similar values we kept seeing are shared
+scaffolding, not per-ability content, exactly as suspected.
+
+**Practical implication:** §50's disambiguation test (locked-vs-owned
+tree membership) remains valid *for the Combat category specifically*
+-- both the owned probe (Fiber Weave) and the locked probe
+(`Unlocks_FlowAttack_Special_PowerAttack`) were Combat abilities tested
+against the Combat tree, so that comparison was apples-to-apples after
+all, just narrower in scope than assumed at the time.
+
+**Next step, not yet done:** to extend this to other categories (and to
+find the true per-ability key format for a live grant), repeat the
+before/after tree-diff technique for a Traversal purchase -- but first
+need to locate the Traversal category's own tree root, the same way
+`0x25AA0780` was found for Combat (via a breakpoint hit during a
+Traversal purchase, reading the equivalent of `R14+0x58` for whatever
+manager instance is active then). Not attempted yet this session.
+
+Session paused here for the day -- meaningful progress on understanding
+the tree/category structure, but the live-grant mechanism itself (how to
+insert without going through the UI) is still not attempted. Combat
+category is the best-understood one and the most promising to attempt
+first when resuming.
+
+---
+
+## §54. §53 re-confirmed: Focus Shield (Movement) also leaves the Combat tree untouched
+
+Bought "Focus Shield +" -- confirmed via in-game screenshot to be a
+**Movement** category ability (listed under "MOVEMENT 17/19", not
+Combat), despite its combat-flavored description. A `+39E19AA`
+breakpoint hit around this purchase showed `R14`/`R15`/root values
+identical to the Combat tree (`0x25AA0780`), which briefly looked like
+it contradicted §53. Resolved by re-running the before/after key-list
+diff: **the tree is still exactly the same 29 keys, unchanged.** So that
+register capture was a false lead -- just another one of this function's
+many unrelated firings (confirmed non-purchase-exclusive since §52),
+not the actual Focus Shield commit.
+
+**§53 stands, now confirmed by two independent Movement purchases**
+(Double Wallrun and Focus Shield) both leaving `0x25AA0780` completely
+untouched. The tree-diff technique is the reliable signal here --
+register snapshots at this breakpoint are not, since the function fires
+too often for unrelated reasons to trust any single hit's register
+values without corroboration.
+
+**Next step, not yet done:** find Movement's own tree. Since `R14`
+(`0x2BBC3160`) is confirmed shared/global across categories (identical
+value seen for every purchase regardless of category), the Movement
+tree is most likely NOT a different `R14` instance but a different
+*offset* within the same `R14` object -- i.e. `R14` is plausibly a
+top-level manager holding one header/root pair per category (Combat's
+being at `+0x48`/`+0x58`). Proposed approach: dump a wider swath of `R14`
+fields (e.g. `+0x80` through `+0xD0` or further) looking for a second
+header-shaped pattern (left/right/parent triple matching the
+`_Tree_node`-style layout already confirmed for Combat) -- not yet
+attempted.
+
+Session paused here -- strong, clean confirmation of the per-category
+tree structure across two categories now (proven present for Combat,
+proven absent for Movement in the same known tree), which is solid
+groundwork for whoever picks this up next, whether that's later today
+or a future session.
+
+---
+
+## §55. Session wrap-up: reset tonight's test purchases so Movement has more unlocked-but-unpurchased abilities for next time
+
+Only one Movement ability was left available to unlock, which would have
+blocked next session's plan to find Movement's own ownership tree (needs
+at least one, ideally several, fresh purchases to test with). With the
+game confirmed closed, used `set_flag.py` to reset the three Movement
+abilities purchased for testing tonight back to locked (value 1 -> 0,
+across all 3 `ProgressionManagerData*` sections):
+
+- `Unlocks_DoubleWallrun` (hash `0xf139b4b3`) -- Double Wallrun
+- `Unlocks_FastClimb` (hash `0x6f18bef0`) -- Climb Efficiency (name match,
+  reasonably but not 100% confident)
+- `Unlocks_Focus` (hash `0x2c9cc1d5`) -- best guess for Focus Shield +;
+  no exact "shield"-named flag was found in the decoded save, so this is
+  the least certain of the three. If Focus Shield doesn't show back up as
+  locked/purchasable, this guess was wrong and the real flag name is
+  still unknown.
+
+Backup kept as `PROF_SAVE.before_movementreset` alongside the usual
+`patch_save.py`/`set_flag.py` safety pattern. XP was not touched (still
+at the 999999 surplus from earlier in the project).
+
+**Starting point for next session:**
+1. Verify in-game that Double Wallrun, Climb Efficiency, and (hopefully)
+   Focus Shield show up as locked/purchasable again.
+2. Resume the Movement-tree hunt from §54: dump a wider swath of `R14`
+   (`0x2BBC3160`, should still be stable if the game hasn't been patched)
+   fields beyond `+0x48`/`+0x58` (Combat's known offsets) looking for a
+   second header-shaped left/right/parent triple for Movement.
+3. Once found, repeat the before/after key-diff test (§53/54's reliable
+   method) on a fresh Movement purchase to confirm.
+4. Longer-term goal unchanged: once both categories' tree mechanics are
+   fully understood, attempt an actual live "grant ability" test by
+   constructing a node and inserting it the way `+2A34880`/the
+   `+39E1700` function chain does, without going through the UI purchase
+   flow -- this is the original multi-session goal and still hasn't been
+   attempted yet, though tonight's work (true entry point found, tree
+   structure understood, per-category model confirmed) puts it much
+   closer than before.
+
+---
+
+## §56. LIVE GRANT PATH FOUND: the global flag hashmap at `[module+0x257C9D8]` controls abilities; changes apply on respawn
+
+This supersedes the tree model from §45–§55. The `R14+0x48/+0x58` trees are
+a **stat/achievement registry**, not ability ownership. There is no need to
+build tree nodes. A live grant is a **4-byte value write**.
+
+### How we got here
+- Breakpoint logging at the entry of `+39E1700` (`runtime/log_purchase_entry.lua`):
+  every call comes from `+39E24A9`, and RCX is the same object on every call
+  (vtable `+1C64B38`). RDX iterates 18 stat records (vtable `+1C95530`,
+  tag `0xB1000002`, GUIDs at +0x18/+0x40, target at +0x34, e.g. 0x144 = 324 GridLeaks).
+  R8 points to a (current, target) pair. So `+39E1700` is **stat-progress sync**,
+  not purchase commit. The caller `+39E1F20` is the achievement/stat
+  evaluator. It dispatches on criterion type descriptors `+2876BA8`, `+2876D30`,
+  `+2876A20`, `+2876828`, `+2876940`.
+- The flag-threshold criterion (`+2876D30`) reads a progression flag by
+  hash lookup at `+39E2268..+39E22D9`. That lookup revealed the store.
+- **Dead end, now retracted:** the `[0xAFAFAFAF|count]` + (hash,value) arrays
+  found by AOB scan (`identify_stat_objects.lua` Test A, `dump_record_array.lua`,
+  `progression_poke.lua` v1/v2) are **frozen save snapshots**. There are three
+  copies per ProgressionManagerData section. Their clocks never tick, their heap
+  memory is freed and reused, and writing to them does nothing. Do not write
+  to them. v1 of progression_poke also chose the wrong arrays ("highest clock =
+  live" was a bad inference).
+
+### The store
+```
+tbl     = qword [MirrorsEdgeCatalyst.exe + 0x257C9D8]   ; static root, stable across restarts
+buckets = qword [tbl + 0x20]
+nbuck   = dword [tbl + 0x28]                            ; 3739 this session
+node    = buckets[hash % nbuck]
+walk:   dword [node+0x00] = djb2a name hash
+        qword [node+0x08] = PamProgressionFlag definition ptr
+        dword [node+0x18] = VALUE
+        qword [node+0x28] = next in chain
+```
+- 2,374 entries, longest chain 6. It holds **every** flag, including ones never
+  bought (value 0). For example, `Unlocks_FlowAttack_Special_PowerAttack` is
+  present with value 0. So a grant is a value write; no insert is needed.
+- It is newer than the save on disk (XP_Gained 1002684 vs 1002674 on disk), so
+  this is where the game saves *from*.
+- Tool: `runtime/flag_hashmap.lua` (TARGET_HASH / NEW_VALUE; nil = read-only).
+
+### The decisive test (Switch Place = `Unlocks_MoveEnemyBack`, 0x67800619)
+Done in one session, all in-game, no save edits:
+
+| step | table value | action | could use Switch Place? |
+|---|---|---|---|
+| 1 | 1 → **0** | none | yes (still active) |
+| 2 | 0 | died / respawned | **no** |
+| 3 | 0 → **1** | none | no (still inactive) |
+| 4 | 1 | died / respawned | **yes** |
+| 5 | 1 → **0** | none | yes |
+| 6 | 0 | died / respawned | **no** |
+
+The result reproduced in both directions, and the respawn was the only
+variable each time. Conclusions:
+- **The hashmap value is authoritative for gameplay.**
+- The player's ability set is **rebuilt from the table on respawn**, not read
+  every frame. A write takes effect at the next death/checkpoint reload.
+- The **Progression menu UI showed "unlocked" the whole time**. It reads a
+  separate cache (probably built at level load), so the UI is **not** a
+  reliable indicator in any future test. Only test the move itself.
+
+### Side findings
+- Switch Place = `Unlocks_MoveEnemyBack` (0x67800619) is confirmed.
+- §55's "Focus Shield = `Unlocks_Focus`" is **probably wrong**: `Unlocks_Focus`
+  had been pruned from the live save section. The real Focus Shield flag is still unknown.
+- Backup taken before any live writes:
+  `Documents\Mirrors Edge Catalyst\settings\PROF_SAVE.before_livepoke`
+  (305 records; DWR, FastClimb and MoveEnemyBack = 1; XP_Used 17000).
+
+### Mistakes this session (so we don't repeat them)
+- Predicted that `+39E1700`'s RCX would differ per category. It was constant.
+  The function was misidentified from the start (§52).
+- Called the snapshot arrays "the live store" before a write test. The test
+  disproved it.
+- Wrong-length RVA typed (`+39E1F2` vs `+39E1F20`). Also, CE's Lua Engine
+  keeps old pasted text, so re-executing without re-pasting reruns the old script.
+
+### Next steps
+1. **Grant test (0 → 1 on a never-bought ability):** write 1, die, and try the move.
+   Revoke is proven; grant is the same write in the other direction, but it
+   still has to be verified with a flag that was never set.
+2. Grant/revoke Double Wallrun (0xF139B4B3) to confirm Movement works the same way.
+3. **Find the respawn "apply abilities" routine** so the AP client can
+   trigger it directly instead of needing a death. Method: CE "find out what
+   accesses" on a node's `+0x18` value, then die. The reads that fire during
+   respawn identify the rebuild function.
+4. Optional: find the UI cache, so the menu reflects AP grants too.
+5. XP_Used should probably be left alone for AP grants. Decide whether AP items
+   should also adjust the XP counters or bypass them entirely.
+
+---
+
+## §57. GRANT PROVEN: never-owned flags, including a mission-locked one, take effect on respawn
+
+The multi-session goal ("grant an ability live, without a save edit and
+restart") is **achieved**. §56 proved revoke-and-restore; this proves the
+direction that matters.
+
+### The test
+Target: the Combat stamina column ("+1 STAMINA"), which the menu shows as
+Graphene Weave (purchasable) and Carbon Weave (**LOCKED: Complete mission
+SANCTUARY**). Flags `Unlocks_IncreasedHealth0..4`, hashes from djb2a:
+
+| flag | hash | before | after grant |
+|---|---|---|---|
+| `Unlocks_IncreasedHealth0` | `848D8855` | 1 | 1 (untouched) |
+| `Unlocks_IncreasedHealth1` | `848D8854` | 0 | 1 |
+| `Unlocks_IncreasedHealth2` | `848D8857` | 0 | 1 |
+| `Unlocks_IncreasedHealth3` | `848D8856` | 0 | 1 |
+| `Unlocks_IncreasedHealth4` | `848D8851` | 0 | 1 |
+
+Procedure: write the four zeros to 1 in the hashmap at `[module+0x257C9D8]`,
+then die. **Health bar went from 4 segments to 8.** Four flags, four segments,
+one per flag.
+
+### What this establishes
+1. **A grant is a 4-byte write.** No node construction, no insert, no call into
+   the purchase path. Every flag already exists in the table with value 0.
+2. **The mission gate is UI-only.** Carbon Weave requires mission SANCTUARY
+   to *buy*. The flag write applied anyway. The gate lives in the progression
+   menu's purchasability check, not in the ability itself. Expect the same for
+   other mission-gated and XP-gated items -- worth spot-checking one more
+   category before relying on it.
+3. **Passive stat upgrades apply on respawn too**, same as active moves (§56).
+   The earlier worry that passive stats might only apply at level load was wrong.
+4. **XP is not involved.** `XP_Used` stayed 17000 across the grant. The game
+   never charged for these, so an AP client can grant items without touching
+   the XP economy at all.
+5. The tool `runtime/grant_test.lua` (MODE read/grant/restore, with a control
+   check on `Unlocks_MoveEnemyBack` before any write) is the working pattern
+   for this: never write unless a known flag reads its known value first.
+
+### Confirmed model, end to end
+```
+AP item received
+  -> lookup(hash) in [MirrorsEdgeCatalyst.exe+0x257C9D8]
+  -> write 1 to node+0x18
+  -> player respawns (death / checkpoint)
+  -> ability is live
+```
+The menu still shows stale state throughout (§56) -- cosmetic only.
+
+### Remaining work for the AP client
+1. **Remove the death requirement.** Find the routine that rebuilds the
+   player's ability set on respawn and call it directly. Method: CE "find out
+   what accesses this address" on a granted node's `+0x18`, then die, and read
+   which code touches it during the respawn.
+2. **Refresh the progression menu's cache** so granted items display correctly.
+   Cosmetic, but confusing for a player otherwise.
+3. **Verify the gate bypass generalises** -- try one XP-gated and one
+   story-gated item outside the stamina column.
+4. Build the hash -> in-game-name map for the item pool. `Unlocks_*` names come
+   from the existing djb2a dictionary; the menu display names (Carbon Weave,
+   Graphene Weave, ...) still need to be matched to flags, probably via the
+   UI/localisation data rather than the flag names.
+
+---
+
+## §58. The respawn ability-rebuild call chain, decoded
+
+Goal: stop requiring a death for a granted flag to take effect. Method: CE
+"find out what accesses" on a granted node's `+0x18`, then a stack-walking
+breakpoint logger (`runtime/trace_flag_read.lua`) across a death.
+
+### The read
+"Find out what accesses" on `<node>+0x18` during a respawn produced exactly ONE
+instruction, hit ONCE:
+
+```
+MirrorsEdgeCatalyst.exe+39DA8DD   mov eax,[rax+18]
+```
+
+`RAX` is the hashmap node; `+0x18` is the value field from §56. It is the
+generic flag-value getter, shared by every lookup, so the instruction itself
+says nothing -- the CALLERS do.
+
+### Timing (this is the useful part)
+With the logger filtering on `Unlocks_MoveEnemyBack`'s node:
+- **0 hits** across ~10s of normal play.
+- **1 hit** during the death/respawn.
+
+So the flag is **not polled**. It is read once, when the player is rebuilt.
+That is why a write only takes effect on respawn (§56/§57), and it means the
+rebuild is a discrete routine that can, in principle, be invoked on demand.
+
+### The chain
+Stack at the moment of the read (innermost first):
+
+```
++3A77E14 < +31250EE < +1A5BDB8 < +3149001 < +33542D6 < +33604F0 < +337442E
+```
+
+`runtime/analyze_chain.lua` resolved each frame. Note that CC-padding is only a
+heuristic for finding function starts -- it landed a few bytes early twice. The
+**call targets in the disassembly are authoritative**, and give:
+
+```
++337440B --call--> +3354280 --call--> +31250A0 --call [r14+08]--> +3A77DB3 --call--> +39DA880
+                                                                                       |
+                                                                          contains the getter +39DA8DD
+```
+
+- **`+3A77DB3`** -- per-item ownership query. Its body confirms the §56 store
+  from the game's own code:
+  ```
+  mov rcx,[14257C9D8]     ; the flag table global
+  call +39DA170           ; resolve the flag definition
+  mov [rbx+80],rax        ; cache the definition on the object
+  mov rdx,[rbx+80]
+  mov rcx,[14257C9D8]
+  call +39DA880           ; read the value  <- +39DA8DD is inside this
+  ```
+  So `rbx` is an item object with the flag definition cached at `+0x80`.
+- **`+31250A0`** -- calls through `[r14+08]`, i.e. dispatches over a list of
+  items. This is the shape of "rebuild every ability" and is the prime
+  candidate for the routine the AP client should invoke.
+- **`+3354280`**, **`+337440B`** -- its callers, progressively higher-level.
+- Frames `+1A5BDB8`, `+3149001`, `+33604F0` are **not trusted**: one had no
+  resolvable start, one disassembled misaligned, one is padding. With a single
+  captured hit there is no frequency signal to separate real frames from stale
+  stack slots, so these are treated as junk unless later evidence revives them.
+
+### Next
+`runtime/log_apply_candidates.lua` breaks on the entries of `+31250A0`,
+`+3354280` and `+3A77DB3` across an idle period and a death, to establish:
+when each fires (a per-frame routine is not a rebuild), what `this` pointer it
+takes, and how many items it iterates. The `this` pointer is what an AP client
+would capture and reuse.
+
+Likely final shape for the client: rather than calling the rebuild from an
+injected thread (wrong thread = crash risk), hook a routine that already runs on
+the game thread and have it invoke the rebuild when the client sets a "pending
+grant" flag.
+
+---
+
+## §59. Each ability is enforced by ONE flag-check entity that evaluates once, at respawn
+
+### Correction to §58
+The breakpoint at `+3A77DB3` never fired because `+3A77DB3` isn't a real
+function start. `+31250A0` and `+3354280` came from actual `call` targets, but
+`+3A77DB3` is only reached through `call [r14+08]`. Its "start" was the
+CC-padding guess, which had already been shown to land a few bytes off twice.
+The fix was to break at `+3A77E14`, which is known to execute because it was the
+captured return address.
+
+### Also from the §58 follow-up (`log_apply_candidates.lua`)
+- `+3354280`: 0 hits idle, 12 during the death. There were 12 distinct `this`
+  objects, all of one class (vtable `+1C3FCB0`).
+- `+31250A0`: 0 hits idle, 31 during the death, on at least 3 object classes
+  (`+1B962C8`, `+1B96170`, `+1AE33B8`). It is a generic dispatcher, not an
+  ability routine.
+- Conclusion: there is no single "rebuild abilities" function. A respawn
+  re-creates the player's logic entities, and each one checks its own flag as it
+  initialises.
+
+### The flag-check site `+3A77E14` (`runtime/log_item_checks.lua` v2)
+At `+3A77E14`: `RBX` = the entity doing the check, `[RBX+0x80]` = the pointer it
+cached, and `EAX` = the flag value it got back. `[RBX+0x80]` matches the
+hashmap node's **`+0x10`** field, not `+0x08` (v1 indexed `+0x08` and got
+UNRESOLVED everywhere). With both indexed, every flag resolved.
+
+All checking entities share one class, vtable **`+1C7B168`**: a generic "check a
+progression flag" logic entity. There are hundreds of them across the level.
+
+Split by window (idle ~10s, then a death):
+
+| group | count | notes |
+|---|---|---|
+| RESPAWN-ONLY | 46 flags | **every known `Unlocks_*` flag is here** |
+| ALWAYS | 34 flags | polled continuously; includes `XP_Gained` (66 entities) and counters |
+| IDLE-ONLY | 8 flags | one-off level checks |
+
+**Every ability flag we can name** (`Unlocks_MoveEnemyBack`, `DoubleWallrun`,
+`FastClimb`, `Shift`, `ExtendedSlide`, `Focus`,
+`FlowAttack_Special_PowerAttack`, `IncreasedHealth0..4`) is:
+- checked **only** during the respawn,
+- checked **exactly once**,
+- by **exactly one entity**, e.g. `Unlocks_MoveEnemyBack` by entity `1B9473E0`
+  (heap address; changes each respawn).
+
+The returned values match ownership. The other ~35 RESPAWN-ONLY hashes with
+value 0/1 are very likely the remaining `Unlocks_*` abilities, and can be named
+offline with the djb2a dictionary.
+
+### What this means
+The ability system is **one small entity per ability**. It asks the table once
+when the player is (re)built, then (presumably) enables or disables its ability.
+So "apply a grant without dying" becomes: **make that one entity evaluate
+again.** That needs:
+1. The entity's real evaluate function. Capture the target of `call [r14+08]` at
+   `+31250EA` rather than guessing a start address again.
+2. Confirmation that the checking entity persists after the respawn, so it can
+   be poked later. It may instead be a one-shot that is destroyed.
+3. Its arguments. Then a test: write a flag, invoke the entity's evaluate on the
+   game thread, and see whether the ability changes with no death.
+
+Fallback if (2) fails: the AP client applies grants at the next death or
+checkpoint. §57 shows that works for any flag, mission-gated ones included.
+
+### SAVE-STATE WARNING found in this run
+All five `Unlocks_IncreasedHealth0..4` returned **1** at this respawn. §57
+restored them to `1,0,0,0,0` and confirmed 4 bars in-game, but in this fresh
+session all five are 1. The likely cause: the death right after the §57 grant
+hit a checkpoint autosave with the granted state, and the game never saved again
+after the in-memory restore. The on-disk save now probably has +4 stamina.
+**Rule going forward:** a test grant followed by a death can reach disk. Restore
+before any death that isn't part of the test, or back up and restore the save
+file afterwards.
+
+---
+
+## §60. The evaluate event, captured: `+33604F0(sender, event, entity)`, and the entity survives the respawn
+
+`runtime/capture_evaluate.lua` puts breakpoints on `+31250EA` (the
+`call [r14+08]`) and `+3A77E14` (inside the check), and correlates the two for
+`Unlocks_MoveEnemyBack`:
+
+```
+=== 67800619 checked by entity 1E20AC20 (vtable +1C7B168), value EAX=1 ===
+   last call via +31250EA: target +33604F0
+      RCX=2979FD340 [+1C3FCB0]  RDX=32AEE730 [+1A5BDB8]  R8=1E20AC20 [+1C7B168]
+```
+
+- **`+33604F0` is the real function** that runs the check. It's a call target,
+  so its start address is known, not guessed. This retires the `+3A77DB3` guess
+  for good.
+- **Arguments:**
+  - `RCX` = **sender**, class vtable `+1C3FCB0`. It's the same class `+3354280`
+    ran on in §59, so `+3354280` is a sender method that fires an event at each
+    connected target.
+  - `RDX` = **event object**, stack-allocated, vtable `+1A5BDB8`. That vtable
+    showed up as a "frame" in the §58 stack trace; it was never a caller, just
+    this object's vtable left on the stack.
+  - `R8` = **receiver = the flag-check entity** itself. The source is
+    `lea r8,[rdi-08]`, so `R8` *is* the entity. The script's "R8+8==entity"
+    test used the wrong formula.
+- **The entity survives the respawn.** `alive()` afterwards showed the same
+  vtable and the same cached `[+0x80]`. A new entity is made each respawn (the
+  last run's Switch Place checker was `1B9473E0`, this one is `1E20AC20`), but
+  it lives until the next one. So it can be poked after the fact.
+- Call volume per respawn: 1205 calls through `+31250EA`, split between two
+  targets, `+2C6F890` (x796) and `+33604F0` (x409). There were 227 checks at
+  `+3A77E14`.
+
+### Model
+Respawn → a sender (class `+1C3FCB0`) fires an event (`+1A5BDB8`) at each
+connected entity through `+33604F0(sender, event, entity)` → each flag-check
+entity (`+1C7B168`) reads its flag once and switches its ability on or off.
+
+### Next: `runtime/dump_event.lua` (read-only)
+Before replaying anything live, capture exactly what would be sent:
+- disassembly of `+33604F0`, to see how it dispatches to the entity;
+- the event object's bytes, copied at the moment of the call (it's on the
+  stack);
+- the sender's header and whether it's still alive after the respawn;
+- the entity's vtable, to find its event-handler slot.
+
+Then the live test: write `Unlocks_MoveEnemyBack` = 0, replay the captured
+event into the current Switch Place entity **without dying**, and check whether
+Switch Place stops working. Restore the flag before any death (§59 autosave
+rule).
+
+### Process note (corrected in §65)
+FINDINGS.md appeared to be overwritten by older copies. I first blamed an editor
+on the user's machine. **That was wrong. The fault was in Claude's own file
+transfer; see the §65 correction.**
+
+---
+
+## §61. LIVE APPLY WITHOUT DEATH: `+3A75790(entity, value, 1)`
+
+**This removes the last blocker. A granted flag can take effect immediately,
+with no death, respawn, or restart.**
+
+### How it was found
+Static disassembly (`runtime/dump_event.lua`, plus a two-function read):
+
+```
++33604F0(sender, event, entity):   router
+    if [event+08] != 0 -> virtual call on that object
+    else               -> jmp +31661C0(entity, event)
+
++31661C0(entity, event):           gate
+    r8d = [entity+18]
+    if bit 3 set -> ret             (NB: both live entities had bit 3 SET, see below)
+    if bit 0x40 set -> jmp vtable[0x90] else jmp vtable[0x78]   (slot 15)
+
++3A77DC0(entity) = vtable slot 15: the flag check
+    call +316ADC0
+    data = [entity+28]
+    if byte [data+3A] != 0 -> ret
+    if [entity+80] == 0:
+        h = [data+34]; if h != 0 -> +39DA170(table, h) else [data+28]
+        [entity+80] = that            (the node+0x10 pointer, §59)
+    eax = +39DA880(table, [entity+80])   -- the flag value
+    jmp +3A75790(entity, value, 1)       <-- APPLY
+```
+
+The check never reads the event's contents, so replaying the event isn't
+needed. The whole ability switch is one call: **`+3A75790(rcx=entity,
+edx=value, r8b=1)`**.
+
+The previous guess `+3A77DB3` was 13 bytes before the real start `+3A77DC0`.
+Vtable slot 15 is the authoritative entry point.
+
+### Finding the entity with no death
+Scan writable memory for the 8-byte vtable `MirrorsEdgeCatalyst.exe+1C7B168`.
+This run found 1172 such objects. Match either field:
+- `[[entity+0x28]+0x34] == hash`. For Switch Place this was **0**, so the
+  entity uses the `[data+28]` path instead.
+- `[entity+0x80] == node+0x10` for the flag's table node. This is what matched,
+  but it only works after the entity has checked once.
+
+For `Unlocks_MoveEnemyBack` this found **2** candidates:
+
+| entity | `[+18]` flags | note |
+|---|---|---|
+| `1DAFBEB0` | `121F` | probably the previous respawn's entity, not yet freed |
+| `1E1239F0` | `321F` | the one `dump_event.lua` captured at the latest respawn; used for the test |
+
+Both have bit 3 set, so bit 3 isn't "inactive" as I first labelled it. The
+difference is **`0x2000`**, which is set only on the current entity. That's a
+candidate "live / attached" bit, not yet proven. A client needs a reliable way
+to pick the live entity. Calling `+3A75790` on a freed object could crash.
+
+### The test (`runtime/live_apply_test.lua`, no death at any point)
+1. `revoke()`: table `67800619` 1→0, then `executeCodeEx(+3A75790, 1E1239F0, 0, 1)`.
+   **Switch Place could not be used.**
+2. `grant()`: table 0→1, then `executeCodeEx(+3A75790, 1E1239F0, 1, 1)`.
+   **Switch Place worked again.**
+
+Both calls returned `rax=0`. There was no crash, even though `executeCodeEx`
+runs the call on a new remote thread rather than the game thread.
+
+### Status of the original goal
+| requirement | status |
+|---|---|
+| where ownership lives | §56 flag table `[+0x257C9D8]`, value at `node+0x18` |
+| grant a never-owned / mission-locked item | §57, proven (applies on respawn) |
+| apply without dying | **§61, proven for revoke and re-grant of Switch Place** |
+| find the entity without dying | vtable scan + `[+80]==node+10`; live-entity selection still open |
+
+### Open items
+1. **Repeat with a never-owned flag, live.** For example, grant
+   `Unlocks_IncreasedHealth1` and watch the stamina bar go 4→5 with no death.
+   This checks the method on a passive stat and on a flag whose entity has never
+   applied "1" before.
+2. **Live-entity selection.** Test whether bit `0x2000` of `[+18]`
+   distinguishes live from stale, across a couple of respawns.
+3. **Entities that haven't cached `[+80]` yet** (hash at `data+34` = 0 and not
+   yet evaluated) can't be matched by the `[+80]` method. Need a fallback, e.g.
+   resolve `[data+28]` against node+0x10.
+4. **Threading.** It worked from a remote thread twice, but the real client
+   should call from the game thread (a small hook) to avoid rare races.
+5. The progression menu still shows stale state (§56). Cosmetic.
+
+---
+
+## §62. §61 NOT REPRODUCED: the live call returned but the change only applied after a death
+
+This is a second run of `live_apply_test.lua` (fixed picker) in a fresh game
+session. The target entity was chosen by the `0x2000` rule.
+
+```
+revoke()  -> +3A75790(1E11D5C0, 0, 1)   table 1->0   rax=0
+revoke()  -> +3A75790(1E11D5C0, 0, 1)   table 0->0   rax=0
+   (death) -> new entity 1B663570 (321F); 1E11D5C0 gone
+grant()   -> +3A75790(1B663570, 1, 1)   table 0->1   rax=0
+```
+
+User report: **both revoke and grant "worked, but I had to die for it to
+apply".** The calls returned normally with no crash, but the ability didn't
+change until the next respawn. That is just the ordinary §56/§57 table path.
+
+### This contradicts §61
+In §61, the same call on the same kind of entity (`321F`) turned Switch Place
+off and on with no death. So there is one success and one failure, and I can't
+yet say whether the live call works. **§61's "proven" is downgraded to "seen
+once, not reproduced".** Candidate differences to rule out:
+- Something about the §61 session. The entity had just been captured by
+  `dump_event.lua` with breakpoints on `+33604F0`/`+3A77E14` during the
+  respawn, and those breakpoints were then removed.
+- `+3A75790` may only fire its output when the value differs from a stored
+  "last value" in the entity, or it may depend on other entity state.
+- The long-lived `121F` entity (fixed address across deaths) may be the one
+  that actually drives the ability, with the `321F` one only mattering at
+  respawn.
+- The §61 revoke observation itself: one observation only.
+
+### Also observed
+- Right after loading, before any death, only the `121F` entity exists for the
+  flag (plus the `[+80]` match). The `321F` entity appears after the first
+  respawn.
+- The crash in the previous session (a repeated `revoke()`) is still
+  unexplained. The picker is now validated per call, and no crash occurred in
+  this run.
+
+### Next
+`runtime/diag_apply.lua`: disassemble `+3A75790` to see what it depends on,
+then snapshot and diff the target entity's memory around each call. This shows
+whether the call changes anything, and lets us test the `121F` entity as the
+target.
+
+### Process (corrected in §65)
+The "reverted to a one-version-old copy" problem was blamed on a sync tool or
+editor on the user's machine. **That was wrong. See the §65 correction.**
+
+---
+
+## §63. What `+3A75790` actually does: it updates the entity's outputs; nothing downstream re-reads them live
+
+`runtime/diag_apply.lua` disassembled `+3A75790` and diffed the entity's first
+0x100 bytes around each call. Switch Place was tested after every call.
+
+### Disassembly, annotated
+```
++3A75790(rcx=entity, edx=value, r8b=flag):
+  if !([entity+18] & 8) -> return        ; bit 3 = ENABLED (every entity had it; §61's "INACTIVE" label was backwards)
+  changed = ([entity+78] != value); [entity+78] = value
+  if !changed && !flag -> return
+  port = [entity+68]                     ; int output port
+  if port && !(port settled && [[port]] == value):
+      +2A430F0(entity+68, &value, 1)     ; push value to connected entities
+  b = (value > 0)
+  port = [entity+70]                     ; bool output port
+  if port && !(port settled && [[port]] == b):
+      +2A430F0(entity+70, &b, 1)         ; push bool to connected entities
+  mode = data->vtable[0x20]()            ; data = [entity+28]
+  if mode == 2 && flag == 0:
+      +347E420(entity+30, 1)             ; fire an EVENT -- skipped when flag=1
+  ...
+```
+The respawn path always calls with `flag = 1` (`mov r8b,01` at `+3A77E14`), so the
+event branch never runs there.
+
+### Probe results (fresh session, no deaths during the probes)
+| call | entity | diff | Switch Place |
+|---|---|---|---|
+| `+3A75790(live 321F, 0, 1)` | `1B8ACB10` | `+078: 1→0` | **still usable** |
+| `+3A75790(live 321F, 1, 1)` | `1B8ACB10` | `+078: 0→1` | usable |
+| `+3A75790(persist 121F, 0, 1)` | `1DAFB640` | `+078: 1→0` | **still usable** |
+| `+3A75790(persist 121F, 1, 1)` | `1DAFB640` | `+078: 0→1` | usable |
+
+So the call **runs and takes effect inside the entity**: `[+78]` holds its
+current value, and the output ports are updated through `+2A430F0`. But the
+ability does **not** change live. That matches §62 and contradicts §61.
+
+### Interpretation
+The flag-check entity is only a source. Whatever consumes its output (the
+thing that actually enables the move) evidently reads that output **once, when
+it is itself created at respawn**, and doesn't react to later changes. §61's
+single live "success" is now the outlier. It is not reproduced in two later
+sessions (§62, §63) and should not be relied on. The likeliest explanation is an
+observation coincidence.
+
+### Remaining cheap experiment
+Call with `flag = 0`: `probe(v, "live", 0)`. If `mode == 2` for this entity,
+that fires the `+347E420` event, which the respawn path never does. If a
+consumer listens for that event, the change could apply live.
+
+### If that fails
+- **Pragmatic:** grants apply at the next death or checkpoint (proven, §57). An
+  AP client can write the flag immediately and tell the player "applies on next
+  respawn".
+- **Deeper:** follow the output ports at `[entity+68]`/`[entity+70]` to the
+  consumer entity, find how it enables the move, and poke that instead.
+
+---
+
+## §64. LIVE APPLY WORKS with `flag = 0`: `+3A75790(entity, value, 0)`
+
+Same session setup as §63 (die once after loading, target = the `0x2000`
+entity). The only change is the third argument.
+
+```
+probe(1, live, 0)   table 1->1   rax=1536   no bytes changed   (value unchanged + flag 0 -> early return; expected)
+probe(0, live, 0)   table 1->0   entity+078: 1->0             Switch Place: CAN'T use
+probe(1, live, 0)   table 0->1   entity+078: 0->1             Switch Place: CAN use
+check()             table = 1
+```
+
+Compare §63 (`flag = 1`): the same value changes, the same `+78` updates, and
+Switch Place was **unaffected**.
+
+### Why, from the §63 disassembly
+With `flag = 1` (what the respawn path passes), `+3A75790` only updates the
+entity's value and its output ports. With `flag = 0`, and when the entity's
+`data->vtable[0x20]()` returns 2 (mode function `+473BDA0` for this entity),
+it **also fires `+347E420(entity+30, 1)`, an event**. So the consumer that
+enables the move reacts to that **event**, not to the port values. At respawn
+the consumer is freshly created and reads the port value directly. Live, it
+only reacts to the event.
+
+**Rule:** a live apply is `+3A75790(entity, newValue, 0)` with `newValue`
+**different** from `[entity+78]`. If they're equal and the flag is 0, the
+function returns immediately (first row above).
+
+### Status
+- One session, one revoke and one grant, both behaving as predicted. This is
+  consistent with the disassembly, but **one run**. §61 "worked" once with
+  `flag = 1` and was never reproduced, so this needs an A/B replication in one
+  session before it is called proven.
+- §61 stays unexplained.
+
+### Next
+1. A/B in one session: `flag = 1` revoke (expect no effect), then `flag = 0`
+   revoke/grant twice (expect effect each time).
+2. Generality: a different flag, ideally a never-owned passive
+   (`Unlocks_IncreasedHealth1`, watch the bar 4→5 live).
+3. Other entities may use a different mode than 2, and the event only fires in
+   mode 2. Check the mode per flag of interest.
+4. Threading: the calls still run on a remote thread. No crash in this run.
+
+---
+
+## §65. `flag = 0` live apply replicated (second session); the within-session control is still missing
+
+A new session: die once after load, then `diag_apply.lua`, target = the
+`0x2000` entity `1BDEBA30`.
+
+The protocol asked for `probe(0,"live",1)` first, as the control. **The log
+shows the first three calls were `probe(1, …)`**, i.e. `1→1` with no change and
+an early return. So they were no-ops, and the user's note "still worked" after
+them is expected and tests nothing. The informative part:
+
+```
+probe(0, live, 0)   table 1->0   entity+078: 1->0   Switch Place: NOT usable
+probe(1, live, 0)   table 0->1   entity+078: 0->1   Switch Place: usable
+check()             table = 1
+```
+
+### Evidence tally for live apply via `+3A75790`
+| session | flag | revoke took effect live? |
+|---|---|---|
+| §61 | 1 | yes (**unexplained**, never reproduced) |
+| §62 | 1 | no |
+| §63 | 1 | no (live and persist entities) |
+| §64 | 0 | **yes**, grant too |
+| §65 | 0 | **yes**, grant too |
+
+This is consistent with the §63 disassembly: `flag = 0` fires the
+`+347E420` event, which is what the live consumer reacts to. The one missing
+piece is a `flag = 1` vs `flag = 0` comparison **in the same session**. It's
+cheap, so it's folded into the next test.
+
+### Next: generality (`diag_apply.lua` v3)
+`target(hash, name)` switches the flag under test and records its current value
+as the restore point. Test on a **never-owned passive**,
+`Unlocks_IncreasedHealth1` (`848D8854`, value 0, stamina 4 bars), with the
+control included:
+1. `probe(1,"live",1)` → expect bars unchanged (4)
+2. `probe(0,"live",1)` → reset, no visible change
+3. `probe(1,"live",0)` → expect **5 bars live**
+4. `probe(0,"live",0)` → expect 4 bars
+5. `check()` → must show the original value 0
+
+Its entity's mode function must also return 2 for the event to fire. The script
+prints `data->vtable[0x20]`. It was `+473BDA0` for Switch Place.
+
+### §65 correction: the "reverted files" were Claude's fault
+The user confirmed that nothing on their machine has FINDINGS.md open, and no
+sync tool is involved. The one-version-behind files came from Claude's transfer
+method: files edited in Claude's workspace with shell commands were copied to
+the user's folder from a path that could serve an older snapshot. The fix, used
+from §65 on, is to deliver the file first, commit it by its delivered-file ID,
+and verify the size with a directory listing afterwards. §60 and §62 wrongly
+blamed an editor or sync tool; they have been corrected. The user did nothing
+wrong.
+
+---
+
+## §66. Live GRANT of a never-owned upgrade works: stamina 4→5 bars with no death
+
+Session: die once after load, then `diag_apply.lua` v3 with
+`target(0x848D8854, "IncreasedHealth1")`. The flag was 0 (never owned) and the
+stamina bar showed 4. Entity `1DFAB400` (`321F`), mode function `+473BDA0`, the
+same as Switch Place's.
+
+| call | table | `entity+78` | predicted | observed |
+|---|---|---|---|---|
+| `probe(1,"live",1)` | 0→1 | 0→1 | 4 bars (control) | **5 bars** |
+| `probe(0,"live",1)` | 1→0 | 1→0 | (reset, not checked) | **4 bars** (user confirmed afterwards) |
+| `probe(1,"live",0)` | 0→1 | 0→1 | 5 bars | **5 bars** |
+| `probe(0,"live",0)` | 1→0 | 1→0 | 4 bars | **4 bars** |
+| `check()` | 0 = original | | | OK |
+
+### What this shows
+- **For this port-driven passive, the r8 flag doesn't matter, in either
+  direction.** With flag 1 and with flag 0, the value went 4→5 on grant and
+  5→4 on revoke. Switch Place (event-driven) needed flag 0. So **always call
+  with flag 0**: it covers both kinds of consumer.
+- **A never-owned passive upgrade was granted live and revoked live.** This is
+  the Archipelago use case: an item the player hasn't earned, arriving
+  mid-play.
+- **My control prediction was wrong for stamina.** With `flag = 1` (no event,
+  only the output ports updated) the bar also changed. So consumers differ:
+  - Switch Place's consumer reacts only to the **event** (`flag = 0`, §63–§65).
+  - The stamina consumer reacts to the **output port value** (`flag = 1` is
+    enough).
+- `flag = 0` does both: it updates the ports **and** fires the event. So it
+  covers both kinds of consumer.
+
+### The recipe for a live grant/revoke (as it stands)
+1. Write the value into the §56 table: `node(hash)+0x18 = v`. This persists to
+   the save and to later respawns.
+2. Find the live check entity. Scan for vtable `+1C7B168`, keep those with
+   `[e+0x80] == node+0x10`, then pick the one with `[e+0x18] & 0x2000`.
+3. Call `+3A75790(e, v, 0)`. `v` must differ from `[e+0x78]`, or the function
+   returns early.
+
+Proven on 2 flags (one active move, one passive stat), in both directions,
+across 3 sessions for `flag = 0`.
+
+### Remaining for a real client
+1. **Entity discovery without a death after load.** Right after loading, only
+   the `121F` entity exists and `[+80]` isn't cached on the respawn entity yet.
+   Test whether calling on the `121F` entity with `flag = 0` works, or resolve
+   the entity through `[data+28]` instead of `[+80]`.
+2. **Threading.** `executeCodeEx` calls from a remote thread. There was one
+   crash earlier, of unconfirmed cause, and none in 4 sessions since. The
+   client should make the call on the game thread via a hook.
+3. **Coverage.** Name the other ~35 respawn-only flags (§59) and spot-check that
+   a few more abilities (e.g. Double Wallrun, the Gear tab) use the same entity
+   class and mode.
+4. The progression menu UI is still stale (§56). Cosmetic.
