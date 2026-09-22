@@ -32,3 +32,6 @@ decoded_check.json
 
 # Local working copies of files that also live in runtime/
 Claude outputs/
+
+# Separate repository (the clean client kit) -- lives here for now, move it out anytime
+ap-client-kit/

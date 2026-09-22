@@ -10,55 +10,51 @@ and *how*.
 
 ## Where this stands right now
 
-**The hard problem is solved and proven live, end to end.** Mirror's Edge
-Catalyst's save file holds every piece of per-save progress as a flat,
-readable/writable hash table, and a working Archipelago integration already
-exists on top of it:
+**Building a client?** Go to the
+**[MEC-AP-client-kit](https://github.com/vincenator218/MEC-AP-client-kit)**
+repository. It is the clean, client-oriented distillation of this research:
+the live memory interface, the item and location lists (with IDs and hashes),
+save tools and a Cheat Engine prototype, with none of the research noise. This repo
+is the lab notebook behind it.
 
-1. **Reading works.** `decode_save.py` turns any `PROF_SAVE` file into full
-   JSON with real names for ~99% of every record — collectibles, missions,
-   security hubs, grid nodes, billboard hacks, everything.
-2. **Writing works, confirmed live in-game, three different ways:**
-   - Flipping one existing record dropped the in-game GridLeaks counter by
-     exactly 1, nothing else changed.
-   - Bulk-inserting 323 "collected" records made a real, physical GridLeak
-     the player was standing in front of **disappear from the world** — the
-     actual object-spawn flag, not just a UI cache.
-   - Pushing a category to a true 100% and reloading triggered a real
-     **"RUNNER KIT DROPPED"** in-game notification — the full mission→reward
-     chain firing for real, purely from a save-file edit.
-3. **A working Archipelago proof of concept exists.**
-   `me_catalyst_hint_bridge.py` watches the save file and fires a real AP
-   hint the moment you collect a GridLeak in-game — **tested live against a
-   real Archipelago room, every GridLeak sent a hint, every time.**
-4. **The file format itself is fully decoded, including both of its CRC32
-   integrity checksums**, cross-referenced against an independent save
-   editor ([`ploxxxy/frostnibble`](https://github.com/ploxxxy/frostnibble),
-   linked by Meteor) and verified byte-exact against the project's own
-   original, unedited save files — see "The save file format" below.
+**Both halves of a randomizer are proven on real hardware:**
 
-All of this needs **zero live game-memory access** — no injection, no
-Cheat Engine, nothing running alongside the game. It's pure save-file
-read/write, which is what makes it viable as the actual foundation for a
-randomizer client.
+1. **Sending checks (reading).** Every piece of per-save progress
+   (collectibles, missions, hubs, nodes, billboards, abilities) is a named
+   flag. The same flags can be read in two places:
+   - **live, from the game's in-memory flag table**, polled while the game runs;
+   - **from the save file** (`PROF_SAVE`), decoded by `decode_save.py`.
+
+   A working Archipelago proof of concept (`me_catalyst_hint_bridge.py`)
+   already sent real hints to a real AP room from GridLeak pickups.
+   `checks/` lists all **852 candidate locations** (792 on by default), with
+   detection rules.
+2. **Receiving items (writing), live, with the game running** (FINDINGS §56–§74):
+   - Writing a flag in the in-memory table is **persisted by the game's own
+     autosave**. Verified on disk after a relaunch, in both directions.
+   - Calling one game function (`+3A75790`) on the flag's check entity makes an
+     ability switch **immediately**, with no death or reload. Tested on Switch Place, a
+     stamina tier, Double Wallrun, MAG Rope Swing and Focus. It holds across
+     fresh loads, deaths, mission starts, fast travel and checkpoint restarts.
+     A census found 27 abilities with the same live setup.
+   - Without the call, a written flag takes effect at the next death or
+     checkpoint restart.
+   - **Side missions** unlock through `SilverCompleted_<mission>`: written live,
+     the mission appears in the replay menu at the next checkpoint restart.
+3. **Offline save editing** also works (game fully closed). It's used to build a
+   starting save, for example `clear_all_unlocks.py` for "no abilities".
 
 **What's not done yet:**
 
-- Only GridLeaks is wired into the hint bridge — other categories
-  (Secret Bags, Electronic Parts, Audio Pickups, Intel, missions, security
-  hubs) are all named and readable, they just need their own hash tables
-  added to the bridge (mechanical, same pattern).
-- Only "mark collected/uncollected" has been tested, and it's now
-  confirmed the game has to be **fully closed** while the save is edited
-  — editing while it's running gets silently overwritten by the game's
-  own stale in-memory state, but closed-edit-then-launch works reliably
-  (tested directly both ways — see `FINDINGS.md` §15/§15a/§15b). So a
-  receive-item design needs to queue items and apply them between
-  sessions, not try to inject them into an already-running one.
-- No real in-world coordinates for individual collectibles have been found,
-  which would matter for a "go find this specific item" style check.
+- A real client: the prototype makes the game-function call from a foreign
+  thread (Cheat Engine), which crashed the game twice. A real client must make it
+  on the game's own thread through a hook, and no hook point has been chosen yet.
+- Only 5 abilities are tested one by one. The rest are "same setup, expected to
+  work". Twelve abilities have no live entity, and only Focus of those is proven live.
+- World logic (which checks need which abilities), filler items, and
+  in-world positions or real names for individual collectibles.
 
-See "Open questions / next steps" near the bottom for the full list.
+The full list is in the client kit's `docs/OPEN_QUESTIONS.md`.
 
 ## Use what's already built
 
@@ -66,8 +62,15 @@ You don't need to regenerate anything to use the tools below — the parsed
 static data (`gameconfig_dumps/`) and the hash tables are already in this
 repo. All you need is a copy of your own `PROF_SAVE` file — confirmed
 location: `Documents\Mirrors Edge Catalyst\settings\PROF_SAVE`.
-**Always work on a copy, and set Steam offline before testing an edited
-save in-game** — see "Lessons learned" for why.
+**Always work on a copy, and keep the game fully closed while editing the file.**
+Setting Steam offline was used as a precaution; cloud sync was never actually
+seen interfering (see "Lessons learned").
+
+For **live** work (the game running), the Cheat Engine Lua scripts are in
+`runtime/`. `setflag.lua` reads and writes any flag, `list_live_checks.lua` lists
+every flag-check entity, `diag_apply.lua` / `persist_apply_test.lua` apply an ability
+live, and `sidemissions.lua` handles side-mission unlocks. The distilled,
+documented version is `reference/cheatengine/ap_live.lua` in the client kit.
 
 ```
 # Read: decode a save to full JSON, names resolved
@@ -263,10 +266,10 @@ individually:
    data's `dependency_graph.json` firing for real, purely from a save-file
    edit.
 
-**Gotcha**: Steam Cloud will silently re-sync your original save over an
-edited one if it's online — always set Steam offline before swapping in a
-test save, or a "no change" result might just be cloud sync fighting you,
-not a real negative result.
+**Note**: an early "no change" result was first blamed on Steam Cloud re-syncing
+the save. That was later traced to a mis-pasted command (FINDINGS §12a
+correction). Cloud sync has never actually been seen interfering. Setting Steam
+offline while testing is still a harmless precaution.
 
 ---
 
@@ -335,11 +338,17 @@ This is concretely buildable with what's already been found:
   (`CriticalPathProgression_HasCollectedMagRope*`), not part of the
   general unlock pool, since it's required to physically progress at all.
 
-Two things still need a live test (not yet run, same style as every other
-write test in this project): whether forcing missions "complete" leaves
-`Unlocks_*` alone or recomputes/grants them at load, and whether clearing
-an already-`true` `Unlocks_*` flag actually disables that ability in-game
-the way it did for GridLeaks (§12b).
+Both follow-up questions have since been answered live:
+- Clearing an owned `Unlocks_*` flag **does** disable the ability (§19).
+- Clearing all of them and playing real missions re-grants **nothing** (§20).
+
+Two later refinements:
+- §21 found only 34 of the 58 flags are bought in a normal playthrough. But
+  the stamina tiers 3–4 from the "unreachable" 24 do work (§57), and
+  a live census (§70) shows which abilities have live check entities.
+- Time trials are still not usable as checks. The design now uses
+  collectibles, side missions, opportunities and similar content instead
+  (see `checks/CHECKS.md`).
 
 Also explored: actually intercepting the game's now-dead online traffic,
 since EA shut down Catalyst's servers in December 2023 and there's a real
@@ -414,8 +423,10 @@ and its instance data, and prints/returns a Python structure.
   "World Progression" screenshots against summed flag-group counts:
   `Rz`=Rezoning, `Dt`=Downtown, `Ac`=Anchor, `Vw`=The View, plus
   `Trainstation`=Zephyr Transit Hub and `TheShard`=the final story mission.
-  Separately, the save file revealed the internal name **"Construction"
-  displays in-game as "Glass"**.
+  `ConstructionGridLeaks` is Rezoning's GridLeaks: 74 = Omnistat Tunnels 24 +
+  Development Zone 50. (An earlier note here said "Construction" displays as
+  "Glass". It doesn't: the "Collect every gridLeak in Glass" reward refers to the
+  whole city, Glass, which fired because all 324 GridLeaks were set.)
 - **`build_dependency_graph.py`** ties `PlayerProgressionData.bin` and
   `RewardsData.bin` together into one real graph: which flag/flag-group/
   mission-completion unlocks which reward. Output: `dependency_graph.json`
@@ -437,14 +448,17 @@ and its instance data, and prints/returns a Python structure.
 
 ---
 
-## Live memory access (superseded, kept for reference)
+## Live memory: first attempt (superseded), and what replaced it
 
-Before the save file was discovered, the plan was to read/write the
-game's live process memory. This is **no longer the recommended
-approach** — everything above does what this was trying to do, more
-reliably, without touching the running game at all. Kept here because the
-architectural understanding might still be useful (e.g. for a "detect a
-change right now without waiting for a save" nice-to-have).
+**Update: live memory is the recommended approach again, via a different
+structure.** FINDINGS §56 found the real per-save flag table, a hash map at
+`[MirrorsEdgeCatalyst.exe+0x257C9D8]` keyed by the same djb2a hashes as the save
+file. §57–§74 then showed how to apply ability changes immediately. The full,
+tidy description is in the client kit's `docs/MEMORY.md`.
+
+The notes below describe the **first** live-memory attempt, before the save file
+was decoded. That attempt looked at the wrong structures (static config and
+aggregate UI counters). Kept for reference.
 
 - Meteor shared a full C++ header dump (`SDK.zip`,
   generated from the game's own RTTI) giving real struct offsets for
@@ -491,6 +505,10 @@ clear_category.py                  remove every record for a category
 save_checksum.py                   recomputes the save's two CRC32 checksums
 gridleaks_hashes.json              precomputed hash->name table (324 GridLeaks)
 me_catalyst_hint_bridge.py         ** working AP hint-bridge proof of concept **
+set_flag.py, clear_all_unlocks.py  set any flag / clear every ability (save file)
+checks/                            ** location list: CHECKS.md, locations.json/.csv, build_checks.py **
+runtime/                           Cheat Engine Lua scripts for the live work (FINDINGS §56-§74)
+status_report.md                   short status summary (older; the client kit supersedes it)
 SDK/, Collectibles/, Missions/, ui_widgets/, list.csv, usage_list.txt
                                     earlier exploration / third-party data,
                                     see .gitignore note on SDK/ before pushing
@@ -515,25 +533,12 @@ reference but not this project's to redistribute in bulk.
 - **Which of the three `ProgressionManagerData*` sections is authoritative**
   isn't fully pinned down — all working tests so far patched all three at
   once to be safe. Worth isolating.
-- **Only GridLeaks is wired into the hint bridge.** Other categories need
-  their own hash tables (mechanical, same pattern).
-- **RESOLVED — the write path needs the game fully closed during the
-  edit, confirmed both ways.** First tried editing while the game stayed
-  running (`FINDINGS.md` §15a): mass-set all 324 GridLeaks, then tried
-  every trigger from standing still up through pause menu, checkpoint
-  respawn, zone transition, explicit reload, and a full quit+relaunch —
-  none of them showed the edit. A checksum check proved why: the
-  already-running process still held its old in-memory progression state
-  and wrote that whole state back over our edit before any reload had an
-  edited file to actually load. Redid it with the game **fully closed**
-  during the edit (§15b): same edit, then launched fresh — **324/324
-  GridLeaks, confirmed in-game.** So the rule for a receive-item design is
-  settled: the game must not be running while the save is written to;
-  queue items and apply them between sessions, don't try to inject them
-  into an already-running one. Whether some in-game action can force an
-  already-running session to safely reload without losing its own
-  concurrent progress is a separate, still-open question, but no longer
-  a blocker for a first working design.
+- **Only GridLeaks is wired into the hint bridge.** Every other category now has
+  hashes and detection rules in `checks/locations.json`.
+- **RESOLVED: writing the save *file* needs the game fully closed** (§15a/§15b). A
+  running game writes its own in-memory state back over the file. **Writing the
+  in-memory flag table instead works live**, and the game's autosave then persists it
+  (§56–§73). So items can be received mid-session.
 - **~1% of records still don't resolve** to a known name — likely need a
   wider static-data source (achievements, `RunnerKitDefinitionsMeta`, full
   `MissionDescription` sub-fields) added to the candidate-string dictionary.
@@ -542,8 +547,14 @@ reference but not this project's to redistribute in bulk.
 
 ## Lessons learned / gotchas
 
-- **Steam Cloud will silently overwrite a manually-edited save** if online
-  — always go offline before testing an edited save in-game.
+- **The autosave can capture a test value at any time.** A live write that's left
+  in place, even briefly, can end up on disk (§73). After live tests, check the save
+  (`setflag.lua` → `checksave()` right after the next load).
+- **Verify with a second observation.** Several early conclusions came from a single
+  capture and had to be corrected (§61/§62, §71). HUD elements such as the Focus bar
+  may only redraw at respawn, so test the ability itself, not the UI.
+- Steam Cloud was once suspected of overwriting an edited save. That turned out
+  to be a mis-pasted command, but going offline while testing costs nothing.
 - **ASLR invalidates every literal memory address across game restarts** —
   a lesson from the (now superseded) live-memory work, kept here because
   it's a good general reminder if live-memory work is ever revisited.

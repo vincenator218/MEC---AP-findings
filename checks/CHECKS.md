@@ -34,7 +34,7 @@ Every location is one progression flag. `hash = djb2a(flag name)` (seed 5381, `h
 
 The collectible totals (324 / 251 / 45 / 42 / 40) match the in-game World Progression screen.
 
-**Mission detection.** Side missions and deliveries use `_CompletedTime`, not the `SilverCompleted_`/`BronzeCompleted_` flag. The design plans to write `SilverCompleted_<m>` to unlock missions for replay (§25), so that flag cannot also be the check. §25 also proved that a real completion overwrites the synthetic `_CompletedTime` seed with a different value. So the check is "`_CompletedTime` is nonzero and differs from what the seed save wrote".
+**Mission detection.** Side missions and deliveries use `_CompletedTime`, not the `SilverCompleted_`/`BronzeCompleted_` flag. The design plans to write `SilverCompleted_<m>` to unlock missions for replay (§25), so that flag cannot also be the check. §25 also proved that a real completion overwrites the synthetic `_CompletedTime` seed with a different value. So the check is "`_CompletedTime` is nonzero and differs from what the seed save wrote". **Simpler, per §74:** `SilverCompleted_` alone unlocks the mission (written live, it appears at the next checkpoint restart), so the client never needs to write `_CompletedTime`. The check is then just `_CompletedTime` going 0 → nonzero.
 
 ## Off by default (60): included but flagged
 
@@ -69,10 +69,11 @@ The collectible totals (324 / 251 / 45 / 42 / 40) match the in-game World Progre
 
 **The 34 confirmed:** Coil, CombatRecovery, Disrupter_IncreaseRange, Disruptor_Overload, Disruptor_StunHumans, Disruptor_StunMech, DoubleWallrun, ExtendedComboVulnerability, ExtendedSlide, FastClimb, FlowAttack, FlowAttack_PowerAttack, FlowAttack_Special_PowerAttack, Focus, Focus_FlowAttackFluency, Focus_ReachFlow_Increase, Focus_ReachFlow_IncreaseExtra, Glove, HandToHandCombat, ImpactAttack_PowerAttack, ImpactAttack_Special_PowerAttack, IncreasedHealth0, IncreasedHealth1, IncreasedHealth2, LowerHealthEnforcer, LowerHealthProtector, LowerHealthSentinel, LowerHealthShockProtector, MoveEnemyAttack, MoveEnemyBack (Switch Place), PositionalAdvantage, QuickTurn, Shift, SkillWindowSkillRoll.
 
-The grapple (MAG Rope) is story-gated through `CriticalPathProgression_HasCollectedMagRope*`, not `Unlocks_*`.
+The grapple (MAG Rope) is story-gated through `CriticalPathProgression_HasCollectedMagRope*`, not `Unlocks_*`. It can still be an item: Swing was revoked and granted live (§69). Swing, PullUp, PullDown and LineConnector are separate flags, so they could be separate items (progressive grapple).
 
 **Live-grant status:**
-- Proven: `+3A75790(entity, v, 0)` works for MoveEnemyBack and IncreasedHealth1. It needs one death after load so the entity caches its flag pointer (§64–§66).
+- Proven: `+3A75790(entity, v, 0)` works for MoveEnemyBack, IncreasedHealth1, DoubleWallrun and the story-gated MAG Rope Swing (`CriticalPathProgression_HasCollectedMagRopeSwing`, §69), in both directions. It works right after a normal load with no death (§67). The client re-scans for the entity before every grant because respawns rebuild it.
+- Abilities with no live entity (Focus family, LowerHealth*, Glove, Disruptor_Overload, ExtendedComboVulnerability, PositionalAdvantage): calling the same function on the flag's **persistent** entity works. Proven for Focus (§72). A table write alone applies at the next death (§71).
 - Every other ability is untested live. The save-edit + restart path works for all 34.
 
 ## Regenerating

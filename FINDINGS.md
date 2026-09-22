@@ -1737,6 +1737,11 @@ asset-name prefix on every one of these flags, e.g.
 one more internal-name-to-real-name mapping resolved, joining the
 district/sub-zone table from §10h.
 
+**Correction (later):** that's wrong. This save had **all 324** GridLeaks set, across
+every district, so the reward "Collect every gridLeak in Glass" means the whole city
+(Glass), not the Construction group. The group sums in §10h stand:
+`ConstructionGridLeaks` = Rezoning (Omnistat Tunnels 24 + Development Zone 50 = 74).
+
 **Immediate follow-ups this opens up, not yet done:**
 - ~~Test the *other* direction -- flip a currently-uncollected item's
   record from (absent, or `0`) to `1`~~ -- **done, see §12b**: inserting
@@ -5279,3 +5284,427 @@ across 3 sessions for `flag = 0`.
    a few more abilities (e.g. Double Wallrun, the Gear tab) use the same entity
    class and mode.
 4. The progression menu UI is still stale (§56). Cosmetic.
+
+---
+
+## §67. Double Wallrun: live revoke + grant on a fresh launch, **no death needed**
+
+Session: the game was launched and loaded, with **no death**. Then `diag_apply.lua` v3 was run with
+`target(0xF139B4B3, "DoubleWallrun")`.
+
+- The load printed `live (0x2000) candidates: 1   persistent candidates: 1`, so
+  the `0x2000` respawn entity **already exists right after loading**.
+- Entity `1B941EF0`, flags `321F`, mode function `+473BDA0`. This is the same
+  class, flags and mode as Switch Place and IncreasedHealth1.
+- The table value was 1 (owned), and Double Wallrun worked before the test.
+
+| call | table | `entity+78` | observed |
+|---|---|---|---|
+| `probe(0,"live",0)` | 1→0 | 1→0 | double wall-run **stopped working** |
+| `probe(1,"live",0)` | 0→1 | 0→1 | double wall-run **works again** |
+| `check()` | 1 = original | | OK |
+
+The `+3A75790` disassembly matches §63 byte for byte.
+
+### What this changes
+1. **The "die once after load" requirement was wrong,** at least for a normal
+   launch-and-load. The level load spawns the player the same way a respawn
+   does, so the `0x2000` entity is created and caches `[+80]` at load. The
+   rule came from early runs (§61/§62) that were confounded by `flag = 1`, and
+   it was never tested separately. Every later protocol simply included the
+   death. §66's remaining item 1 ("entity discovery without a death") is
+   **resolved for the fresh-load case**. Not yet tested: after fast travel,
+   after starting or replaying a mission, and after a checkpoint reload.
+2. **The recipe now covers 3 flags and 3 kinds of ability:** an active combat
+   move (Switch Place), a passive stat (stamina), and a movement ability
+   (Double Wallrun). All three use the same entity class and mode function.
+3. The recipe is unchanged: write to the table, then find the `+1C7B168`
+   entity with `[+80] == node+0x10` and `[+18] & 0x2000`, then call
+   `+3A75790(e, v, 0)`.
+
+### Remaining for a real client
+1. Check that entity discovery still works after fast travel, a mission
+   start/replay, and a checkpoint reload. The `0x2000` entity is rebuilt on
+   respawn, so the client must re-scan before every grant, which the scripts
+   already do.
+2. Threading: make the call on the game thread through a hook, not with
+   `executeCodeEx`.
+3. Coverage: spot-check one Gear-tab item and one flag from the "24" group on
+   its own.
+4. The menu UI is still stale. Cosmetic.
+
+---
+
+## §68. The live entity survives a mission start and fast travel. Grants keep working.
+
+This is the same game session as §67 (launched, no death). `diag_apply.lua` v3 was loaded
+once. Each round was `probe(0,"live",0)`, then `probe(1,"live",0)`, then
+`check()` on `DoubleWallrun` (`F139B4B3`).
+
+| state | entity found | result |
+|---|---|---|
+| fresh load (§67) | `1B941EF0` `321F` | revoke stopped the move, grant restored it |
+| after **starting a mission** | `1B941EF0` `321F` | same, as expected |
+| after **fast travel** | `1B941EF0` `321F` | same, as expected |
+
+Each time there was exactly one `0x2000` candidate. `check()` returned OK (1) every
+time.
+
+### What this shows
+- **Neither a mission start nor fast travel rebuilds the check entity.** It is
+  the same object at the same address, with the same flags and the same `data` (`15B96F500`).
+  By contrast, a **death** creates a new `0x2000` entity (§59/§61). The re-scan
+  in every probe already handles that: the §64–§66 tests all ran after a death.
+- So live grants have now worked in every state tested: fresh load, after a
+  death, after a mission start, and after fast travel. They have worked for 3
+  abilities, in both directions.
+
+### Still untested
+- Checkpoint reload / "restart from checkpoint".
+- Going to the main menu and loading again without closing the game.
+- Whether a grant made **during** a mission survives the mission ending.
+- Threading. It stays the main engineering item: the call must run on the game thread
+  through a hook in the real client.
+
+### §68 addendum: checkpoint restart rebuilds the entity, and the re-scan handles it
+
+This is the same game session. Using "restart from checkpoint" from the pause menu, then the same
+three calls:
+
+| state | entity found | `data` | result |
+|---|---|---|---|
+| after **checkpoint restart** | **`1D5BB5B0`** `321F` (new) | `15B96F500` (unchanged) | revoke stopped the move, grant restored it |
+
+- The restart **replaced** the `0x2000` entity. Its address changed, as it
+  does on a death. The script's per-call re-scan found the new one with no
+  reload, and it was still the only candidate. That is the behavior a client
+  needs.
+- The entity's `data` pointer (`[e+0x28]`) did **not** change. `data` is the
+  static per-ability definition. The entity is the per-spawn instance. So a client
+  could cache `data` per ability and find the live entity faster by
+  matching `[e+0x28] == data` plus the `0x2000` bit, instead of going through `[+80]`.
+  This hasn't been needed so far. It is an option if scan cost matters.
+
+**Live grants tested so far:** fresh load, death, mission start, fast travel
+and checkpoint restart all pass. A "quit to main menu and reload" state **does not
+exist** in this game. The pause menu's start screen is a still image over the
+map, and leaving it returns straight to gameplay with no load (confirmed by the user).
+So that covers every in-session state that rebuilds, or might rebuild, the
+entity. The only other load is closing and relaunching the game, which is the fresh-load case (§67).
+
+---
+
+## §69. MAG Rope Swing (a story-gated gear flag) uses the same mechanism. Live revoke + grant works.
+
+Same game session as §67/§68. `target(0xE77600AB, "MagRopeSwing")` =
+`CriticalPathProgression_HasCollectedMagRopeSwing`. This is **not** an `Unlocks_*`
+flag. The story grants it (Savant Extraordinaire, "Getting Magrope").
+
+- Table value 1 (owned). **Live candidates = 1.** The entity has `flags 321F`, `data 15B96F090`
+  (a different per-ability definition from Double Wallrun's `15B96F500`), and mode
+  function `+473BDA0`. It is the same `+1C7B168` class as every ability tested so far.
+
+| call | entity | table | result (user) |
+|---|---|---|---|
+| `probe(0,"live",0)` | `1DA02F40` | 1→0 | swing stopped working |
+| `probe(1,"live",0)` | **`1B889240`** | 0→1 | swing works again |
+| `check()` | | 1 = original | OK |
+
+### What this shows
+- **The gear from story progression is gated the same way.** The
+  `CriticalPathProgression_HasCollectedMagRope*` flags are enforced by the same
+  flag-check entities and respond to the same `+3A75790(e, v, 0)` call. So the
+  grapple can be an Archipelago item, and so can each of its uses separately (Swing,
+  PullUp, PullDown, and LineConnector, which is absent from this save).
+- The recipe now covers 4 flags across 4 kinds: a combat move, a passive stat,
+  a movement ability, and story-gated gear.
+
+### The address change: a death between the calls (user confirmed)
+The user **died between the revoke and the grant**, while the flag was 0. That
+explains the new entity (`1DA02F40` → `1B889240`). It also shows more than the
+planned test did:
+- The entity rebuilt on respawn read the table value **0**, and the swing stayed
+  off after the respawn.
+- The grant was then applied to that **new** entity, found by the per-call
+  re-scan, and it turned the swing back on without another death. So the grant
+  fixed it, not the respawn.
+- This is the §59 autosave risk: a death with a test value in the table. The table
+  is back to 1, so any later save writes 1. Before closing the game, reach a
+  checkpoint or autosave, or check the save file afterwards
+  (`CriticalPathProgression_HasCollectedMagRopeSwing` must be 1).
+
+### Not yet tested
+- PullUp (`0xE17601CF`), PullDown (`0x16F58B58`) and LineConnector (`0xD68DA442`)
+  on their own. LineConnector has no record in this save, so check that it
+  exists in the table before targeting it.
+- Whether removing MAG Rope in a save where the story has already passed a
+  rope-required point can soft-lock traversal. That is a logic and design question for
+  the AP world, not a mechanism question.
+
+---
+
+## §70. Full census of live flag-check entities: 28 live, and basic climbing isn't among them
+
+`runtime/list_live_checks.lua` (read-only) was run in the same session, after §69. It found 1121 entities of
+class `+1C7B168`, and every one resolved to a flag through `[+80]`. **28 have the
+`0x2000` "live" bit.** Every one of them is a player ability, except one tutorial counter:
+
+| group | flags (value in this save) |
+|---|---|
+| Movement | DoubleWallrun 1, ExtendedSlide 1, FastClimb 1, QuickTurn 1, Coil 1, Shift 1, SkillWindowSkillRoll 1 |
+| Combat | FlowAttack 1, FlowAttack_PowerAttack 0, FlowAttack_Special_PowerAttack 0, ImpactAttack_PowerAttack 0, ImpactAttack_Special_PowerAttack 0, HandToHandCombat 1, MoveEnemyAttack 1, MoveEnemyBack 1, CombatRecovery 0 |
+| Gear: Disruptor | Disruptor_StunHumans 0, Disruptor_StunMech 0, Disrupter_IncreaseRange 0 |
+| Gear: stamina | IncreasedHealth0 1, 1 1, 2 0, 3 0, 4 0 |
+| Gear: MAG Rope | MagRopeSwing 1, MagRopePullUp 1, MagRopePullDown 0 |
+| (not an ability) | `MoveTutorials_NumberHeavyLandings` 0 |
+
+So **27 ability flags can be granted live with the §67 recipe as it stands.** Five of
+them are proven (§66–§69). The rest share the same entity class and mode, and they sit in the
+same `data` block (`15B96E9xx`–`15B96FCxx`).
+
+### Answers
+- **Basic climbing, vault and wallrun have no flag.** No live entity checks anything
+  like that, and no flag in the 2376-name table names it. That confirms §20/§23: the
+  "17 always-owned nodes" are hard-wired moves, not items. FastClimb is the
+  only climb-related flag, and it's an upgrade.
+- **IncreasedHealth3/4 have live entities.** That supports §57: they are real, grantable
+  flags even though they are outside §21's 34.
+- **MagRopePullDown is 0 in memory and has a live entity**, while the old decoded save
+  showed 1. That save is a different, older file, so there's no contradiction. It's just
+  the current state.
+- `LineConnector` has **no** entity. It may be unused, or only enforced
+  elsewhere.
+
+### 12 of §21's 34 reachable abilities have no **live** (`0x2000`) entity
+**Correction, same day:** the first version of this paragraph said these have
+no entity at all and are "owned". Both claims were wrong. Cross-checking the census rows shows
+each one **does** have persistent `121F` entities, and several are **0** in the
+current save:
+
+| flag | hash | value | `121F` entities |
+|---|---|---|---|
+| Disruptor_Overload | B75C826E | 0 | 22 |
+| ExtendedComboVulnerability | 87156FC6 | 1 | 1 |
+| Focus | 2C9CC1D5 | 0 | 2 |
+| Focus_FlowAttackFluency | 12B6DD5E | 0 | 2 |
+| Focus_ReachFlow_Increase | B4F7A73E | 1 | 2 |
+| Focus_ReachFlow_IncreaseExtra | 80E2C6E4 | 0 | 2 |
+| Glove | 2CB07F0E | 1 | 2 |
+| LowerHealthEnforcer | 071FEB22 | 1 | 1 |
+| LowerHealthProtector | C0B346D0 | 1 | 1 |
+| LowerHealthSentinel | 243C4904 | 0 | 1 |
+| LowerHealthShockProtector | 56E000EC | 1 | 1 |
+| PositionalAdvantage | EC427EC6 | 1 | 1 |
+
+So these abilities aren't applied through a per-spawn player entity. Either the
+game reads the table directly when they're used, or they're applied by the
+persistent entities. **Next test:** write to the table only, with no call, and see whether
+the ability changes. If it doesn't, try `+3A75790(persist entity, v, 0)`.
+
+### Other observations
+- Many ability flags also have **many persistent (`121F`) entities**: PullUp has 23,
+  Swing 7, StunHumans/StunMech about 20 each. These are probably world objects (grapple
+  points, Disruptor targets) that check the flag for their own state, such as whether to show
+  a prompt. The §69 Swing test didn't touch them, and the swing still worked. If a
+  granted ability ever looks half-enabled (the move works but a world prompt is
+  missing), these are the first place to look.
+- The remaining ~1090 persistent entities are level-script flags (counters,
+  door states, a timestamp and so on). They're not relevant to items.
+
+---
+
+## §71. Unlocks_Focus: a table write alone applies on the next death. Whether it applies live is **inconclusive**.
+
+Same session. `Unlocks_Focus` (`2C9CC1D5`) has no `0x2000` entity, only 2 persistent
+`121F` ones (§70 table). Its data pointers are `15A90AAE0` and `15B713C00`. The latter
+is in the same `15B71xxxx` block as the persistent twin of every live ability
+(for example DoubleWallrun `15B7143A8`, MoveEnemyBack `15B7140D8`).
+
+Test: `setflag` wrote the §56 table directly, with no function call.
+- **No visible live change**, but the check was weak. **Correction (user, same
+  session):** the only thing observed was whether the Focus **bar** appeared. The bar
+  may only be (re)built at respawn, so the ability could have been active with no bar.
+  For comparison, the stamina bar did update live in §66. So "not live" is **unproven**.
+  A proper check is gameplay: take fire while sprinting with the flag at 1, and again at 0.
+- **After a death, the change applied.** The user saw the focus shield appear or
+  disappear, depending on the value written. So the flag is read when the player
+  respawns, just not through a `0x2000` entity. This is the same "respawn-only" behavior
+  §57 saw for every flag before `+3A75790` was found.
+
+So a restart-free grant of these 12 abilities still works **at the next death or
+checkpoint restart**. That's an acceptable fallback for Archipelago. A true live grant
+needs whatever the respawn path does for them.
+
+**Next:** `runtime/persist_apply_test.lua` calls `+3A75790(e, v, 0)` on the
+persistent entities, one at a time or all together, and has a `restore()` that
+checks itself.
+
+**Save caution:** the user died with a test value in the table. The value that was
+autosaved must be checked before the game is closed.
+
+---
+
+## §72. Focus granted and revoked **live** by calling `+3A75790` on a persistent entity
+
+Same session. The flag started at 0 (confirmed by a death). `runtime/persist_apply_test.lua` listed:
+
+| # | entity | flags | `entity+78` | data |
+|---|---|---|---|---|
+| 1 | `1DA089D0` | `121F` | 0 | `15A90AAE0` |
+| 2 | `1DBC2D00` | `121F` | **1** (stale) | `15B713C00` |
+
+- `apply(1, 1)`: table 0→1, then `+3A75790(1DA089D0, 1, 0)`. **Focus granted live.** The user
+  confirmed it in-game.
+- `restore()`: table →0, then the call with 0 on both entities, since each had
+  `+78 ≠ 0`. **Focus removed live.** The user confirmed it.
+
+### What this shows
+- **Abilities without a `0x2000` entity can still be granted live.** Call the same
+  function, `+3A75790(e, v, 0)`, on the right **persistent** entity. For Focus that is
+  the one with data `15A90AAE0`.
+- Entity #2 (`15B713C00`, in the `15B71xxxx` block that pairs with every live ability)
+  held a **stale 1** while the table was 0, and Focus was **off**. So that entity
+  isn't what enforces Focus, or at least doesn't do so on its own. The grant came from #1 alone.
+  The revoke called both, so it doesn't say which one mattered.
+- This also explains §71: the respawn re-evaluates these entities, which is why a table-only
+  write took effect at the next death.
+
+### Client recipe, extended
+1. Write the value to the §56 table.
+2. Find every `+1C7B168` entity with `[e+0x80] == node+0x10`.
+3. If one has `0x2000`, call `+3A75790(e, v, 0)` on it (§67). **Otherwise, call
+   it on every persistent entity for that flag.** For Focus, calling both is harmless and covers
+   the one that matters.
+4. Untested: flags with many persistent entities, for example Disruptor_Overload with 22.
+   Those are probably world objects (Disruptor targets). Calling all of them is likely fine, but
+   test one before relying on it.
+
+**Tally:** live grant and revoke is proven on 5 flags. Four use the live entity: MoveEnemyBack,
+IncreasedHealth1, DoubleWallrun and MagRopeSwing. One uses a persistent entity: Focus. The other 23
+live-entity abilities (§70) share the first four's setup but haven't been tested one by one.
+
+---
+
+## §73. Disruptor_Overload: calls on 24 then 17 entities all returned, and the game crashed **after** `restore()` reported OK
+
+Same session, `persist_apply_test.lua`, `Unlocks_Disruptor_Overload` (`B75C826E`),
+table 0. At selection there were **12** `121F` entities: one `15B71` twin (`15B7137F0`), one lone entity
+`[5] 1CCE7110` with data `15A848560` (picked by analogy with Focus's `15A90AAE0`), and 10 with
+data `15BB11400`. The §70 census had 22 at another moment.
+
+Full log sequence:
+1. `apply(5, 1)`: table →1, and the call on `1CCE7110` returned.
+2. `applyall(1)`: the re-scan found **24** entities by then, and all 24 calls returned.
+3. `restore()`: table →0. The re-scan found 17 entities with `+78 ≠ 0`, called each with 0,
+   and all returned. It printed **"restored to 0 -- OK, safe to die"**.
+4. **The game crashed after that**, during play. No call was in flight.
+
+**In-game effect (user):** after step 1 and after step 2, nothing visible happened near enemies. The
+Overload UI indicator the user expected never appeared. This is **inconclusive**, for the same
+reason as §71: the check was a UI element, and those may only rebuild at respawn. A better check
+is `setflag` to 1 (table only, no calls), then a death, then a look near enemies. That
+tests whether the flag itself grants Overload. If it does, the respawn path is at least a safe
+fallback for this ability.
+**Update (user):** the user thinks they may have been looking for the effect of a
+**different** ability than Disruptor Overload. So §73 says nothing either way about whether
+Overload can be granted. Only the crash observation stands.
+
+### Observations
+- **These entities stream with the world.** There were 12 at selection, 24 a moment later, and
+  `restore()` found several addresses that weren't in the `applyall` list
+  (`1B304140`, `1B415610`, `1B96DFE0`, `1CBC2F40`, `1CBC6150`, `1CD5D920`, `1D5B6150`,
+  `1DF972C0`, `1E0D81F0`) that already had `+78 = 1`. Newly streamed-in entities read
+  the table **while it was 1** and evaluated themselves. So these are world objects
+  (probably Disruptor targets) that each check the flag on spawn, not a
+  player-ability consumer.
+- A crash **after** every call returned points to the flips themselves leaving world
+  objects in a bad state, not to a fault in the call. Fired from another thread, mode 2 with
+  `r8=0` sends each object's event with no sync to the frame. The Cheat Engine thread
+  could also have been racing the world streaming. Not distinguished.
+
+### Consequences for the client
+- **Don't broadcast `+3A75790` to world-object entities.** For flags like Overload, write
+  the table (world objects read it when they stream in), and call at most the player-side
+  entity. That would be the `15A848xxx` one, *if* the user confirms `apply(5,1)` alone
+  worked.
+- Every real call must go through a game-thread hook. There have now been two crashes around
+  remote-thread calls.
+
+Save: `restore()` had put the table back to 0 before the crash. Still check
+on disk: Overload 0, Focus 0, MagRopeSwing 1, DoubleWallrun 1.
+
+### §73 addendum: the test value reached the save
+After relaunching, `checksave()` (runtime/setflag.lua, read right after load, so it reflects
+disk) showed **`Unlocks_Disruptor_Overload = 1`**. It was 0 before the test (§70 census, and
+the `persist_apply_test` load). `restore()` had set it back to 0 in memory, but an autosave
+happened while it was 1, during the `apply`/`applyall`/test window. The crash then stopped any later
+save from writing 0. The other three test flags were correct (Focus 0, MagRopeSwing 1,
+DoubleWallrun 1).
+
+- For testing: the rule "restore before any death **or checkpoint**" isn't enough on its own. An
+  autosave can happen while you're just moving around the city. Keep test windows short, and
+  run `checksave()` after every session.
+- For the client, this is good news: a live table write is persisted by the game's
+  own autosave, so AP grants survive with no save editing.
+- **Fixed and verified on disk.** In the relaunched session: `setflag(0xB75C826E, 0)`, waited for an autosave,
+  closed the game, relaunched, and `checksave()` right after load showed all four OK
+  (Overload 0, Focus 0, MagRopeSwing 1, DoubleWallrun 1). Together with the accidental 0→1
+  write above, this proves **in both directions** that a live table write alone is persisted by
+  the game's autosave.
+
+---
+
+## §74. Side missions: a live `SilverCompleted_` write alone does **not** add the mission to the replay menu
+
+`runtime/sidemissions.lua` (table writes only, no calls). State at load: only
+**Birdman's Delivery** (Silver 1, CompletedTime 4380) and **Two Pigeons With One Stone**
+(1, 5173) are unlocked. The Meta Grid has `_Available = 1` but Silver 0. All the others are 0.
+
+- `smset(10, 1)`: `SilverCompleted_Top of the World` (`FB1C79F9`) 0 → 1. **The mission did
+  not appear** in Missions → Side Missions.
+- `smrestore()`: back to 0. Confirmed with `sm()`.
+
+### Why this doesn't contradict §25
+§25's successful closed-game unlock **also** had `Finger on the Pulse_CompletedTime = 2699`
+in the save. It was left over from try 2, and §25 round 1 confirms both were present. So the working
+state was **Silver 1 + CompletedTime ≠ 0**, not Silver alone. Two explanations remain:
+1. The menu needs both flags. Next test: also write `Top of the World_CompletedTime`
+   (`0792DC9B`) live.
+2. The menu list is built from the save or table only at load, or at a checkpoint.
+   If so, a live write would show up after a checkpoint restart or death. Next test: the same write,
+   then a checkpoint restart.
+
+Either way, for Archipelago a "side mission unlocked" item that shows up at the next
+restart or reload is still usable. The design already treats side missions as
+locations first.
+
+### §74 follow-up: Silver + CompletedTime written live, then a **checkpoint restart**, and the mission appears
+The same session wrote both values live: `SilverCompleted_Top of the World = 1` and
+`Top of the World_CompletedTime` (`0792DC9B`) = 2699.
+- Closing and reopening the pause menu: **not** in Missions → Side Missions.
+- After **restart from checkpoint**: **it appeared** in the Side Missions list.
+
+**Conclusion:** the replay list is built at load (a checkpoint restart counts), not when
+the menu opens. So a live table write is enough to unlock a side mission as an AP item. It
+shows up at the next checkpoint restart, death, fast travel or relaunch. That last point is
+untested for death and fast travel.
+
+Still open:
+- Is CompletedTime needed? Test Silver alone + checkpoint restart. If Silver alone works,
+  the client can leave `_CompletedTime` at 0, and **completion detection becomes trivial**
+  (`_CompletedTime` goes 0 → nonzero means the player really finished it).
+- Does the unlocked mission load and play correctly from a live-written state? §25 proved
+  this only for a save-edit unlock.
+- After `smrestore()`, the mission presumably stays in the list until the next reload. Not
+  checked.
+
+### §74 follow-up 2: **`SilverCompleted_` alone is enough.** CompletedTime isn't needed.
+Only `smset(10, 1)` was written (`Top of the World_CompletedTime` stayed 0), then a checkpoint restart:
+**the mission appeared in the Side Missions list.** Restored afterwards, and `sm()` showed row 10 at `0 0 0`.
+
+So the first §74 attempt failed only because nothing reloaded, and the `CompletedTime = 2699` in
+§25 was incidental. **Client design:**
+- Unlock item: write `SilverCompleted_<m> = 1` live. It appears in the replay list at the next load
+  (checkpoint restart, and presumably death, fast travel or relaunch).
+- Location check: `<m>_CompletedTime` goes **0 → nonzero** when the player really
+  finishes the mission. The client never writes it, so there's no synthetic seed to compare against.
