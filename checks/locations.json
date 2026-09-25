@@ -8714,7 +8714,7 @@
  {
   "id": 1316000,
   "name": "Opportunity - Anchor Ph4 #01",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8726,7 +8726,7 @@
  {
   "id": 1316001,
   "name": "Opportunity - Anchor Ph4 #02",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8738,7 +8738,7 @@
  {
   "id": 1316002,
   "name": "Opportunity - Anchor Ph4 #03",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8750,7 +8750,7 @@
  {
   "id": 1316003,
   "name": "Opportunity - Anchor Ph4 #04",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8762,7 +8762,7 @@
  {
   "id": 1316004,
   "name": "Opportunity - Anchor Ph4 #05",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8774,7 +8774,7 @@
  {
   "id": 1316005,
   "name": "Opportunity - Anchor Ph4 #06",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8786,7 +8786,7 @@
  {
   "id": 1316006,
   "name": "Opportunity - Anchor Ph4 #07",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8798,7 +8798,7 @@
  {
   "id": 1316007,
   "name": "Opportunity - Anchor Ph4 #08",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8810,7 +8810,7 @@
  {
   "id": 1316008,
   "name": "Opportunity - Anchor Ph5 #01",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8822,7 +8822,7 @@
  {
   "id": 1316009,
   "name": "Opportunity - Anchor Ph5 #02",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8834,7 +8834,7 @@
  {
   "id": 1316010,
   "name": "Opportunity - Anchor Ph5 #03",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8846,7 +8846,7 @@
  {
   "id": 1316011,
   "name": "Opportunity - Anchor Ph5 #04",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8858,7 +8858,7 @@
  {
   "id": 1316012,
   "name": "Opportunity - Anchor Ph5 #05",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8870,7 +8870,7 @@
  {
   "id": 1316013,
   "name": "Opportunity - Anchor Ph5 #06",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Anchor",
   "area": "",
   "default": true,
@@ -8882,7 +8882,7 @@
  {
   "id": 1316014,
   "name": "Opportunity - Rezoning Ph6 #01",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Rezoning",
   "area": "",
   "default": true,
@@ -8894,7 +8894,7 @@
  {
   "id": 1316015,
   "name": "Opportunity - Rezoning Ph6 #02",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Rezoning",
   "area": "",
   "default": true,
@@ -8906,7 +8906,7 @@
  {
   "id": 1316016,
   "name": "Opportunity - Rezoning Ph6 #03",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Rezoning",
   "area": "",
   "default": true,
@@ -8918,7 +8918,7 @@
  {
   "id": 1316017,
   "name": "Opportunity - Rezoning Ph6 #04",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Rezoning",
   "area": "",
   "default": true,
@@ -8930,7 +8930,7 @@
  {
   "id": 1316018,
   "name": "Opportunity - Rezoning Ph6 #05",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Rezoning",
   "area": "",
   "default": true,
@@ -8942,7 +8942,7 @@
  {
   "id": 1316019,
   "name": "Opportunity - Rezoning Ph6 #06",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Rezoning",
   "area": "",
   "default": true,
@@ -8954,7 +8954,7 @@
  {
   "id": 1316020,
   "name": "Opportunity - Downtown Ph2 #01",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -8966,7 +8966,7 @@
  {
   "id": 1316021,
   "name": "Opportunity - Downtown Ph2 #02",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -8978,7 +8978,7 @@
  {
   "id": 1316022,
   "name": "Opportunity - Downtown Ph2 #03",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -8990,7 +8990,7 @@
  {
   "id": 1316023,
   "name": "Opportunity - Downtown Ph2 #04",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9002,7 +9002,7 @@
  {
   "id": 1316024,
   "name": "Opportunity - Downtown Ph2 #05",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9014,7 +9014,7 @@
  {
   "id": 1316025,
   "name": "Opportunity - Downtown Ph2 #06",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9026,7 +9026,7 @@
  {
   "id": 1316026,
   "name": "Opportunity - Downtown Ph3 #01",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9038,7 +9038,7 @@
  {
   "id": 1316027,
   "name": "Opportunity - Downtown Ph3 #02",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9050,7 +9050,7 @@
  {
   "id": 1316028,
   "name": "Opportunity - Downtown Ph3 #03",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9062,7 +9062,7 @@
  {
   "id": 1316029,
   "name": "Opportunity - Downtown Ph3 #04",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9074,7 +9074,7 @@
  {
   "id": 1316030,
   "name": "Opportunity - Downtown Ph3 #05",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9086,7 +9086,7 @@
  {
   "id": 1316031,
   "name": "Opportunity - Downtown Ph3 #06",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9098,7 +9098,7 @@
  {
   "id": 1316032,
   "name": "Opportunity - Downtown Ph3 #07",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9110,7 +9110,7 @@
  {
   "id": 1316033,
   "name": "Opportunity - Downtown Ph3 #08",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "Downtown",
   "area": "",
   "default": true,
@@ -9122,7 +9122,7 @@
  {
   "id": 1316034,
   "name": "Opportunity - The View Ph7 #01",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "The View",
   "area": "",
   "default": true,
@@ -9134,7 +9134,7 @@
  {
   "id": 1316035,
   "name": "Opportunity - The View Ph7 #02",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "The View",
   "area": "",
   "default": true,
@@ -9146,7 +9146,7 @@
  {
   "id": 1316036,
   "name": "Opportunity - The View Ph7 #03",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "The View",
   "area": "",
   "default": true,
@@ -9158,7 +9158,7 @@
  {
   "id": 1316037,
   "name": "Opportunity - The View Ph7 #04",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "The View",
   "area": "",
   "default": true,
@@ -9170,7 +9170,7 @@
  {
   "id": 1316038,
   "name": "Opportunity - The View Ph7 #05",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "The View",
   "area": "",
   "default": true,
@@ -9182,7 +9182,7 @@
  {
   "id": 1316039,
   "name": "Opportunity - The View Ph7 #06",
-  "category": "Opportunity Mission",
+  "category": "Opportunity",
   "district": "The View",
   "area": "",
   "default": true,
@@ -9200,7 +9200,7 @@
   "default": true,
   "flag": "An Ear to the Ground_CompletedTime",
   "hash": "0x6E0CF2BC",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_An Ear to the Ground"
  },
  {
@@ -9212,7 +9212,7 @@
   "default": true,
   "flag": "Birdman's Delivery_CompletedTime",
   "hash": "0xD6879B15",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Birdman's Delivery"
  },
  {
@@ -9224,7 +9224,7 @@
   "default": true,
   "flag": "Break And Entry_CompletedTime",
   "hash": "0xFBD17842",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Break And Entry"
  },
  {
@@ -9236,7 +9236,7 @@
   "default": true,
   "flag": "Caught in the Web_CompletedTime",
   "hash": "0x18DD6DC0",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Caught in the Web"
  },
  {
@@ -9248,7 +9248,7 @@
   "default": true,
   "flag": "Complete Coverage_CompletedTime",
   "hash": "0x3E0E6D25",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Complete Coverage"
  },
  {
@@ -9260,7 +9260,7 @@
   "default": true,
   "flag": "Drone Works_CompletedTime",
   "hash": "0xCEE20802",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Drone Works"
  },
  {
@@ -9272,7 +9272,7 @@
   "default": true,
   "flag": "Exit Strategy_CompletedTime",
   "hash": "0x73A854D9",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Exit Strategy"
  },
  {
@@ -9284,7 +9284,7 @@
   "default": true,
   "flag": "Finger on the Pulse_CompletedTime",
   "hash": "0xB209C074",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Finger on the Pulse"
  },
  {
@@ -9296,7 +9296,7 @@
   "default": true,
   "flag": "The Meta Grid_CompletedTime",
   "hash": "0xBCBB773E",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_The Meta Grid"
  },
  {
@@ -9308,7 +9308,7 @@
   "default": true,
   "flag": "Top of the World_CompletedTime",
   "hash": "0x0792DC9B",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Top of the World"
  },
  {
@@ -9320,223 +9320,223 @@
   "default": true,
   "flag": "Two Pigeons With One Stone_CompletedTime",
   "hash": "0xA0BCE842",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "unlock/replay flag: SilverCompleted_Two Pigeons With One Stone"
  },
  {
   "id": 1318000,
-  "name": "Delivery - Phase 2 #1",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph2 #1",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh2Delivery01_CompletedTime",
   "hash": "0xAAFC606D",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh2Delivery01"
  },
  {
   "id": 1318001,
-  "name": "Delivery - Phase 2 #2",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph2 #2",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh2Delivery02_CompletedTime",
   "hash": "0xC589F02E",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh2Delivery02"
  },
  {
   "id": 1318002,
-  "name": "Delivery - Phase 2 #3",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph2 #3",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh2Delivery03_CompletedTime",
   "hash": "0x0F01CC6F",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh2Delivery03"
  },
  {
   "id": 1318003,
-  "name": "Delivery - Phase 3 #1",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph3 #1",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh3Delivery01_CompletedTime",
   "hash": "0xFBBDC0EC",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh3Delivery01"
  },
  {
   "id": 1318004,
-  "name": "Delivery - Phase 3 #2",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph3 #2",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh3Delivery02_CompletedTime",
   "hash": "0x4F78222F",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh3Delivery02"
  },
  {
   "id": 1318005,
-  "name": "Delivery - Phase 3 #3",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph3 #3",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh3Delivery03_CompletedTime",
   "hash": "0xB10568EE",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh3Delivery03"
  },
  {
   "id": 1318006,
-  "name": "Delivery - Phase 4 #1",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph4 #1",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh4Delivery01_CompletedTime",
   "hash": "0xF73753EB",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh4Delivery01"
  },
  {
   "id": 1318007,
-  "name": "Delivery - Phase 4 #2",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph4 #2",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh4Delivery02_CompletedTime",
   "hash": "0x09806AA8",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh4Delivery02"
  },
  {
   "id": 1318008,
-  "name": "Delivery - Phase 4 #3",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph4 #3",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh4Delivery03_CompletedTime",
   "hash": "0x9331E7E9",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh4Delivery03"
  },
  {
   "id": 1318009,
-  "name": "Delivery - Phase 5 #1",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph5 #1",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh5Delivery01_CompletedTime",
   "hash": "0x993AF06A",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh5Delivery01"
  },
  {
   "id": 1318010,
-  "name": "Delivery - Phase 5 #2",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph5 #2",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh5Delivery02_CompletedTime",
   "hash": "0x422C60A9",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh5Delivery02"
  },
  {
   "id": 1318011,
-  "name": "Delivery - Phase 5 #3",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph5 #3",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh5Delivery03_CompletedTime",
   "hash": "0xE3F34868",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh5Delivery03"
  },
  {
   "id": 1318012,
-  "name": "Delivery - Phase 6 #1",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph6 #1",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh6Delivery01_CompletedTime",
   "hash": "0x05734169",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh6Delivery01"
  },
  {
   "id": 1318013,
-  "name": "Delivery - Phase 6 #2",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph6 #2",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh6Delivery02_CompletedTime",
   "hash": "0x2000D12A",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh6Delivery02"
  },
  {
   "id": 1318014,
-  "name": "Delivery - Phase 6 #3",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph6 #3",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh6Delivery03_CompletedTime",
   "hash": "0x6978AD6B",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh6Delivery03"
  },
  {
   "id": 1318015,
-  "name": "Delivery - Phase 7 #1",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph7 #1",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh7Delivery01_CompletedTime",
   "hash": "0x5634A1E8",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh7Delivery01"
  },
  {
   "id": 1318016,
-  "name": "Delivery - Phase 7 #2",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph7 #2",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh7Delivery02_CompletedTime",
   "hash": "0xA9EF032B",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh7Delivery02"
  },
  {
   "id": 1318017,
-  "name": "Delivery - Phase 7 #3",
-  "category": "Delivery",
+  "name": "Opportunity - Delivery Ph7 #3",
+  "category": "Opportunity (Delivery)",
   "district": "",
   "area": "",
   "default": true,
   "flag": "OWPh7Delivery03_CompletedTime",
   "hash": "0x0B7C49EA",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "also BronzeCompleted_OWPh7Delivery03"
  },
  {
@@ -9548,7 +9548,7 @@
   "default": false,
   "flag": "OPPDT01Delivery_CompletedTime",
   "hash": "0x74E6FF00",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9560,7 +9560,7 @@
   "default": false,
   "flag": "OPPDT02_Delivery_CompletedTime",
   "hash": "0xE60547DC",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9572,7 +9572,7 @@
   "default": false,
   "flag": "OPPANC01Delivery_CompletedTime",
   "hash": "0x4619241C",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9584,7 +9584,7 @@
   "default": false,
   "flag": "Dt02Delivery01_CompletedTime",
   "hash": "0x5A9C8DCD",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9596,7 +9596,7 @@
   "default": false,
   "flag": "OPPDT01OpportunityMissions_CompletedTime",
   "hash": "0x206CF5BA",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9608,7 +9608,7 @@
   "default": false,
   "flag": "OPPDT02RunnerBeatdown_CompletedTime",
   "hash": "0xD47BD34F",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9620,7 +9620,7 @@
   "default": false,
   "flag": "Anc01Opportunity_CompletedTime",
   "hash": "0x37C35F16",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9632,7 +9632,7 @@
   "default": false,
   "flag": "OWPh3OppMiss02_CompletedTime",
   "hash": "0x6B705338",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "in-game name/where unknown; verify before enabling"
  },
  {
@@ -9644,7 +9644,7 @@
   "default": false,
   "flag": "Back in the Game_CompletedTime",
   "hash": "0x1F14D019",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9656,7 +9656,7 @@
   "default": false,
   "flag": "Be Like Water_CompletedTime",
   "hash": "0x07F1F23B",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9668,7 +9668,7 @@
   "default": false,
   "flag": "Benefactor_CompletedTime",
   "hash": "0xC5B4AB23",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9680,7 +9680,7 @@
   "default": false,
   "flag": "Birdman's Route_CompletedTime",
   "hash": "0xEECE0010",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9692,7 +9692,7 @@
   "default": false,
   "flag": "Encroachment_CompletedTime",
   "hash": "0x8960494F",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9704,7 +9704,7 @@
   "default": false,
   "flag": "Family Matters_CompletedTime",
   "hash": "0xAB0CE71C",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9716,7 +9716,7 @@
   "default": false,
   "flag": "Fly Trap_CompletedTime",
   "hash": "0xB36F7606",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9728,7 +9728,7 @@
   "default": false,
   "flag": "Grid Node Anchor_CompletedTime",
   "hash": "0xAB8C3483",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9740,7 +9740,7 @@
   "default": false,
   "flag": "Kingdom_CompletedTime",
   "hash": "0x4B40088F",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9752,7 +9752,7 @@
   "default": false,
   "flag": "Mischief Maker_CompletedTime",
   "hash": "0xF0A40424",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9764,7 +9764,7 @@
   "default": false,
   "flag": "Old Friends_CompletedTime",
   "hash": "0x71ACE024",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9776,7 +9776,7 @@
   "default": false,
   "flag": "Payback_CompletedTime",
   "hash": "0xD02AC2E1",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9788,7 +9788,7 @@
   "default": false,
   "flag": "Prisoner X_CompletedTime",
   "hash": "0x8C0754F4",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9800,7 +9800,7 @@
   "default": false,
   "flag": "Release_CompletedTime",
   "hash": "0x73E086CB",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9812,7 +9812,7 @@
   "default": false,
   "flag": "Reunion_CompletedTime",
   "hash": "0x9E2A2726",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9824,7 +9824,7 @@
   "default": false,
   "flag": "Sanctuary_CompletedTime",
   "hash": "0x039C86D6",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9836,7 +9836,7 @@
   "default": false,
   "flag": "Savant Extraordinaire_CompletedTime",
   "hash": "0xCD35FE06",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9848,7 +9848,7 @@
   "default": false,
   "flag": "The Shard_CompletedTime",
   "hash": "0xD1063F97",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9860,7 +9860,7 @@
   "default": false,
   "flag": "Tickets, Please_CompletedTime",
   "hash": "0x946C6817",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {
@@ -9872,7 +9872,7 @@
   "default": false,
   "flag": "Vive La Resistance_CompletedTime",
   "hash": "0xC7E5B880",
-  "detection": "'<mission>_CompletedTime' becomes non-zero AND differs from any value the seed save wrote",
+  "detection": "'<mission>_CompletedTime' changes from 0 to non-zero (the client never writes it)",
   "note": "only usable if the story is NOT pre-completed in the seed save"
  },
  {

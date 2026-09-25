@@ -28,9 +28,9 @@ Every location is one progression flag. `hash = djb2a(flag name)` (seed 5381, `h
 | +5000 | Security Hub | 6 | `SecurityHubsCompleted_SecHub<X>` | value == 1 |
 | +5100 | Grid Node | 3 | `GridNodes_{Rezoning,Dt,View}Completed` | value == 1 |
 | +5200 | Billboard Hack | 12 | `HackableBillboards_<x>NN` | value == 1 |
-| +6000 | Opportunity Mission | 40 | `MiscCompleted_OW Opp <Dist>Ph<N> NN` | value == 1 |
+| +6000 | Opportunity | 40 | `MiscCompleted_OW Opp <Dist>Ph<N> NN` | value == 1 |
 | +7000 | Side Mission | 11 | `<Mission>_CompletedTime` | see below |
-| +8000 | Delivery | 18 | `OWPh<2-7>Delivery0<1-3>_CompletedTime` | see below |
+| +8000 | Opportunity (Delivery) | 18 | `OWPh<2-7>Delivery0<1-3>_CompletedTime` | see below |
 
 The collectible totals (324 / 251 / 45 / 42 / 40) match the in-game World Progression screen.
 
