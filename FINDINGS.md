@@ -5772,3 +5772,15 @@ exactly like a side mission unlocked with `SilverCompleted_` (§74).
 - Whether the menu entry shows a blank time, and what it displays for a never-played one.
 
 `oprestore()` put both values back, verified by a final `op()`.
+
+### §76 addendum: a menu-unlocked opportunity plays, and a real completion writes the time
+The user launched the opportunity from the menu entry created by the flag write, played it,
+and **the real completion time was saved correctly**. So the whole loop works for
+opportunities, exactly as §25 showed for a side mission:
+
+1. item received → write `MiscCompleted_<name> = 1`;
+2. the entry appears in the menu at the next load;
+3. the player plays it from the menu;
+4. `_CompletedTime` goes 0 → the real time, which is the location check.
+
+Remaining (minor): the same run on a delivery (`BronzeCompleted_`), assumed identical.
