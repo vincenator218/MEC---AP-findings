@@ -5708,3 +5708,67 @@ So the first §74 attempt failed only because nothing reloaded, and the `Complet
   (checkpoint restart, and presumably death, fast travel or relaunch).
 - Location check: `<m>_CompletedTime` goes **0 → nonzero** when the player really
   finishes the mission. The client never writes it, so there's no synthetic seed to compare against.
+
+---
+
+## §75. Opportunities: `_Available` is **not** the map gate, and it can't be used as an unlock item
+
+`runtime/opportunities.lua` (table writes only) lists all 58 open-world activities:
+40 `OW Opp <District>Ph<N> NN` and 18 `OWPh<N>Delivery0<K>`, each with
+`_Available`, `_CompletedTime`, `_Timer` and a `MiscCompleted_` /
+`BronzeCompleted_` completion flag. In-game these are labelled **OPPORTUNITY** on the
+world marker; deliveries are one kind of opportunity.
+
+State on the user's fresh save: 23 of the 58 had `_Available = 1`, 2 deliveries
+were already done, and no `MiscCompleted_` was set.
+
+| step | result |
+|---|---|
+| `opallavail(0)`, then look at the map, then checkpoint restart | markers unchanged; after the reload `oprestore()` found **0** entries to restore |
+| `opallavail(0); op()` in one block | all 23 read **0** — the writes do land |
+| `op()` again later, markers still visible | still 0 — nothing rewrites them while playing |
+| `oprestore()` | restored 23, OK |
+
+### Conclusions
+- **The map doesn't read `_Available` live.** Markers stayed with the flag at 0.
+- **A reload restores it from the save.** The first round's "restored 0 entries" wasn't a
+  rewrite by some background system: the checkpoint restart re-read progression from the
+  last save, which still had the 1s. Writes only stick to disk once an autosave
+  happens (§73).
+- So **opportunities can't cheaply become AP items.** They stay as **checks**
+  (`MiscCompleted_` / `_CompletedTime`), which is what `checks/` already uses.
+- Not tested, and probably not worth it: leave the zeros in place until an
+  autosave, then reload, to see whether the markers are built from `_Available` at
+  load. That bakes a wrong availability state into the save for a small payoff.
+
+### Naming
+The in-game marker says "OPPORTUNITY", so the check list now calls both families
+Opportunity: `Opportunity - Downtown Ph2 #01` and `Opportunity - Delivery Ph2 #1`.
+
+---
+
+## §76. Opportunities CAN be unlock items: the completion flag puts them in the menu
+
+Follow-up to §75, same session. The user finished `OW Opp DtPh2 03` for real, and it
+appeared in the menu. What changed for it: `MiscCompleted_ = 1` and `_CompletedTime = 5020`
+(`_Available` went 0 during that session and read 1 again after the next reload,
+which is the replay state).
+
+Test: `opdone(24, 1)` wrote **only** `MiscCompleted_OW Opp DtPh2 04 = 1`, leaving
+`_CompletedTime` at 0. After a checkpoint restart, **the entry appeared in the menu**,
+exactly like a side mission unlocked with `SilverCompleted_` (§74).
+
+### What this gives the client
+- **58 more items**: 40 opportunities + 18 deliveries, granted by a table write, appearing at
+  the next load. `data/items.json` now has 109 items (51 + 58).
+- **The check is unchanged**: `_CompletedTime` going 0 → non-zero. The client never writes it, so
+  a real completion is unambiguous. Same rule as side missions.
+- `_Available` is still not useful (§75).
+
+### Not yet checked
+- That a menu-unlocked opportunity actually loads and plays (the side-mission
+  equivalent was proven for a save-edit unlock in §25).
+- The same test on a delivery (`BronzeCompleted_`), assumed to behave the same.
+- Whether the menu entry shows a blank time, and what it displays for a never-played one.
+
+`oprestore()` put both values back, verified by a final `op()`.
