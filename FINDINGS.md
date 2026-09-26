@@ -5784,3 +5784,49 @@ opportunities, exactly as §25 showed for a side mission:
 4. `_CompletedTime` goes 0 → the real time, which is the location check.
 
 Remaining (minor): the same run on a delivery (`BronzeCompleted_`), assumed identical.
+
+---
+
+## §77. The Archipelago starting save is built and loads correctly
+
+New tool: `tools/save/make_seed_save.py` (in the client kit). It takes a
+**story-complete** save and clears everything a randomizer hands out or checks off,
+in place: no records added or removed, file size unchanged, both checksums recomputed.
+
+Built from the community story-complete save `0percent16TheEnd`:
+
+| cleared (593 values) | kept |
+|---|---|
+| all 58 `Unlocks_*` abilities | the 37 `GoldCompleted_*` story missions and their times/timers |
+| MAG Rope Swing / PullUp / PullDown (`--keep-magrope` to skip) | every other `CriticalPathProgression_*`: district unlocks, story state |
+| `XP_Gained` / `XP_Used` (`--keep-xp` to skip) | doors, character states, world scripting |
+| every location flag (852; `--default-locations-only` for just the 792) | `Collectables_Total*` capacities |
+| every `SilverCompleted_` / `BronzeCompleted_` / `MiscCompleted_` and its `_CompletedTime`/timestamps | |
+| mission-collectible and codex counters, and the `Collectables_*Collected` aggregates (`--keep-codex` to skip) | |
+
+350 non-zero records remain, nearly all story state.
+
+**Verified in-game** (user loaded it): abilities gone, XP 0, no grapple, every
+collectible counter at 0 including the per-mission ones, no side missions and no
+opportunities in the menus, story complete, city open.
+
+Two expected leftovers:
+- **Side Missions still lists "Gridnode Run"** = Grid Node Anchor, which is a *story*
+  (Gold) mission. The tool never touches story flags.
+- **The Runs tab is empty but every run exists in the world.** This is §75/§76:
+  the menu lists unlocked runs; the world doesn't read those flags. So in a
+  story-complete seed the activity unlocks are menu-only, and **abilities are the
+  only real gate**.
+
+### Traversal check (user, on the seed)
+- **You can leave the spawn point without the MAG Rope.** So the rope is safe to
+  randomize, at least from the seed's starting position.
+- **Fast travel reaches every hideout.** The whole city is available from the
+  start, which makes AP logic much simpler: any check is reachable once the
+  abilities it needs are in hand, with no district routing to model.
+
+### Design consequence
+With this seed, progression is gated by abilities (36 `Unlocks_*` + 3 rope uses).
+The 69 side-mission/opportunity unlocks are effectively cosmetic there, so they
+belong in the pool as filler-grade items, unless a future finding gates the world
+versions too.
