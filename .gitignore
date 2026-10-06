@@ -35,3 +35,9 @@ Claude outputs/
 
 # Separate repository (the clean client kit) -- lives here for now, move it out anytime
 ap-client-kit/
+
+# Third-party Frosty mods downloaded for analysis (MAGrope Plus by zhpete,
+# Classic Health by bluepear18, both from the MEC Nexus). FINDINGS records what
+# they contain and how to read one; the mods themselves are their authors' to
+# distribute, not ours. Keep them locally.
+*.fbmod

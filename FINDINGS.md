@@ -5827,6 +5827,848 @@ Two expected leftovers:
 
 ### Design consequence
 With this seed, progression is gated by abilities (36 `Unlocks_*` + 3 rope uses).
-The 69 side-mission/opportunity unlocks are effectively cosmetic there, so they
-belong in the pool as filler-grade items, unless a future finding gates the world
-versions too.
+The 43 side-mission/opportunity unlocks that *do* have a menu entry (§78) are
+effectively cosmetic there, so they belong in the pool as filler-grade items, unless
+a future finding gates the world versions too.
+
+
+## §78. The 32 Runs-menu opportunities decoded to their in-game names
+
+**Why.** The location and item lists used internal names (`OW Opp DtPh2 02`), which
+nobody reading a spoiler log or a hint would recognise.
+
+**Method.** Starting from a story-complete save, `set_flag.py` wrote all 40
+`MiscCompleted_OW Opp *` and all 18 `BronzeCompleted_OWPh<N>Delivery<NN>` flags to 1,
+and gave each one a **unique `_CompletedTime`** (a distinct hundredth of a second, so
+no two could collide). The user then read the Runs tab of the replay menu and reported
+every entry with its displayed time. Inverting time → flag gives an exact, one-to-one
+mapping; no guessing from ordering was involved.
+
+**Result: 32 of the 40 opportunities appear in the Runs menu.** All 32 were decoded.
+
+| flag base | in-game name | type |
+|---|---|---|
+| `OW Opp AncPh4 01` | Dogen's Latest Thing | Covert Delivery |
+| `OW Opp AncPh4 02` | An Impatient Man | Covert Delivery |
+| `OW Opp AncPh4 03` | — | intervention (not in the Runs menu) |
+| `OW Opp AncPh4 04` | — | intervention (not in the Runs menu) |
+| `OW Opp AncPh4 05` | Von Oben | Fragile Delivery |
+| `OW Opp AncPh4 06` | Bugging WFYO | Diversion |
+| `OW Opp AncPh4 07` | — | intervention (not in the Runs menu) |
+| `OW Opp AncPh4 08` | The Spice Must Flow | Fragile Delivery |
+| `OW Opp AncPh5 01` | Patterns | Diversion |
+| `OW Opp AncPh5 02` | A Small Job for Dogen | Diversion |
+| `OW Opp AncPh5 03` | You Know the Drill | Covert Delivery |
+| `OW Opp AncPh5 04` | Don't Get Dogen Angry | Covert Delivery |
+| `OW Opp AncPh5 05` | — | intervention (not in the Runs menu) |
+| `OW Opp AncPh5 06` | — | intervention (not in the Runs menu) |
+| `OW Opp CtPh6 01` | Contraband Tunes | Fragile Delivery |
+| `OW Opp CtPh6 02` | Just Add a Slice of Lime | Fragile Delivery |
+| `OW Opp CtPh6 03` | The Heart of a Fighter | Fragile Delivery |
+| `OW Opp CtPh6 04` | Pronto, OK? | Covert Delivery |
+| `OW Opp CtPh6 05` | The Henchmen Meetup | Diversion |
+| `OW Opp CtPh6 06` | A Lecture for an Exec | Diversion |
+| `OW Opp DtPh2 01` | — | intervention (not in the Runs menu) |
+| `OW Opp DtPh2 02` | The Vial | Fragile Delivery |
+| `OW Opp DtPh2 03` | Memento | Fragile Delivery |
+| `OW Opp DtPh2 04` | Stay Out of Sight | Covert Delivery |
+| `OW Opp DtPh2 05` | — | intervention (not in the Runs menu) |
+| `OW Opp DtPh2 06` | Run, Just Run | Covert Delivery |
+| `OW Opp DtPh3 01` | The Raposa Datagrab | Diversion |
+| `OW Opp DtPh3 02` | You Can Run, Can You Hide? | Covert Delivery |
+| `OW Opp DtPh3 03` | Under Surveillance | Diversion |
+| `OW Opp DtPh3 04` | Cameras and Drones | Covert Delivery |
+| `OW Opp DtPh3 05` | Tree of Life | Fragile Delivery |
+| `OW Opp DtPh3 06` | — | intervention (not in the Runs menu) |
+| `OW Opp DtPh3 07` | She Loves Me, She Loves Me Not | Fragile Delivery |
+| `OW Opp DtPh3 08` | A Particular Taste | Fragile Delivery |
+| `OW Opp VwPh7 01` | Game Over, Runner. Game Over. | Covert Delivery |
+| `OW Opp VwPh7 02` | The Greylands in No Time | Covert Delivery |
+| `OW Opp VwPh7 03` | Aurorian Cuisine | Fragile Delivery |
+| `OW Opp VwPh7 04` | The Lie | Fragile Delivery |
+| `OW Opp VwPh7 05` | The Associate's Side Deal | Covert Delivery |
+| `OW Opp VwPh7 06` | Black November Supplies | Diversion |
+
+### What is *not* in the menu
+
+- **The 8 opportunities with no name above** never appeared, even with the flag set
+  and a unique time written. They are the world-only **interventions** (the OPPORTUNITY
+  markers you can walk into but that get no replay entry).
+- **All 18 `BronzeCompleted_OWPh<N>Delivery<NN>` deliveries** never appeared either.
+  The user confirmed why: these are **countdown** deliveries — you have to reach the drop
+  before a timer expires, and no time is recorded, so there is nothing for the menu to list.
+
+### Cross-checks that all passed
+
+- Every **type** predicted from the localization SIDs in `dependency_graph.json`
+  (§ earlier: `ID_OPP_FRA_DEL_*` → fragile delivery, `ID_OPP_COV_DEL_*` → covert
+  delivery, `ID_OPP_DIV_*` → diversion) matched the type shown in game. 12 fragile,
+  12 covert, 8 diversions — and the 8 with no SID are exactly the 8 with no menu entry.
+- **`Ct` = Rezoning is confirmed.** The SIDs spell the district `RZ` where the flags
+  spell it `Ct` (Construction, the district's development name), and the Rezoning
+  entries showed up under the Rezoning district in game.
+- The user also confirmed a real run over a menu-unlocked entry **saves the new time
+  correctly**, so the `_CompletedTime` check (§76) still holds with the flag pre-set.
+
+### Consequences for the lists
+
+- `locations.json` / `.csv` now name the 32 (`Opportunity - The Vial`) and carry the
+  type in the note column. The 8 interventions keep the internal label and are noted as
+  `intervention (not in the Runs menu)`. **Location IDs did not change** — opportunities
+  are numbered while iterating sorted *flag* names, not display names.
+- `items.json` drops **26 dead unlock items**: the 18 countdown deliveries and the 8
+  interventions. An unlock item for those would do nothing, because there is no menu
+  entry to add and the activity already exists in the world on a story-complete save.
+  **The item pool goes from 109 to 83.** Checks are unaffected: all 69 activities
+  (11 side missions + 40 opportunities + 18 deliveries) still write their completion
+  flags and are still detectable.
+- The crowdsourcing worksheet (`checks/activity_logic_worksheet.*`, rebuilt by
+  `checks/build_worksheet.py`) now lists activities by their in-game names, so answers
+  from other players can be matched without a decoder ring.
+
+
+## §79. The playtest save (everything unlocked, no abilities, 500k XP) + a real bug in `set_flag.py`
+
+**Goal.** Hand other players a save where they can start any mission or activity from the
+menu with **no abilities at all**, and buy the one they turn out to need, so they can
+report back which ability gates what. That is the input the AP world's logic needs (§77
+left it as the last big unknown).
+
+**`make_testing_save.py`** (in `ap-client-kit/tools/save/`), built from the §77 seed save:
+
+| | |
+|---|---|
+| `SilverCompleted_` / `BronzeCompleted_` / `MiscCompleted_` | -> 1 (92 flags: everything appears in its menu) |
+| their `_CompletedTime` / `_CompletedTimestampPart1/2` | -> 0 (276 flags: nothing reads as done, a real run still records a real time) |
+| every `Unlocks_*` | -> 0 (58 flags) |
+| the 4 MAG Rope flags | -> 0 |
+| `XP_Gained` | -> 500000 (`--xp`), `XP_Used` -> 0 |
+| story | untouched: 37 `GoldCompleted_`, every other `CriticalPathProgression_*` |
+
+Result: 35 records patched, **673 inserted**, file size unchanged (999485 zero bytes of
+padding were available; 5384 were consumed), both CRC32 fields recomputed and verified
+stable on a re-read. Verified per section: 0 abilities set, 92/92 activities = 1, 0
+leftover non-story completion times, 37 Gold intact, `XP_Gained` = 500000 in **both**
+`ProgressionManagerData` sections.
+
+One rope-named flag is deliberately left set: `TheViewMagRopePulldownPersistence_AnchorToViewTransition`.
+It is world state (a rope left pulled down during the Anchor→View transition), not a rope
+ability, and clearing it could change traversal.
+
+### The bug this uncovered, in `set_flag.py`
+
+The first build looked right (35 patched / 673 inserted) but read back wrong: `XP_Gained`
+was 0 in both sections and only 59 of 92 activities were 1 in the larger section.
+
+Cause: the writer patched existing records **directly in the file buffer**, then rebuilt
+the section from `blob`, a copy taken *before* those patches, and wrote that rebuilt blob
+back over the section. So in any section that also needed an insertion, **every in-place
+patch was silently discarded**. Insert-only flags survived, which is exactly why the
+damage looked partial.
+
+This is the same bug behind the earlier "69 flags written into one section but only 50
+into the other" that we worked around with a second pass. Both writers now patch a single
+bytearray copy per section and write it back once, so the second pass is no longer needed.
+
+**Lesson (again):** the save writers need a read-back assertion, not just a success
+message. Every future save tool should re-parse its own output and compare against the
+requested values before reporting done.
+
+
+## §80. Can basic movement be taken away? What two published Frosty mods reveal
+
+**Where this came from.** The user pointed out that in the opening of *Back in the Game*,
+in the courtyard before you get the beat link, Faith can run and slide but **cannot climb,
+vault or coil**. So a state in which basic moves are off demonstrably exists in the game.
+The question is what drives it, and whether Archipelago could drive the same thing.
+
+### 80a. It is not a progression flag. Re-verified.
+
+Searched all 2376 names in `flag_names.json` and the whole of `dependency_graph.json`
+(2376 flags, 152 missions, 124 groups, 67 rewards):
+
+- There is **no** `Unlocks_Climb`, `Unlocks_Vault`, `Unlocks_Springboard`, or any flag for
+  basic wallrun or roll. Nothing in the save file addresses those moves.
+- This agrees with the §70 census, which found no flag-check entity for climbing.
+- The three near-misses, all ruled out: `Unlocks_FastClimb` is climb *speed* (already an
+  item); `Unlocks_SkillWindowWallClimb` and `Unlocks_SkillWindowSpringboard` are the
+  skill-move *timing window* (the speed/invulnerability bonus), not the move, and have no
+  record in any real save. Their sibling `Unlocks_SkillWindowSkillRoll` *is* entity-backed
+  and already an item, which is the only reason the pair is worth a spot-check at all.
+- The `rewards` graph in `dependency_graph.json` only gates **cosmetic runner kits** on
+  flags (e.g. one kit needs 16 conditions including `Unlocks_IncreasedHealth1`). It has no
+  movement content.
+
+So no save edit and no live flag write can touch those moves. Confirming this a second
+time was worth it, because the rest of this section is only interesting given that it's true.
+
+### 80b. The `.fbmod` format, enough of it to read one
+
+Frosty mods are readable offline with no tooling. Header: `FROSTY\0`, a version byte, then
+length-prefixed `MirrorsEdgeCatalyst`, then NUL-terminated title / author / category /
+version / description. Then a resource count and one table entry per resource (name,
+GUID, hashes; `ffffffff` in place of the hashes means the slot carries no data). Then a
+list of u64 sizes, then the payloads back to back.
+
+Sanity check the split by arithmetic: for `classic_health.fbmod`, data start `0x263` +
+icon `0x1a1e` + focuswidget `0x215d` + faithcharacter `0x62899` = `0x66677` = exactly the
+file length. **Do this check before trusting any string offsets** — the first pass on this
+file put identifier strings inside what looked like a screenshot JPEG, and the strings
+would have been meaningless if that had been true.
+
+### 80c. MAGrope Plus (zhpete, 59546 bytes) — hijack an always-loaded logic graph
+
+Modifies exactly four EBX assets:
+
+```
+sound/logic/faith_movement_audio
+me_sound/logic/faithaudiochannel
+ui/widgets/map/progression/progression_treegearcontent
+ui/widgets/hud/buildinfowidget
+```
+
+None of them is a rope settings asset. The payloads are **Frostbite logic graphs** —
+`SchematicChannel`, `PropertyConnection(s)`, `DataBus`, `SourceFieldId`/`TargetFieldId`,
+`TriggerOn`, `CompareFloat`, `AccumulatedInputs`, `GraphSize`, `Event`, `Link`, `Entity`.
+
+The movement-audio graph carries `PamMoveTracker`, `PamRayCast` (`RayLength`,
+`BetweenRaycasts`, `SeeThroughMaterials`) and `PamSwitch` — which matches the mod's own
+description, "any surface between 3m and 15m". The audio-channel graph carries the input
+side, `AccumulatedInputs` + `TriggerOn`, which is the mod's "press F to toggle".
+
+**Technique:** pick a logic graph that is always resident and that nothing depends on
+(the audio graphs), and implement the feature in graph nodes. The audio assets are a
+carrier, not the subject. Note that the feature toggles **live, on a keypress** — so an
+injected graph can change movement behaviour at runtime.
+
+### 80d. Classic Health (bluepear18, 419447 bytes) — edit the character asset
+
+Modifies exactly two EBX assets:
+
+```
+ui/widgets/hud/focuswidget
+characters/faithcharacter
+```
+
+No graph hijack. Removing the Focus shield and the last-chance slo-mo was done as a
+**property edit on the player character asset**. Readable strings inside
+`characters/faithcharacter`:
+
+| string | what it suggests |
+|---|---|
+| **`CanFindMAGRopeSwing`** | a `Can<Ability>` capability boolean, on the character |
+| `Shield`, `LowHealthThreshold`, `Recover`, `qEnabled` | what this mod changed |
+| `PamMovementImpact`, `PamRope`, `PamMag…`, `vMagrope`, `Skillroll`, `TagId` | the components aggregated on the character |
+| `DoorBarge`, `Kick`, `Open`, `Climb`, `Release`, `Scuff` | a move/foley event list (an enum, **not** a permission) |
+
+`CanFindMAGRopeSwing` is the find. That naming shape is exactly where a climb or vault
+permission would live if one exists.
+
+**So ability removal is proven, and it is a property edit, not a graph veto.** That is a
+much simpler mechanism than expected.
+
+### 80e. The structural result: flag-check entities are logic-graph nodes
+
+This is the part that reframes the memory work. The entities from §56–§70 — vtable
+`BASE+0x1C7B168`, int/bool output ports at `[e+0x68]`/`[e+0x70]`, static data at
+`[e+0x28]`, the apply call at `+0x3A75790` — are **EBX logic-graph nodes**. We met them
+from the memory side and never named what they were. The `0x2000` "live" bit is a
+per-spawn instance in a loaded graph, which is why deaths and checkpoint restarts replace
+them (§68, §70).
+
+Consequence: a modded logic graph can contain a flag-check node on **any** flag, wired to
+whatever gates an ability. Our client already writes flags live (§57, §67, §73) and the
+apply call already pushes the change into the node. That is a complete bridge from an
+Archipelago item to a game behaviour that has no flag of its own today.
+
+`Unlocks_Placeholder` is a ready-made channel for this: it exists in the flag table, has no
+record in any real save, and nothing reads it.
+
+### 80f. Limits of offline analysis — do not push further this way
+
+Frostbite EBX stores field and type names as **hashes, not text**. Only strings held as
+literal data survive: 338 of them in a 403KB `faithcharacter`, many truncated by the
+format (`Allow4`, `UClimb8`, `qEnabled`, `rPamRopej`). The payload is not zlib, not lz4
+block, and not zstd — it is the game's own EBX binary, so **the property list cannot be
+enumerated from here.** Frosty Editor resolves the hashes against its type SDK, which is
+why it can show a full property grid and we cannot. (`ME-AP\SDK\` may hold a type dump
+that would close this gap — unchecked.)
+
+Anything claimed about `faithcharacter` beyond the strings in the table above is guesswork
+and should not be written down as fact.
+
+**Superseded by §82.** `ME-AP\SDK\` turned out to be a full generated class SDK from the
+MEC modding Discord, and it answers §80's question outright — without Frosty, and without a
+mod. Read §82 before acting on anything in §80g.
+
+### 80g. What to do next, and what it would cost
+
+**The open question is now narrow:** open `characters/faithcharacter` in Frosty Editor and
+search the property grid for `Climb`, `Vault`, `Coil`, `Can`. A `CanClimb`-style boolean
+makes the original idea easy; its absence closes the question for good.
+
+Two costs that apply either way, if this route is ever taken:
+
+1. **A `faithcharacter` edit is static**, baked at load. It cannot be an AP item by itself.
+   The design would be: set the ability off in the mod, gate it back on through a flag the
+   client drives at runtime (80e).
+2. **It adds a hard dependency for every player** — Frosty Mod Manager 1.0.6.3, a correct
+   load order, launching with `-dataPath "ModData/Default"`, and version mismatches crash
+   the game. That is a real barrier for an AP release, and it should be weighed against
+   §81, which needs nothing but the client.
+
+Design note, separate from feasibility: climbing carries nearly all traversal in Catalyst.
+Gating it makes large parts of a seed unreachable rather than merely harder, which usually
+reads as "stuck". §81 gives a similar "the world opens up" feeling for far less work.
+
+**Sources:** MAGrope Plus and Classic Health from the Mirror's Edge Catalyst Nexus
+(gameplay category, 32 mods reviewed — none alters basic movement). Frosty Tool Suite is
+the only maintained toolchain; Frost4 is archived and unsuitable.
+
+
+## §81. Four untested progression flags that look like real world gates
+
+Found while searching for a movement flag, none of them in the item pool. Values read from
+the story-complete community save:
+
+| flag | value | what it looks like |
+|---|---|---|
+| **`Global_CityUnlockState`** | **9** | a numeric city-unlock **stage**, not a boolean |
+| `CriticalPathProgression_HasCollectedGridleakMapping` | 1 | whether grid leaks are shown on the map |
+| `CriticalPathProgression_HasUnlockedDowntownSouth` | 1 | a district gate |
+| `CriticalPathProgression_NomadMissionsUnlocked` | 1 | Nomad content gate |
+
+Also present but with **no record** in that save, so probably unused or set elsewhere:
+`HasCollectedAlertRadar`, `HasEnteredAnchorForFirstTime`, `HasUnlockedTransitionConDt`,
+`HasTurnedOffAnchorBlockerFans`.
+
+`Global_CityUnlockState` is the one to test. If it really stages map access, it is a
+**progressive** item — nine steps of city access handed out one at a time — which is a far
+better spine for a seed than any single ability, and it needs no mod. §77 established that
+the starting save leaves the whole city open and fast travel reaches every hideout, which
+is what makes abilities the only current gate; this flag could change that.
+
+`HasCollectedGridleakMapping` is the other good one, and it answers the earlier problem
+that collectibles other than grid leaks are not shown on the map: if this controls the
+grid-leak markers, it is a real item with real consequences for how a seed plays.
+
+**Test plan (none of this is done):** on a backup save, live-write `Global_CityUnlockState`
+down from 9 and watch what closes on the map, restoring the value before any autosave.
+Same for `HasCollectedGridleakMapping` at 0. Standing rule applies: game closed for save
+edits, work from a backup, and verify empirically rather than assuming.
+
+
+## §82. **The prologue mechanism, found: `PamMovementExclusionVolume`** (from the SDK)
+
+`ME-AP\SDK\` is a generated Frostbite class SDK from the Mirror's Edge Catalyst modding
+Discord: ~2000 per-class `.h` headers, `FBClasses.h` (4110 class names), `ClassHierarchy.h`,
+`CrossReferences.h`, a Cheat Engine table, and Ghidra/IDA import scripts. Every header
+carries field names, byte offsets, defaults, **and a live memory address chain**. This is
+the type information §80f said we were missing, and it was sitting in the repo the whole time.
+
+### 82a. The answer
+
+`PamMovementExclusionVolume` — a world volume that switches off individual moves:
+
+| field | offset | default |
+|---|---|---|
+| `ExcludeVault` | `0x80` | **true** |
+| `ExcludeHeaveUp` | `0x81` | **true** |
+| `ExcludeHang` | `0x82` | **true** |
+| `ExcludeWallrun` | `0x83` | **true** |
+| `ExcludeMagrope` | `0x84` | false |
+| `Enabled` (inherited from `PamFindableMovementVolumeData`) | `0x70` | true |
+
+`GetTypeInfo` = `Module+0x2878c60`; singleton pointer read at `Module+0x2878c80`.
+
+The entity-data form, `PamMovementExclusionEntityData` (derives
+`PamFindableMovementVolumeEntityData`), has the same five booleans at `0xa0`–`0xa4`, plus
+from its parent:
+
+| field | offset | note |
+|---|---|---|
+| `HalfExtents` (`Vec3`) | `0x80` | **the volume's size** |
+| `Enabled` | `0x90` | |
+
+`GetTypeInfo` = `Module+0x2878c00`; singleton pointer at `Module+0x2878c20`.
+
+**This explains the prologue exactly.** The courtyard in *Back in the Game* is almost
+certainly inside one of these volumes. Vault, heave-up (the climb/mantle), hang and wallrun
+are excluded; **running and sliding are not in the list at all** — which is precisely what
+the user observed and what started this whole line of investigation. The observation was
+right, and the mechanism is a world volume, not a progression state.
+
+### 82b. Corrections to earlier hypotheses
+
+- **The player-tag theory was wrong.** `PamPlayerTagComponentData` derives
+  `ShaderParameterComponentData` and holds `PlayerOnlineId`, `ShowTag`, `MaxVisibleRadius`,
+  `UseBackground`; `PamPlayerTagLayer` holds `LayerName`, `NameSid` and arrays of
+  `PamPlayerTagImage`. It is the **multiplayer nameplate**, cosmetic, with nothing to do with
+  abilities. The `PlayerTagsDefinitionSettingsMeta` "layers / default tags" structure
+  (§12, §80) is nameplate customisation. Drop this thread.
+- **Climbing has no on/off of its own.** `ClimbingStateData` is pure tuning:
+  `LateralInputScale` 0.3, `DownAngleLimit` 35, `DropOffAngle` 30, `AttractionVelocity` 0.1,
+  `PushAwayVelocity` 3, and four `ClimbOff*` distances/times. No enable field. The character
+  state machine (`OnGroundStateData`, `InAirStateData`, `JumpStateData`, `ClimbingStateData`,
+  `SlidingStateData`, `FallingStateData`, …) is tuning data throughout.
+- `PamCharacterEntityData` is visuals only (`PamUseRunnersGhostShader`, `Visible`,
+  animation priorities), so Classic Health's Focus edit hit some other component inside the
+  `characters/faithcharacter` blueprint, not this one.
+
+### 82c. Why this matters more than §80 did
+
+§80 concluded that gating a basic move would need a Frosty mod, which would make Frosty
+Mod Manager a hard dependency for every player. **That may not be true.** These are live
+objects with known offsets, reachable the same way as everything else in §56–§73:
+
+- the five `Exclude*` booleans say **which** moves are off,
+- `HalfExtents` says **where**,
+- `Enabled` turns the volume on and off.
+
+So the theoretical path is: find an exclusion-volume instance, grow its `HalfExtents` to
+cover the city, and drive the five booleans from the client. That would give **per-move
+gating at runtime with no mod at all** — climb, vault, hang, wallrun and magrope as five
+real Archipelago items, applied and revoked live like every other flag.
+
+### 82d. What is NOT established
+
+Nothing here has been tested in-game. Specifically unknown:
+
+1. Whether an exclusion volume instance can be found and edited live, and whether the game
+   re-reads `HalfExtents` after the volume has spawned (it may only be read at load).
+2. Whether the courtyard actually uses one of these, or whether the prologue restriction
+   comes from somewhere else that merely looks the same. **Verify before believing 82a.**
+3. Whether a city-sized volume breaks anything — the volumes are `Findable`, so they may
+   participate in runner-vision or path finding.
+4. Whether exclusion is what the prologue uses *in addition to* other restrictions (no beat
+   link, no map). If the courtyard bundles them, that is a scripting matter, separate from
+   these volumes.
+5. `GetInstance()` in these headers returns the **Data/definition** singleton, not a placed
+   instance. Editing the definition changes what volumes do, not where the player is. The
+   per-instance objects still have to be located — most likely by the same AOB/vtable scan
+   used for flag-check entities (§56).
+
+### 82e. Next test (read-only, cheap)
+
+Replay *Back in the Game* from the mission menu, stand in the courtyard, and scan for
+`PamMovementExclusionVolume` instances via the type info at `Module+0x2878c60`. If instances
+exist there and vanish in the open world, 82a is confirmed and the design in 82c becomes
+worth building. If none appear, the prologue uses something else and §82 needs revisiting.
+
+The SDK also unblocks a lot else: `CrossReferences.h` shows what references what, and the
+Cheat Engine table and Ghidra/IDA scripts in `SDK\` may resolve names for the structures we
+reverse-engineered by hand in §56–§70.
+
+
+## §83. **CONFIRMED IN GAME: movement moves can be switched off live, with no mod**
+
+Test by the user in free roam, on a random save, with `runtime/exclusion_step2.lua` and
+`runtime/exclusion_step3.lua`. §82 was a reading of the SDK; this is the behaviour.
+
+### 83a. The SDK matches this build exactly
+
+`exclusion_step1.lua` resolved every class by the SDK's addresses and read the class name
+back out of memory:
+
+```
+module base = 140000000
+flag table   : tbl=2BBF4530 buckets=2BBFEFF0 nbuck=3739   -> same build as FINDINGS
+142878C60 -> "PamMovementExclusionVolume"
+142878C00 -> "PamMovementExclusionEntityData"
+142884DA0 -> "PamFindableMovementVolumeEntityData"
+14285ECF0 -> "PamClientMovementExclusionEntity"
+142878300 -> "PamPlayerTagsSettings"            (control)
+```
+
+So `ME-AP\SDK\` is valid for our exe and its offsets can be trusted. Two structural facts
+fell out of the type-info dumps, useful well beyond this section:
+
+- **`typeinfo+0x18` = the parent class's type info.** `PamMovementExclusionEntityData`'s
+  parent pointer resolves to `PamFindableMovementVolumeEntityData`'s type info, matching the
+  SDK's declared hierarchy. Walkable for any class.
+- **`typeinfo+0x20` = the class's default object**, and **that object's first qword is the
+  vtable every instance of the class shares.** This is a general recipe for finding
+  instances of any class in the SDK: read the default object, take its vtable, scan
+  writable memory for 8-byte-aligned pointers to it. What the SDK calls `GetInstance()` is
+  just this default object — it is *not* a placed world instance.
+
+### 83b. 62 placed exclusion volumes exist in ordinary free roam
+
+`exclusion_step2.lua`, vtable `141C95708`, 63 hits in 2.2s, of which 62 are real (the class
+default at `2D6BAF80` is the 63rd; hits inside the module range are type-table false
+positives and are filtered by address).
+
+The flag patterns are clearly hand-authored per surface:
+
+| extents | excluded |
+|---|---|
+| (1.3, 0.5, 0.2), several | Hang only — thin slabs on ledges you shouldn't hang from |
+| (2.1, 1.6, 2.9), (3.2, 1.6, 1.9) | Vault + HeaveUp only |
+| (1.9, 3.7, 1.5) | Wallrun only |
+| (1.3, 0.2, 28.7) | Vault + HeaveUp + Hang, not Wallrun |
+| (38.2, 31.6, 15.5) | Vault + HeaveUp + Hang, not Wallrun |
+| many | all four, Magrope left allowed |
+
+`ExcludeMagrope` is `false` on effectively all of them, consistent with its `false` default.
+
+**`PamMovementExclusionVolume` has no placed instances at all** — only its class default. The
+world uses the **EntityData** form, which is the one carrying `HalfExtents`. Target that one.
+
+### 83c. The behaviour test — it works, and it works live
+
+`xgrowall(2000)` set `HalfExtents` to (2000,2000,2000) on all 62 volumes, so the player was
+inside one wherever they stood. User's report:
+
+> "I ran xgrowall(2000) and I could not climb (mantle). I could still climb pipes so I
+> imagine this and ladders still work. I died by accident then restore() and the climbing
+> came back."
+
+So:
+
+1. **The mantle was blocked.** At this point four flags were set at once (the authored
+   values), so this did *not* yet isolate which flag did it. §84 does that properly.
+2. **The change applies immediately.** No death, no checkpoint restart, no reload happened
+   between the write and the failed climb. The game evaluates the volume every time the move
+   is attempted, so this is a **live** mechanism — the same immediacy as the ability `apply`
+   call in §67, but with no function call and no game-thread hook needed. **Only a memory
+   write.**
+3. **Pipe climbing is NOT covered.** Pipes still worked with every authored exclusion
+   active. Ladders are assumed to be the same but were not tested. So these five do not cover
+   every vertical move, and world logic must not assume "no climb" means "no vertical
+   traversal".
+4. Restoring brought climbing back.
+
+5. **A death does not reset it.** The user died between the write and the restore and
+   confirmed: *"after I died I could still not climb but then I restored and could climb, so
+   death does not reset."* The block survived the respawn, and only the explicit restore
+   lifted it.
+
+   This is a real difference from the flag-check entities of §68/§70, which are **rebuilt**
+   on death and checkpoint restart and therefore need re-applying. The exclusion volume's
+   EntityData survives a respawn, so a client would not have to re-apply after a death.
+   Whether it survives a *checkpoint restart* or a full load (level streaming) is still
+   untested — see §83e.
+
+### 83d. Why this changes the project
+
+This is the first mechanism we have that gates something with **no progression flag behind
+it at all**, and it needs no mod, no injected DLL and no game-thread hook — unlike the
+ability `apply` call (§73), which crashed the game twice from a foreign thread. It is a plain
+write to a float and five bytes.
+
+Candidate new items, if §83e holds up: **Vault, Heave Up (mantle), Hang, Wallrun** and a
+second lever on **MAG Rope**. Those are four traversal items the game has no flags for, which
+is exactly the gating the seed was short of (§77 concluded abilities were the only real gate
+and §81 was the only other lead).
+
+Caveat for design: 61 of the 62 volumes are the designers' own, gating specific surfaces. A
+client must not rewrite those — see §83e for the single-volume approach.
+
+### 83e. Next: one control volume, and map the rest of the booleans
+
+`runtime/exclusion_step4.lua`. Two questions:
+
+1. **Is one volume enough?** Grow a single volume (`xon`) and leave the other 61 alone. If
+   the block still applies, the client design is "one AP control volume" and the level is
+   untouched. This is the version that could ship.
+2. **Which boolean is which move?** With `xset()`, enable one at a time and name what each
+   blocks. `HeaveUp` is done; `Vault`, `Hang`, `Wallrun`, `Magrope` are not.
+
+Order: `xon()` with nothing excluded first (confirm everything still works, which also
+proves that growing a volume is harmless on its own), then one boolean at a time, then
+`xoff()`.
+
+Still open after that:
+
+- **Checkpoint restart and streaming.** A death is now known not to reset it. A checkpoint
+  restart, a fast travel and a full reload are not tested, and volumes are level-placed, so
+  moving across the city may stream them in and out and re-create them from their EntityData.
+  The client must be prepared to re-scan and re-apply after a load — which it already does for
+  items, so probably a non-issue, but unverified.
+- Whether a city-sized volume disturbs anything else (these are `Findable` volumes, so runner
+  vision or path finding could read them).
+- Whether pipes/ladders can be gated by some other mechanism.
+- Whether `Enabled` (`0x90`) alone is a cleaner switch than rewriting `HalfExtents`.
+
+
+## §84. **The five exclusion flags, each mapped to its move. All independent.**
+
+Tested by the user in free roam with `runtime/exclusion_step7.lua`: all 61 volumes grown to
+`HalfExtents = (2000,2000,2000)` so the player is always inside one, then **one** flag set at
+a time across every volume, with the other four forced to 0. Same ledge, same wall, every run.
+
+| mask | result |
+|---|---|
+| `xgo(2000, 0,0,0,0,0)` | **control — everything works.** A map-sized volume that excludes nothing changes nothing. |
+| `xgo(2000, 1,0,0,0,0)` | vault blocked, everything else fine |
+| `xgo(2000, 0,1,0,0,0)` | mantle (heave-up) blocked, **hang still works** |
+| `xgo(2000, 0,0,1,0,0)` | hang blocked |
+| `xgo(2000, 0,0,0,1,0)` | wallrun blocked, **both vertical and horizontal** |
+| `xgo(2000, 0,0,0,0,1)` | MAG rope blocked |
+
+User's summary: *"Perfect across the board."*
+
+So the five booleans are **fully independent**, and each one means exactly what the SDK's
+field name says:
+
+| flag | offset | move |
+|---|---|---|
+| `ExcludeVault` | `0xA0` | **the whole springboard/vault family** — see §84e |
+| `ExcludeHeaveUp` | `0xA1` | mantle / pull up over a ledge |
+| `ExcludeHang` | `0xA2` | hang from a ledge |
+| `ExcludeWallrun` | `0xA3` | wallrun, vertical and horizontal |
+| `ExcludeMagrope` | `0xA4` | MAG rope |
+
+### 84e. `ExcludeVault` is the springboard family, not just "vault"
+
+Tested separately with Vault masked alone (`xsolo(nil, 20000, 1,0,0,0,0)`), all three of these
+**fail**:
+
+1. springboarding off a low object (crate, car, bin) to gain height,
+2. vaulting over a waist-high railing or barrier,
+3. a designer-placed springboard prop.
+
+While a **plain jump still works**, and so does stepping onto a knee-high ledge. So the flag
+gates one coherent move family rather than a single animation, and it does not touch ordinary
+jumping.
+
+The SDK confirms why there is nothing finer to reach for: the exclusion volume has exactly
+five bools and **no `ExcludeSpringboard`**. The springboard system itself has no on/off either
+— `SpringboardDriverSettings` is pure tuning (`MinimumForwardSpeed`, `Minimum/MaximumJumpHeight`,
+`UseLookDirAngleLimit`, `AllowedJumpAssistDistance`, `JumpAssistPenalty`), and
+`PamCustomSpringboardEntityData` is a placed prop with `ForwardSpeed`, `JumpHeight`,
+`Bidirectional`. So "vault" is DICE's internal word for what players call a springboard, and
+the two are not separable.
+
+**Name the item after the player-facing move: "Springboard".** `ExcludeVault` stays as the
+field name in any code that writes it.
+
+### 84a. Five new items, with no progression flag behind any of them
+
+This is the first gating mechanism in the project that owes nothing to the flag table:
+
+- **Vault**, **Heave Up**, **Hang**, **Wallrun**, **MAG Rope** — five traversal items.
+- Granting or revoking is **one byte**. No `apply` call, no game-thread hook, no injected DLL,
+  no Frosty mod. Contrast §73, where calling the ability `apply` function from a foreign
+  thread crashed the game twice.
+- The effect is **immediate**, with no death, checkpoint restart or reload (§83c), and
+  **survives a death** (§83c item 5).
+- MAG Rope now has two independent levers: the three
+  `CriticalPathProgression_HasCollectedMagRope*` flags (already items) and `ExcludeMagrope`.
+
+Note the overlap to resolve in design: `Unlocks_DoubleWallrun` is an existing item and
+`ExcludeWallrun` kills wallrunning outright, so the two need an order — presumably
+`ExcludeWallrun` gates wallrun at all, and `Unlocks_DoubleWallrun` gates the second one.
+
+### 84b. There is a size ceiling, and we do not know where it is
+
+`HalfExtents = 2000` works. **`HalfExtents = 50000` does not** — with 50000 the flags are
+ignored entirely and every move works (this is what made §83's first mapping attempt
+misleading). Somewhere between the two the game stops honouring the volume: probably an
+intersection test, a broadphase bound, or a float precision limit.
+
+A client must stay under that ceiling, so before anything ships: bisect the usable maximum,
+and confirm 2000 actually covers the whole playable city from any position (it may not — 2000
+worked here because 61 volumes scattered across the map meant one was always near).
+
+### 84c. Still open
+
+1. **A single control volume did not work.** Volume #27 grown alone to 2000 and then 50000,
+   with `ExcludeHeaveUp` set, changed nothing — while the same flag across all 61 blocked the
+   mantle immediately. So an arbitrary EntityData is not necessarily live; #27 is probably
+   level data whose entity is not spawned. Unresolved, and it matters: the blunt "write all
+   61" approach **overwrites the designers' own per-surface volumes** while active, so
+   surfaces that should refuse a hang or a wallrun will allow them. For a randomizer that is
+   probably acceptable, even desirable for consistency, but it can enable sequence breaks and
+   out-of-bounds routes, and world logic should not assume the level's own restrictions hold.
+2. **Volumes stream.** The count moved between 62 and 61 across runs in the same session, so
+   the set changes with the level. A client must re-scan after every load and re-apply. Death
+   does not require it; loads are untested.
+3. **Pipes and ladders are not covered** by any of the five (§83c).
+4. Whether `Enabled` (`0x90`) is a cleaner switch than rewriting `HalfExtents`.
+5. Whether a map-sized volume disturbs runner vision or path finding — these are `Findable`
+   volumes. Nothing odd was reported, but it was not specifically checked.
+
+### 84d. Method note worth keeping
+
+The first mapping attempt changed **two variables at once** (size 2000 → 50000 *and* authored
+flags → HeaveUp-only) and produced a result that looked like flag coupling: one flag appearing
+to kill two unrelated moves. It was neither — the wallrun block came from a run with all four
+authored flags set, and the "HeaveUp does nothing" came from the size ceiling. The matrix above
+only became readable once size was held fixed at a known-good value and exactly one flag moved
+per run. Same lesson as §79: change one thing, and read the state back rather than trusting
+what you think you wrote.
+
+
+## §85. The exclusion-volume mechanism is finished: one volume, five items, no mod
+
+Continuation of §84, all tested by the user in free roam with `runtime/exclusion_lab.lua`
+(which supersedes `exclusion_step3..7`). The open questions in §84b/§84c are now answered,
+except where noted.
+
+### 85a. Reproducible across a full game restart
+
+After closing and relaunching the game: `xlist()` found 61 volumes, all 61 valid, and
+`xapply(2000, 1,0,0,0,0)` blocked the vault with wallrun and climbing unaffected. Module base
+`140000000` again, so no ASLR to contend with, and the class default / vtable recipe from
+§83a resolved unchanged (`vtable = 141C95708`).
+
+### 85b. The size ceiling is above 20000, and that is enough
+
+| `HalfExtents` | vault blocked? |
+|---|---|
+| 2000 | yes |
+| 5000 | yes |
+| 10000 | yes |
+| 20000 | yes |
+| 50000 | **no** (§84b) |
+
+The exact threshold between 20000 and 50000 was **not** measured, deliberately: 20000 is far
+larger than the playable city, so pinning the ceiling has no design value. Recorded as
+"20000 works, 50000 is ignored, threshold unmeasured". Revisit only if a client ever needs to
+exceed 20000, and treat anything above 20000 as unvalidated.
+
+### 85c. Coverage holds across the whole city, through streaming and death
+
+At size 20000, the user fast travelled to another district **and died**, then tested again:
+the vault was still blocked. `xinfo()` at that point:
+
+```
+known=61  in-memory=61
+mask size=20000 V=1 H=0 Hg=0 W=0 M=0
+37/61 still hold our size, 24 address(es) no longer valid
+```
+
+So 24 of the 61 volumes had been streamed out and their addresses freed — and the effect was
+still in place, because the surviving ones covered the player. Two things this confirms:
+
+- **The vtable validity check works and is necessary.** 24 addresses would have been written
+  into freed (possibly reused) memory without it. Any client must re-validate before every
+  write, as the kit's open question #2 predicted for flag-check entities.
+- Coverage is not positional at this size. Fast travel and death do not lift the block.
+
+### 85d. **One volume is enough.** The design is clean.
+
+`xsolo(nil, 20000, 1,0,0,0,0)` restores all 61 volumes to their authored values and masks
+**exactly one** valid volume. Result: the vault was still blocked, with the other 60 untouched.
+
+This resolves the biggest caveat in §84c. The client does **not** need to rewrite the
+designers' 60 volumes, so their per-surface restrictions stay intact and the sequence-break /
+out-of-bounds worry largely goes away. It also explains the §84c failure: volume #27 was not
+a *valid* volume at the time (streamed out), not a size problem — any single valid volume
+works.
+
+### 85e. The client algorithm
+
+```
+1. find the class default at [Module+0x2878C00 + 0x20]; its first qword is the vtable
+2. scan writable memory, 8-byte aligned, for pointers to that vtable -> volume instances
+3. discard the class default and anything inside the module range
+4. pick one instance whose [addr+0] still equals the vtable
+5. write HalfExtents = (20000,20000,20000), Enabled = 1, and the five Exclude bools
+6. re-assert every couple of seconds; when [addr+0] no longer matches the vtable, the
+   volume has been streamed out -- pick another valid one and re-apply (re-scan if none)
+```
+
+`xhold(sec)` in `exclusion_lab.lua` is this algorithm, and is the reference implementation.
+Item grant/revoke is a single byte at `0xA0`–`0xA4`; item state is whatever the AP client
+already tracks, so no game state is involved and nothing is persisted to the save.
+
+### 85f. What remains
+
+1. ~~`xhold` under sustained travel is untested.~~ **Tested and it holds.** With one volume
+   masked and `xhold(2)` running, the user fast travelled, started a side mission and quit it;
+   the block stayed in place the whole time. Note that the log printed **no** `re-picked`
+   lines, so volume `1844D9830` stayed valid throughout — the re-pick branch itself is still
+   unexercised, and remains the one untested path in the algorithm.
+2. **Pipes and ladders are not covered** by any of the five (§83c). "No climb" does not mean
+   "no vertical traversal", and logic must not assume it does.
+3. **Item overlap:** `Unlocks_DoubleWallrun` is an existing item and `ExcludeWallrun` removes
+   wallrunning entirely. Presumably `ExcludeWallrun` gates wallrun at all and
+   `Unlocks_DoubleWallrun` gates the second one, but the interaction is untested.
+4. Whether `Enabled` (`0x90`) alone is a cleaner switch than rewriting `HalfExtents`. Not
+   tried; `HalfExtents` is known to work.
+5. Whether a city-sized `Findable` volume disturbs runner vision or path finding. Nothing odd
+   was reported across several sessions of testing, but it was never specifically examined.
+6. ~~The five items are not yet in `items.json`.~~ **Added**, with two decisions by the user:
+
+   | item | field | note |
+   |---|---|---|
+   | Springboard | `ExcludeVault` | named for the player-facing move, not DICE's internal word (§84e) |
+   | Climb Up | `ExcludeHeaveUp` | |
+   | Ledge Hang | `ExcludeHang` | |
+   | Wallrun | `ExcludeWallrun` | |
+   | MAG Rope | `ExcludeMagrope` | **replaces** the three `CriticalPathProgression_HasCollectedMagRope*` items |
+
+   The rope decision collapses swing / pull-up / pull-down into one on/off switch. Simpler,
+   but coarser: logic can no longer require one specific rope use. It is reversible — the
+   three flags still exist and still work. It also has a knock-on: the **starting save now
+   keeps the rope** (`make_seed_save.py` defaults to keeping it, `--clear-magrope` to zero
+   it), because the client gates the rope at runtime and clearing it in the save would gate
+   it twice.
+
+   Pool: 83 - 4 rope + 5 traversal = **84 items**. `docs/MEMORY.md` §5 is the client-facing
+   write-up of the mechanism.
+
+
+## §86. A bug in the restore path, and the cleanup that does not depend on originals
+
+### What happened
+
+After the §85f endurance run (one volume masked, `xhold` running, fast travel + a side mission
+started and quit), the user called `xstop()` then `xrestore()` and got:
+
+```
+xrestore: 3 volume(s) restored (of 61 known)
+```
+
+and **the vault was still blocked**.
+
+### Cause
+
+`xrestore()` walked its table of originals and skipped any address whose vtable check failed —
+58 of the 61 had streamed out during the travelling, so it restored 3 and silently did nothing
+for the rest. It then reported success. Two mistakes compounded:
+
+1. **Originals were keyed by address**, and the level recycles addresses. An address that
+   streams out and comes back is a *different* volume, so a stored "original" can belong to
+   something that no longer exists — or, worse, be applied to an unrelated volume that now
+   occupies that address.
+2. **The restore reported a count, not a verified state.** "3 restored" was true and useless;
+   nothing checked whether anything of ours was still live afterwards.
+
+### The fix: a cleanup that needs no originals
+
+Authored extents are tiny — across 61 volumes the largest was `(38.2, 31.6, 15.5)`. So
+**any volume with an extent over 100 is one we wrote**, which gives a reliable sweep even with
+no record of the original:
+
+- `xmasked()` — scan and list every volume with an extent over 100, flagging which have no
+  recorded original.
+- `xpanic()` — restore the ones with trustworthy originals; for the rest, zero the five bools
+  and set the extent to 1, making the volume a harmless no-op. The level restores its real
+  values the next time it streams that volume in, and nothing is written to the save.
+
+`xrestore()` now also tells the user to run `xmasked()` afterwards rather than implying it
+finished the job.
+
+### Verified clean
+
+On the next run `xmasked()` reported *"no volume has an extent over 100 — nothing of ours is
+live"* with 61 volumes present, so the state recovers fully. Worth stressing why recovery is
+never really at risk here: **these writes touch no progression flag and nothing is persisted.**
+Volumes are rebuilt from level data, so a game restart is always a guaranteed clean slate.
+
+### For the client
+
+The client must not key its bookkeeping by address the way this script originally did. The
+robust pattern is the one `xhold` uses for masking plus what `xmasked` uses for cleanup:
+
+- never trust a stored address — re-validate `[addr+0] == vtable` before every read or write;
+- identify *our* volumes by their written signature (an out-of-range extent), not by a
+  remembered address;
+- on disconnect or shutdown, sweep by signature rather than replaying a list of originals.
+
+**Lesson, third time in this log** (after §79 and §84d): report what the state *is*, not what
+the operation attempted. A write path that counts its own successes will happily tell you it
+worked while the game disagrees.

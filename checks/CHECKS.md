@@ -32,6 +32,20 @@ Every location is one progression flag. `hash = djb2a(flag name)` (seed 5381, `h
 | +7000 | Side Mission | 11 | `<Mission>_CompletedTime` | see below |
 | +8000 | Opportunity (Delivery) | 18 | `OWPh<2-7>Delivery0<1-3>_CompletedTime` | see below |
 
+### Opportunity names
+
+The 40 `MiscCompleted_OW Opp …` activities are the world's **OPPORTUNITY** markers.
+**32 of them appear in the Runs tab of the replay menu and their in-game names are
+known** (decoded in game by writing a unique `_CompletedTime` to each and reading the
+menu back -- FINDINGS §78). `locations.json` uses those names, with the type
+(fragile delivery / covert delivery / diversion) in the `note` column;
+`data/opportunity_names.json` is the raw map.
+
+The remaining 8 are **interventions**: they exist in the world but never get a Runs
+entry, so they keep an internal label. The 18 `OWPh<N>Delivery<NN>` deliveries are
+**countdown** runs -- no time is recorded and they are not listed in the menu either --
+but all 26 still write their completion flags, so they are ordinary checks.
+
 The collectible totals (324 / 251 / 45 / 42 / 40) match the in-game World Progression screen.
 
 **Mission detection.** Side missions and deliveries use `_CompletedTime`, not the `SilverCompleted_`/`BronzeCompleted_` flag. The design plans to write `SilverCompleted_<m>` to unlock missions for replay (§25), so that flag cannot also be the check. §25 also proved that a real completion overwrites the synthetic `_CompletedTime` seed with a different value. So the check is "`_CompletedTime` is nonzero and differs from what the seed save wrote". **Simpler, per §74:** `SilverCompleted_` alone unlocks the mission (written live, it appears at the next checkpoint restart), so the client never needs to write `_CompletedTime`. The check is then just `_CompletedTime` going 0 → nonzero.
